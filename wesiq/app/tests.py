@@ -84,6 +84,70 @@ class PasswordResetTests(SecurityTestCase):
         # Even the right code is refused once the attempts are used up
         self.assertEqual(verify_password_reset_code(user, code), "locked")
 
+class WebPasswordResetFlowTests(SecurityTestCase):
+    """
+    The homepage, login and profile flows stored the code without its expiry marker, so every code was "expired" (shown as
+    "Overovací kód sa nezhoduje"), and the mail was translated in the request's language under the user's language prefix
+    (e.g. "/es/obnova-hesla", a 404).
+    """
+
+    def reset_with_mailed_code(self, user, new_password):
+        import re
+        from urllib.parse import urlparse
+
+        self.assertEqual(len(mail.outbox), 1)
+        body = mail.outbox[-1].body
+        link = re.search(r"(\S*\?password-reset-code=(\d{6}))", body)
+        self.assertIsNotNone(link, body)
+
+        # The Reset Page Identifies The Account By The Cookie Set When The Code Was Requested (The Profile Script Sets It Too)
+        self.client.cookies["email_address"] = user.email_address
+
+        # The Link From The Mail Opens The Reset Page (Like A Browser, It Follows The Trailing Slash Redirect)
+        path = urlparse(link.group(1)).path
+        query = urlparse(link.group(1)).query
+        response = self.client.get(f"{path}?{query}", follow = True)
+        self.assertEqual(response.status_code, 200, path)
+        self.assertEqual(response.context["password_reset_code"], link.group(2)) # The Page Received The Code From The Link
+
+        self.client.post(response.request["PATH_INFO"], {"password_reset_code": link.group(2), "new_password": new_password})
+
+        user.refresh_from_db()
+        return path
+
+    def test_login_page_flow_with_spanish_account_from_slovak_page(self):
+        user = make_user("carlos", language = "es")
+        self.client.cookies["email_address"] = user.email_address
+
+        self.client.get("/sk/prihlasenie/?password-reset=true") # Requested From A Slovak Page
+
+        path = self.reset_with_mailed_code(user, "Nuevo-Pass-2026!")
+        self.assertTrue(path.startswith("/es/recuperacion-de-contrasena"), path) # The Spanish Route, Not "/es/obnova-hesla"
+        self.assertTrue(check_password("Nuevo-Pass-2026!", user.password))
+        self.assertIsNone(user.password_reset_code) # Single Use
+
+    def test_homepage_flow(self):
+        user = make_user("hana", language = "sk")
+        self.client.cookies["email_address"] = user.email_address
+
+        self.client.get("/en/?password-reset=true") # Requested From An English Page
+
+        path = self.reset_with_mailed_code(user, "Nove-Heslo-2026!")
+        self.assertTrue(path.startswith("/sk/obnova-hesla"), path)
+        self.assertTrue(check_password("Nove-Heslo-2026!", user.password))
+
+    def test_profile_flow(self):
+        user = make_user("emma", language = "en")
+        session = self.client.session
+        session["logged_in_user_id"] = user.id
+        session.save()
+
+        self.client.get(reverse("profile_url", args = [user.username]) + "?password-reset=true")
+
+        path = self.reset_with_mailed_code(user, "Brand-New-Pass-2026!")
+        self.assertTrue(path.startswith("/en/password-reset"), path)
+        self.assertTrue(check_password("Brand-New-Pass-2026!", user.password))
+
 class EditPostSettingsTests(SecurityTestCase):
     def test_cannot_change_post_owner(self):
         owner = make_user("owner")
