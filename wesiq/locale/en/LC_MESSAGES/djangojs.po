@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Wesiq\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-11 17:36+0000\n"
+"POT-Creation-Date: 2026-11-15 15:22+0000\n"
 "PO-Revision-Date: 2026-07-23 19:57+0000\n"
 "Last-Translator: Patrik Behul <behulpatrik@gmail.com>\n"
 "Language-Team: en\n"
@@ -176,7 +176,6 @@ msgid "Zdieľať príspevok"
 msgstr "Share post"
 
 #: app/static/app/ts/src/components/searchBar.ts:35
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:86
 msgid "Uverejniť príspevok"
 msgstr "Create a post"
 
@@ -313,47 +312,13 @@ msgstr "Edit message"
 msgid "Načítavam..."
 msgstr "Loading..."
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:426
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:427
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:446
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:447
-msgid "Vypnúť viditeľnosť len pre sledovateľov"
-msgstr "Make visible to everyone"
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:107
+msgid "Zahodiť príspevok?"
+msgstr "Discard post?"
 
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:433
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:434
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:453
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:454
-msgid "Zapnúť viditeľnosť len pre sledovateľov"
-msgstr "Make visible to followers only"
-
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:467
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:468
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:487
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:488
-msgid "Zapnúť komentáre"
-msgstr "Turn on comments"
-
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:474
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:475
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:494
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:495
-msgid "Vypnúť komentáre"
-msgstr "Turn off comments"
-
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:507
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:508
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:527
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:528
-msgid "Zobraziť počet označení páči sa mi to"
-msgstr "Show like count"
-
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:514
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:515
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:534
-#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:535
-msgid "Skryť počet označení páči sa mi to"
-msgstr "Hide like count"
+#: app/static/app/ts/src/pages/community/components/upload_post_form.ts:107
+msgid "Vybrané fotky a text sa neuložia."
+msgstr "Your selected photos and text won't be saved."
 
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:57
 #: app/static/app/ts/src/pages/community/functions/createCommentHTML.ts:58
@@ -421,13 +386,13 @@ msgstr "Share..."
 msgid "Počet videní..."
 msgstr "Views..."
 
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:15
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:16
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:17
 msgid "Pozastaviť..."
 msgstr "Pause..."
 
+#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:37
 #: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:38
-#: app/static/app/ts/src/pages/community/functions/customVideoPlayback.ts:39
 msgid "Prehrať..."
 msgstr "Play..."
 
@@ -435,34 +400,34 @@ msgstr "Play..."
 msgid "Pri načítaní polohy došlo k chybe."
 msgstr "An error occurred while getting your location."
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:71
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:72
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:76
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:77
 msgid "Odstrániť..."
 msgstr "Remove..."
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:106
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:111
 msgid "Obrázok je príliš veľký"
 msgstr "The image is too large"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:131
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:132
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:136
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:137
 msgid "Vypnúť zvuk"
 msgstr "Mute"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:152
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:153
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:157
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:158
 msgid "Vybrať náhľad"
 msgstr "Choose thumbnail"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:193
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:198
 msgid "Video je príliš veľké"
 msgstr "The video is too large"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:234
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:239
 msgid "Video je príliš dlhé"
 msgstr "The video is too long"
 
-#: app/static/app/ts/src/pages/community/functions/postPreview.ts:245
+#: app/static/app/ts/src/pages/community/functions/postPreview.ts:250
 msgid "Video je príliš krátke"
 msgstr "The video is too short"
 
@@ -525,12 +490,12 @@ msgstr "An error occurred while searching for users."
 msgid "Počet sledovateľov..."
 msgstr "Number of followers..."
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:264
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:265
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:257
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:258
 msgid "Označiť"
 msgstr "Tag"
 
-#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:417
+#: app/static/app/ts/src/pages/community/functions/tagUsers.ts:410
 msgid "Odstrániť zmienku"
 msgstr "Remove mention"
 
@@ -538,25 +503,25 @@ msgstr "Remove mention"
 msgid "Pri zmene sledovania došlo k chybe."
 msgstr "An error occurred while updating the follow status."
 
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:15
-msgid "Overuje sa..."
-msgstr "Verifying..."
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:32
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:41
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:84
+#: app/static/app/ts/src/services/sendPOST.ts:46
+#: app/static/app/ts/src/services/sendPOST.ts:58
+msgid "Niečo sa pokazilo"
+msgstr "Something went wrong"
 
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:35
-msgid "Spracuváva sa..."
-msgstr "Processing..."
-
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:62
-msgid "Chyba pri spracovaní"
-msgstr "Processing error"
-
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:70
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:45
 msgid "Chyba spojenia"
 msgstr "Connection error"
 
-#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:79
-msgid "Skúste znovu"
-msgstr "Try again"
+#: app/static/app/ts/src/pages/community/functions/uploadPost.ts:65
+msgid "Overenie reCaptcha zlyhalo"
+msgstr "reCAPTCHA verification failed"
+
+#: app/static/app/ts/src/pages/community/functions/uploadPostSteps.ts:140
+msgid "Krok %(step)s z %(count)s"
+msgstr "Step %(step)s of %(count)s"
 
 #: app/static/app/ts/src/pages/community/functions/videoWatchTime.ts:67
 #: app/static/app/ts/src/pages/community/functions/videoWatchTime.ts:68
@@ -598,27 +563,27 @@ msgstr "The selected file is too large."
 msgid "Nie je vybraný žiaden súbor."
 msgstr "No file selected."
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:111
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:116
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:80
 msgid "Počet opakovaní"
 msgstr "Number of reps"
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:112
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:117
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:81
 msgid "Počet sekúnd"
 msgstr "Number of seconds"
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:113
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:118
 #: app/static/app/ts/src/pages/manage_training_plans/functions/exercises.ts:82
 msgid "Počet krokov"
 msgstr "Number of steps"
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:195
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:200
 #, javascript-format
 msgid "Tréningový plán %s bol odstránený."
 msgstr "Training plan %s has been deleted."
 
-#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:200
+#: app/static/app/ts/src/pages/manage_training_plans/functions/editTrainingPlan.ts:205
 msgid "Pri odstraňovaní tréningového plánu došlo k chybe."
 msgstr "An error occurred while deleting the training plan."
 
@@ -724,13 +689,25 @@ msgstr "An error occurred while deleting tasks."
 msgid "Pri pokuse o zmenu poradia úloh došlo k chybe."
 msgstr "An error occurred while reordering the tasks."
 
-#: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:221
+#: app/static/app/ts/src/pages/training_session/functions/officialTasksCompletion.ts:255
 msgid "Pri označovaní úlohy za dokončenú došlo k chybe."
 msgstr "An error occurred while marking the task as complete."
 
-#: app/static/app/ts/src/pages/training_session/functions/playback.ts:150
+#: app/static/app/ts/src/pages/training_session/functions/playback.ts:163
 msgid "Pri zaznamenávaní aktivity došlo k chybe."
 msgstr "An error occurred while recording the activity."
+
+#: app/static/app/ts/src/pages/training_session/functions/trainingPlan.ts:33
+msgid "Do zlyhania"
+msgstr "To failure"
+
+#: app/static/app/ts/src/pages/training_session/functions/trainingPlan.ts:49
+msgid "Cviky: %(count)s"
+msgstr "Exercises: %(count)s"
+
+#: app/static/app/ts/src/pages/training_session/functions/trainingPlan.ts:50
+msgid "Série: %(count)s"
+msgstr "Sets: %(count)s"
 
 #: app/static/app/ts/src/pages/training_session/functions/xpBoost.ts:45
 msgid "Pri uplatňovaní navýšenia XP došlo k chybe."
@@ -757,3 +734,33 @@ msgstr "Show password"
 #: app/static/app/ts/src/utils/password.ts:59
 msgid "Zadajte váš e-mail"
 msgstr "Enter your email"
+
+#~ msgid "Vypnúť viditeľnosť len pre sledovateľov"
+#~ msgstr "Make visible to everyone"
+
+#~ msgid "Zapnúť viditeľnosť len pre sledovateľov"
+#~ msgstr "Make visible to followers only"
+
+#~ msgid "Zapnúť komentáre"
+#~ msgstr "Turn on comments"
+
+#~ msgid "Vypnúť komentáre"
+#~ msgstr "Turn off comments"
+
+#~ msgid "Zobraziť počet označení páči sa mi to"
+#~ msgstr "Show like count"
+
+#~ msgid "Skryť počet označení páči sa mi to"
+#~ msgstr "Hide like count"
+
+#~ msgid "Overuje sa..."
+#~ msgstr "Verifying..."
+
+#~ msgid "Spracuváva sa..."
+#~ msgstr "Processing..."
+
+#~ msgid "Chyba pri spracovaní"
+#~ msgstr "Processing error"
+
+#~ msgid "Skúste znovu"
+#~ msgstr "Try again"

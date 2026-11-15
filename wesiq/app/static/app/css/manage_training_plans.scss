@@ -1,191 +1,191 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
-// Manage Training Plans Palette (aliases of shared glass tokens)
-
-$plans-surface: $surface;
-$plans-surface-border: $surface-border;
-$plans-surface-hover: $surface-hover;
-$plans-glow: $surface-glow;
-
 /**************
  Header Styles
 **************/
 
+// Back To The Activity ("Header" Back Button)
+
 .banner {
-    .training_session {
-        a {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            width: max-content;
-            padding: 5px 10px;
-            background-color: transparent;
-            border: 1px solid $dark-blue-color;
-            border-radius: $big-border-radius;
-            cursor: pointer;
-            transition: transform 0.1s ease;
+    .left {
+        .back_to_activity {
+            @include icon_button(soft, 38px);
+            text-decoration: none;
+
+            i {
+                font-size: 15px;
+            }
         }
     }
 }
 
 /************
- Main Styles
+ Main Styles (Laid Out Like The Native Plan Screens)
 ************/
 
 .content {
-    padding-bottom: 30px;
+    max-width: $main-width;
+    margin: 0px auto;
 
-    .no_logged_in {
-        @include flex_center;
-        position: fixed;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: calc(100vh);
-        background-color: transparentize($main-color, 0.45);
-        z-index: 500;
+    // Title (Follows The Mode)
 
-        p {
-            max-width: 420px;
-            padding: 28px 32px;
-            text-align: center;
-            background: $plans-surface;
-            border: 1px solid $plans-surface-border;
-            border-radius: $medium-border-radius;
-            box-shadow: 0 10px 30px transparentize($main-color, 0.5);
+    .page_header {
+        max-width: $main-width;
+        margin: 0px auto $space-md;
+
+        .page_title {
+            @include typography(title);
             color: $color-text;
-            line-height: 1.6;
 
-            a {
-                color: $blue-color;
-                text-decoration: none;
-                font-style: italic;
-                font-weight: 500;
+            span {
+                font: inherit; // The Global "*" Rule Would Reset The Size
+            }
 
-                &:hover,
-                &:active,
-                &:focus-visible {
-                    text-decoration: underline;
-                }
+            .title_edit {
+                display: none;
             }
         }
     }
 
+    &:has(.sidebar .edit.active) .page_header .page_title {
+        .title_create {
+            display: none;
+        }
+
+        .title_edit {
+            display: inline;
+        }
+    }
+
+    // Not Logged In (Empty State)
+
+    .no_logged_in {
+        @include card(default, $space-xxl $space-xl, $radius-xl);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $space-md;
+        max-width: $max-dialog-width;
+        margin: $space-lg auto;
+        text-align: center;
+
+        .empty_icon {
+            @include empty_state_icon(56px);
+        }
+
+        p {
+            @include typography(callout);
+            color: $color-text-secondary;
+        }
+
+        .sign_in_button {
+            @include button(primary);
+        }
+    }
+
+    // Mode Switch ("SegmentedControl": New Plan, My Plans)
+
     .sidebar {
-        position: fixed;
-        top: 50%;
-        left: 0px;
-        transform: translateY(-50%);
-        padding: 10px;
-        background-color: $color-surface;
-        border: $hairline solid $color-border;
-        border-left: none;
-        border-radius: 0px $medium-border-radius $medium-border-radius 0px;
-        z-index: 2000;
+        max-width: $main-width;
+        margin: 0px auto $space-lg;
 
         ul {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            @include segmented_control;
+            max-width: $max-dialog-width;
+            list-style: none;
 
             li {
                 display: flex;
-                align-items: center;
+                flex: 1;
 
                 a {
-                    @include icon_button(soft, 40px);
-                    position: relative;
+                    @include segment;
+                    text-decoration: none;
 
                     i {
-                        font-size: 17px;
-                    }
-
-                    &.active {
-                        color: $color-on-primary;
-                        background-color: $color-primary-solid;
+                        font-size: 13px;
                     }
                 }
 
+                // Hover Labels Of The Old Side Menu (The Script Still Toggles Them)
                 .label {
-                    pointer-events: none;
-                    position: absolute;
-                    transform: translateX(calc(-100% + 60px));
-                    opacity: 0;
-                    color: $secondary-color;
-                    font-size: 0.9em;
-                    white-space: nowrap;
-                    transition: transform 0.2s ease, opacity 0.2s ease;
-
-                    &.show {
-                        opacity: 1;
-                        transform: translateX(60px);
-                    }
+                    display: none;
                 }
             }
         }
     }
 
     .first_section {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-evenly;
-        gap: 20px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: start;
+        gap: $space-xl;
         max-width: $main-width;
         margin: 0px auto;
 
         .top {
             display: flex;
             flex-direction: column;
-            justify-content: space-evenly;
-            max-width: $secondary-width;
-            width: 100%;
-            min-height: fit-content;
+            gap: $space-md;
+            min-width: 0;
 
             // New Training Plan, Edit Training Plan
 
             .new_training_plan,
             .edit_training_plan {
-                @include flex_center($direction: column);
+                display: flex;
+                flex-direction: column;
+                gap: $space-md;
+                outline: none;
 
                 &.hidden {
                     display: none;
                 }
 
+                // Data For The Script
+                .one_exercise_data {
+                    display: none;
+                }
+
+                // Settings Card (Name And Day, Like The Native Editor)
+
                 .additional_info {
-                    display: flex;
-                    justify-content: space-between;
-                    gap: 20px;
-                    width: 100%;
-                    margin-bottom: 20px;
+                    @include card(default, $space-lg);
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                    grid-template-rows: auto auto;
+                    grid-auto-flow: column;
+                    gap: $space-xs + 2px $space-md;
+
+                    .field_label {
+                        @include typography(label);
+                        padding: 0px $space-xs;
+                        color: $color-text-secondary;
+                    }
 
                     .title {
                         @include form_input;
                         width: 100%;
-                        margin-bottom: 0px;
-                        flex: 1 1 0px; 
                         min-width: 0;
-                        max-width: calc(50% - 10px);
+                        margin: 0px;
 
                         &::-webkit-calendar-picker-indicator {
                             display: none !important;
                         }
 
                         &.error_animation {
+                            border-color: $color-danger;
                             animation: trainingTitleError 0.2s linear 3;
                         }
                     }
 
-                    // Custom Select Menu
-
+                    // Day ("TextField" Look With A Raised Options Panel)
                     .day_select_menu {
                         @include custom_select_menu($options_list_height: calc(33px * 4));
-                        flex: 1 1 0;
                         min-width: 0;
 
                         .select {
-
                             span {
                                 margin-left: 0px;
                             }
@@ -193,61 +193,81 @@ $plans-glow: $surface-glow;
                     }
                 }
 
+                // Plan Card (One Exercise At A Time With Segments To Switch)
+
                 .training_plan {
-                    @include animated_border;
+                    @include card(default, 0px);
                     position: relative;
                     display: flex;
                     flex-direction: column;
                     width: 100%;
-                    height: 350px;
-                    border-radius: $medium-border-radius;
+                    min-height: 340px;
                     overflow: hidden;
+                    transition: border-color $duration-fast ease;
 
                     &.animate {
                         animation: trainingPlanDrag 1s infinite alternate;
                     }
 
+                    &.blur {
+                        animation: blur $duration-normal ease-out;
+                    }
+
+                    // Empty Plan ("Card" Outlined Empty State, Also The Drop Target)
                     .drop_zone {
-                        @include flex_center($direction: column);
-                        gap: 10px;
-                        height: 100%;
-                        color: $blue-color;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: $space-sm;
+                        flex: 1;
+                        margin: $space-md;
+                        padding: $space-xl;
+                        text-align: center;
+                        border: $hairline dashed $color-border-strong;
+                        border-radius: $radius-lg;
+                        cursor: pointer;
                         z-index: 100;
 
                         &:not(.active) {
                             display: none;
                         }
 
-                        &:hover {
-                            cursor: pointer;
+                        .empty_icon {
+                            @include empty_state_icon(48px);
+                            margin-bottom: $space-xs;
 
-                            .fa-compress {
-                                color: $color-primary-text;
+                            i {
+                                font-size: 20px;
                             }
-                        }
-
-                        .fa-compress {
-                            font-size: 2.5em;
-                            color: $blue-color;
-                            transition: transform 0.2s ease, color 0.3s ease;
 
                             &.error_animation {
                                 animation: trainingPlanError 0.2s linear 3;
                             }
                         }
+
+                        .empty_title {
+                            @include typography(body_strong);
+                            color: $color-text;
+                        }
+
+                        .empty_message {
+                            @include typography(callout);
+                            color: $color-text-secondary;
+                        }
                     }
 
+                    // Exercise ("ExerciseCard")
                     .exercise {
                         display: flex;
                         flex-direction: column;
-                        align-items: center;
-                        justify-content: flex-start;
-                        gap: 10px;
+                        align-items: stretch;
+                        gap: $space-md;
+                        flex: 1;
                         width: 100%;
-                        height: 100%;
-                        padding: 20px 50px;
-                        transition: transform 0.5s ease;
-                        cursor: move;
+                        padding: $space-lg;
+                        transition: transform $duration-slow ease;
+                        cursor: grab;
                         z-index: 100;
 
                         &:not(.active) {
@@ -256,136 +276,114 @@ $plans-glow: $surface-glow;
                             transform: translateX(100%);
                         }
 
+                        h3,
                         .title_input {
+                            @include typography(heading);
                             width: 100%;
-                            text-align: center;
-                            background: none;
-                            border: none;
-                            outline: none;
-                            color: $secondary-color;
-                            font-family: $article-heading-font;
-                            font-size: 2em;
+                            text-align: left;
+                            color: $color-text;
+                        }
 
-                            &::placeholder {
+                        .title_input {
+                            @include form_input;
+                            margin: 0px;
+                        }
+
+                        // Unit And Sets Labels
+                        .labels {
+                            display: grid;
+                            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                            align-items: center;
+                            gap: $space-sm;
+
+                            p {
+                                @include typography(label);
+                                padding: 0px $space-xs;
+                                text-align: center;
                                 color: $color-text-secondary;
                             }
-                        }
-
-                        h3 {
-                            font-family: $article-heading-font;
-                            font-size: 2em;
-                            color: $secondary-color;
-                        }
-
-                        .labels {
-                            @include flex_center;
-                            max-width: 400px;
-                            width: 100%;
-                            margin: 10px 0px 5px;
-                            padding: 0px 10px;
-
-                            // Custom Select Menu
 
                             .unit_select_menu {
                                 @include custom_select_menu($options_list_height: calc(33px * 2));
-                                max-width: 90%;
-                                margin: 0px auto;
+                                min-width: 0;
 
                                 .select {
-                                    border: none;
+                                    min-height: 36px;
+                                    background-color: transparent;
+                                    border-color: $color-border;
+                                    border-radius: $radius-pill;
 
                                     span {
+                                        @include typography(label);
                                         margin-left: 0px;
                                     }
                                 }
-
-                                .options_list {
-                                    .option {
-                                        position: relative;
-                                        text-align: center;
-
-                                        i {
-                                            position: absolute;
-                                            top: 50%;
-                                            left: 10px;
-                                            transform: translateY(-50%);
-                                        }
-                                    }
-                                }
-                            }
-
-                            p {
-                                width: 100%;
-                                text-align: center;
-                                line-height: 1;
-                                color: $color-text-secondary;
                             }
                         }
 
                         .add_period {
-                            @include blue_button($width: 100%);
-                            height: 40px;
-                            margin-bottom: 10px;
+                            @include button(outline, sm, 100%);
                             flex-shrink: 0;
                         }
 
+                        // Set Rows ("Stepper" × "Stepper")
                         .periods_container {
                             @include scrollbar;
                             display: flex;
                             flex-direction: column;
-                            gap: 5px;
-                            width: 100%;
-                            max-height: 100px;
-                            padding: 0px 5px;
+                            gap: $space-sm;
+                            max-height: 152px;
 
                             .period_selection {
-                                width: 100%;
-                                display: flex;
-                                justify-content: space-between;
-                                gap: 10px;
+                                display: grid;
+                                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                                gap: $space-sm;
 
                                 .reps_container,
                                 .sets_container {
+                                    position: relative;
                                     display: flex;
-                                    width: 100%;
-                                    background: transparent;
+                                    align-items: center;
+                                    gap: $space-xs;
+                                    padding: $space-xs;
+                                    background-color: $color-background-deep;
                                     border: $hairline solid $color-border;
-                                    border-radius: $big-border-radius;
-                                    transition: border-color 0.2s ease;
+                                    border-radius: $radius-pill;
+                                    transition: border-color $duration-fast ease;
 
-                                    &:hover,
                                     &:focus-within {
-                                        border-color: $blue-color;
+                                        border-color: $color-primary;
                                     }
 
                                     .decrease_reps,
                                     .increase_reps,
                                     .decrease_sets,
                                     .increase_sets {
-                                        all: unset;
-                                        @include icon;
-                                        @include flex_center;
-                                        width: 30px;
+                                        @include icon_button(soft, 32px);
 
                                         i {
+                                            font-size: 13px;
                                             pointer-events: none;
                                         }
                                     }
 
                                     .reps,
                                     .sets {
-                                        width: calc(100% - 30px - 30px);
-                                        height: 40px;
+                                        @include typography(heading);
+                                        flex: 1;
+                                        min-width: 0;
+                                        height: 32px;
+                                        font-variant-numeric: tabular-nums;
                                         text-align: center;
+                                        color: $color-text;
                                         background: none;
-                                        color: $secondary-color;
                                         border: none;
                                         outline: none;
+                                        appearance: textfield;
 
                                         &::-webkit-inner-spin-button,
                                         &::-webkit-outer-spin-button {
                                             -webkit-appearance: none;
-                                            -moz-appearance: none;
                                             appearance: none;
                                         }
                                     }
@@ -396,18 +394,20 @@ $plans-glow: $surface-glow;
                                 }
 
                                 .reps_container {
-                                    position: relative;
-
                                     .to_failure,
                                     .time {
-                                        @include position_center;
-                                        width: calc(100% - 30px - 30px);
-                                        height: 100%;
-                                        line-height: 40px;
-                                        font-size: 0.9em;
+                                        @include typography(label);
+                                        position: absolute;
+                                        top: 50%;
+                                        left: 50%;
+                                        transform: translate(-50%, -50%);
+                                        width: calc(100% - 88px);
                                         text-align: center;
-                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
                                         overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        color: $color-text;
+                                        pointer-events: none;
                                     }
 
                                     .time {
@@ -417,39 +417,22 @@ $plans-glow: $surface-glow;
                             }
                         }
 
-                        // Warm Up Timer
-
+                        // Warm Up ("Stepper" Of The Duration)
                         .timer_container {
                             display: flex;
-                            flex-direction: row;
                             align-items: center;
                             justify-content: space-between;
-                            width: 100%;
-                            margin-top: 29px;
-                            padding: 0px 40px;
+                            gap: $space-md;
+                            margin: auto 0px;
 
                             .add_time,
                             .subtract_time {
-                                @include icon_button(soft, 50px);
-                                position: relative;
-                                background: $plans-surface-hover;
-                                border-color: $plans-surface-border;
-
-                                &:hover,
-                                &:focus-visible {
-                                    border-color: $color-border-strong;
-                                    box-shadow: 0 4px 14px $plans-glow;
-                                }
+                                @include icon_button(soft, 48px);
 
                                 .fa-plus,
                                 .fa-minus {
+                                    font-size: 18px;
                                     pointer-events: none;
-                                    position: absolute;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    font-size: 30px;
-                                    color: $blue-color;
                                 }
                             }
 
@@ -459,240 +442,317 @@ $plans-glow: $surface-glow;
                         }
                     }
 
+                    // Exercise Segments (Switch The Exercise, Like The Native Segments)
                     .bar_container {
-                        position: relative;
                         display: flex;
-                        flex-direction: row;
-                        justify-content: space-between;
-                        gap: 10px;
-                        margin: auto 10px 10px;
+                        gap: 4px;
+                        margin: auto $space-lg $space-lg;
                         z-index: 100;
 
                         .bar {
-                            position: relative;
-                            width: 100%;
-                            height: 10px;
-                            border: $hairline solid $color-border;
-                            border-radius: calc(10px / 2);
+                            flex: 1;
+                            min-width: 0;
+                            height: 6px;
+                            background-color: $color-surface-strong;
+                            border-radius: $radius-pill;
+                            cursor: pointer;
+                            outline-offset: 3px;
+                            transition: background-color $duration-fast ease;
 
-                            &.animate:not(&.active) {
+                            &:hover {
+                                background-color: $color-primary-soft;
+                            }
+
+                            &.active {
+                                background-color: $color-primary;
+                            }
+
+                            &.animate:not(.active) {
                                 animation: barDrag 1s infinite alternate;
                             }
-
-                            &:before {
-                                content: "";
-                                position: absolute;
-                                top: 0px;
-                                left: 0px;
-                                width: 100%;
-                                height: 100%;
-                                border-radius: inherit;
-                                transition: background-color 0.3s ease;
-                            }
-
-                            &.active,
-                            &:hover {
-                                cursor: pointer;
-
-                                &.animate {
-                                    &:before {
-                                        animation: barDrag 1s infinite alternate;
-                                    }
-                                }
-
-                                &:before {
-                                    width: 100%;
-                                    background-color: $green-color;
-                                    box-shadow: 0px 0px 10px $green-color;
-                                }
-                            }
                         }
                     }
                 }
 
-                .save {
-                    @include blue_button($width: 100%);
-                }
-            }
-
-            .new_training_plan {
-                .save {
-                    margin-top: 20px;
-                }
-            }
-
-            .edit_training_plan {
-                .training_plan {
-                    &.blur {
-                        animation: blur 0.3s ease-out;
-                    }
-                }
-
+                // Plan Picker Of The Edit Mode ("Chip" Row)
                 .training_plan_bar_container {
+                    order: -1;
                     display: flex;
-                    flex-direction: row;
-                    justify-content: space-between;
-                    gap: 10px;
-                    width: 100%;
-                    margin: 10px 0px;
+                    gap: $space-sm;
+                    overflow-x: auto;
+                    scrollbar-width: none;
 
                     .bar {
-                        width: 100%;
-                        height: 10px;
-                        border: $hairline solid $color-border;
-                        border-radius: calc(10px / 2);
-                        transition: background-color 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+                        @include chip;
+                        min-width: 44px;
+                        justify-content: center;
 
-                        &.active,
-                        &:hover {
-                            cursor: pointer;
-                            background-color: $blue-color;
-                            border-color: transparentize($blue-color, 0.2);
-                            box-shadow: 0px 0px 12px $plans-glow;
+                        &.active {
+                            @include chip_selected;
                         }
                     }
+                }
+
+                // Save ("Button" Primary Full Width) And Delete ("Button" Danger)
+                .save {
+                    @include button(primary, md, 100%);
                 }
 
                 .buttons {
                     display: flex;
-                    flex-direction: row;
-                    gap: 20px;
-                    width: 100%;
-                    margin-top: 10px;
+                    flex-direction: column;
+                    gap: $space-sm;
 
                     .delete {
-                        @include blue_button($width: 100%);
-                        background: transparentize($red-color, 0.9);
-                        border-color: transparentize($red-color, 0.5);
-
-                        &:hover,
-                        &:focus-visible {
-                            border-color: $red-color;
-                            background: transparentize($red-color, 0.75);
-                            box-shadow: 0 6px 20px transparentize($red-color, 0.8);
-                        }
+                        @include button(danger, md, 100%);
                     }
+                }
+            }
+
+            // No Plans Yet (Empty State)
+            .empty_plans {
+                @include card(default, $space-xxl $space-xl);
+                align-items: center;
+                text-align: center;
+
+                .empty_icon {
+                    @include empty_state_icon(56px);
+                }
+
+                .empty_title {
+                    @include typography(heading);
+                    color: $color-text;
+                }
+
+                .empty_message {
+                    @include typography(callout);
+                    color: $color-text-secondary;
+                }
+
+                .create_plan_button {
+                    @include button(secondary, sm);
                 }
             }
         }
 
-        // Exercise Selection
+        // The Library Is Only Useful While Editing A Plan
+        &:has(.empty_plans:not(.hidden)) .exercise_selection {
+            display: none;
+        }
+
+        // Exercise Library (Like The Native "Pridať Cvik" Sheet)
 
         .exercise_selection {
-            @include flex_center($direction: column);
-            max-width: $secondary-width;
-            width: 100%;
-            min-height: 500px;
+            @include card(default, $space-lg $space-lg 0px, $radius-xl);
+            position: sticky;
+            top: calc(var(--header-offset) + #{$space-md});
+            display: flex;
+            flex-direction: column;
+            gap: $space-md;
+            min-width: 0;
+            max-height: calc(100dvh - var(--header-offset) - var(--tab-bar-height) - #{$space-xxl});
+            overflow: hidden;
+
+            .library_title {
+                @include typography(heading);
+                text-align: left;
+                color: $color-text;
+            }
 
             .search_bar_menu {
                 @include search_bar;
-                margin-bottom: 20px;
+                max-width: none;
             }
 
             .exercises {
                 @include scrollbar;
                 display: grid;
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 10px;
-                width: 100%;
-                max-height: 450px;
-                margin: 0px auto;
-                padding: 5px;
-                text-align: center;
+                grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+                align-content: start;
+                gap: $space-xxs $space-sm;
+                margin: 0px (-$space-lg);
+                padding: 0px $space-lg $space-lg;
 
+                // Quick Buttons (Custom Exercise, Warm Up)
                 .custom_exercise,
                 .warm_up {
-                    &:hover {
-                        .fa-plus,
-                        .fa-dumbbell {
-                            filter: blur(2px);
-                        }
+                    @include typography(label);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: $space-sm;
+                    min-height: 48px;
+                    margin-bottom: $space-sm;
+                    color: $color-text;
+                    background-color: $color-surface-raised;
+                    border: $hairline solid $color-border;
+                    border-radius: $radius-md;
+                    cursor: pointer;
+                    transition: background-color $duration-fast ease;
+
+                    &:hover,
+                    &:focus-visible {
+                        background-color: $color-surface-pressed;
                     }
 
-                    .fa-plus,
-                    .fa-dumbbell {
-                        font-size: 2.5em;
-                        color: $blue-color;
-                        transition: filter 0.3s ease, transform 0.3s ease;
+                    i {
+                        font-size: 14px;
+                        color: $color-primary;
                     }
 
                     .name {
-                        display: none;
+                        font-size: inherit;
+                        font-weight: inherit;
                     }
                 }
 
-                .exercise {
-                    @include flex_center;
-                    @include scrollbar;
-                    position: relative;
-                    aspect-ratio: 1 / 1;
-                    gap: 5px;
-                    padding: 10px;
-                    text-decoration: none;
-                    background-color: $color-surface;
-                    border: $hairline solid $color-border;
-                    border-radius: $medium-border-radius;
-                    cursor: move;
-                    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+                // Library Row (Thumbnail, Name, Weight Stepper, Add)
+                .exercise:not(.custom_exercise):not(.warm_up) {
+                    grid-column: 1 / -1;
+                    display: flex;
+                    align-items: center;
+                    gap: $space-md;
+                    min-height: 56px;
+                    padding: $space-sm $space-xs;
+                    border-radius: $radius-md;
+                    cursor: pointer;
+                    transition: background-color $duration-fast ease;
+
+                    &:hover,
+                    &:focus-visible {
+                        background-color: $color-surface-pressed;
+                    }
 
                     &.hidden {
-                        display: none !important;
-                    }
-
-                    &:hover, 
-                    &:focus-visible {
-                        background: transparent;
-                        border-color: $color-border-strong;
-
-                        .name {
-                            filter: blur(2px);
-                        }
-
-                        .weight_selection {
-                            @include position_center;
-                            @include flex_center($direction: column);
-                            width: 100%;
-                            height: 100%;
-
-                            .decrease_weight, 
-                            .increase_weight {
-                                background: none;
-                                color: $secondary-color;
-                                border: none;
-                                outline: none;
-                                cursor: pointer;
-                                transition: color 0.2s ease;
-
-                                &:hover {
-                                    color: $blue-color;
-                                }
-
-                                i {
-                                    pointer-events: none;
-                                    font-size: 1.2em;
-                                }
-                            }
-
-                            .weight {
-                                font-size: 2em;
-                                cursor: default;
-                                color: $secondary-color;
-
-                                span {
-                                    font-size: inherit;
-                                }
-                            }
-                        }
-                    }
-
-                    img {
-                        @include position_center;
-                        width: 100%;
-                        opacity: 0.2;
-                    }
-
-                    .weight_selection {
                         display: none;
+                    }
+
+                    img,
+                    .thumb_placeholder {
+                        flex-shrink: 0;
+                        width: 44px;
+                        height: 44px;
+                        object-fit: cover;
+                        background-color: $color-surface-raised;
+                        border-radius: $radius-sm;
+                    }
+
+                    .thumb_placeholder {
+                        @include flex_center;
+                        color: $color-text-muted;
+
+                        i {
+                            font-size: 16px;
+                        }
+                    }
+
+                    .name {
+                        @include typography(body_strong);
+                        flex: 1;
+                        min-width: 0;
+                        overflow-wrap: anywhere;
+                        color: $color-text;
+                    }
+
+                    // Weight ("Stepper" Compact, Minus First)
+                    .weight_selection {
+                        display: flex;
+                        align-items: center;
+                        gap: 2px;
+                        padding: 2px;
+                        background-color: $color-background-deep;
+                        border: $hairline solid $color-border;
+                        border-radius: $radius-pill;
+                        cursor: default;
+
+                        .increase_weight,
+                        .decrease_weight {
+                            @include icon_button(plain, 28px);
+                            color: $color-text-secondary;
+
+                            i {
+                                font-size: 11px;
+                                pointer-events: none;
+                            }
+                        }
+
+                        // Minus, Value, Plus (The Markup Starts With Plus)
+                        .decrease_weight {
+                            order: 1;
+                        }
+
+                        .weight {
+                            order: 2;
+                        }
+
+                        .increase_weight {
+                            order: 3;
+                        }
+
+                        .weight {
+                            @include typography(caption);
+                            min-width: 40px;
+                            text-align: center;
+                            font-variant-numeric: tabular-nums;
+                            color: $color-text;
+
+                            span {
+                                font-size: inherit;
+                            }
+                        }
+                    }
+
+                    // Only Exercises With Weight Need The Stepper
+                    &[data-requires_weight="False"] .weight_selection {
+                        display: none;
+                    }
+
+                    .add_hint {
+                        @include flex_center;
+                        flex-shrink: 0;
+                        width: 32px;
+                        height: 32px;
+                        color: $color-primary;
+                        background-color: $color-primary-soft;
+                        border-radius: $radius-pill;
+
+                        i {
+                            font-size: 13px;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**************
+ Media Queries
+**************/
+
+// One Column On Narrow Screens (Library Below The Editor)
+@media (width <= 900px) {
+    .content {
+        .first_section {
+            grid-template-columns: minmax(0, 1fr);
+
+            .exercise_selection {
+                position: static;
+                max-height: 70vh;
+            }
+        }
+    }
+}
+
+@media (width <= 400px) {
+    .content {
+        .first_section {
+            .top {
+                .new_training_plan,
+                .edit_training_plan {
+                    .additional_info {
+                        grid-template-columns: minmax(0, 1fr);
+                        grid-auto-flow: row;
                     }
                 }
             }
@@ -711,14 +771,12 @@ $plans-glow: $surface-glow;
         background-color: $blue-color;
     }
 }
-
 @keyframes trainingPlanDrag {
     100% {
         background-color: transparentize($blue-color, 0.88);
         filter: blur(1px);
     }
 }
-
 @keyframes barDrag {
     0% {
         background-color: $green-color;
@@ -728,7 +786,6 @@ $plans-glow: $surface-glow;
         background-color: rgb(255, 207, 32);
     }
 }
-
 @keyframes trainingPlanError {
     0% {
         color: $secondary-color;
@@ -738,7 +795,6 @@ $plans-glow: $surface-glow;
         color: $red-color;
     }
 }
-
 @keyframes trainingTitleError {
     0% {
         border-bottom: $hairline solid $color-divider;
@@ -746,113 +802,5 @@ $plans-glow: $surface-glow;
 
     100% {
         border-bottom: 1px solid $red-color;
-    }
-}
-
-/**************
- Media Queries
-**************/
-
-@media (width <= 1060px) {
-    .content {
-        .first_section {
-            flex-direction: column;
-            gap: 50px;
-
-            .top {
-                justify-content: center;
-                max-width: 800px;
-            }
-
-            .exercise_selection {
-                max-width: 800px;
-
-                .exercises {
-                    max-height: 450px;
-                }
-            }
-        }
-    }
-}
-
-@media (width <= 500px) {
-    header {
-        // Banner
-
-        .banner {
-            gap: 10px;
-        }
-    }
-
-    .content {
-        padding-top: 30px + 104px + 20px + 20px;
-
-        .first_section {
-            .top {
-                .edit_training_plan {
-                    .buttons {
-                        flex-direction: column;
-                        align-items: center;
-                        gap: 10px;
-
-                        .save,
-                        .delete {
-                            width: 100%;
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@media (width <= 400px) {
-    .content {
-        .first_section {
-            .top {
-                justify-content: flex-start;
-
-                .new_training_plan,
-                .edit_training_plan {
-                    .additional_info {
-                        gap: 10px;
-
-                        .title {
-                            max-width: calc(50% - 5px);
-                        }
-                    }
-
-                    .training_plan {
-                        justify-content: space-between;
-                        height: calc(100vh - 97px - 20px - 125px - 10px);
-
-                        .exercise {
-                            flex-direction: column;
-                            justify-content: space-between;
-                            height: calc(100% - 50px);
-                            padding: 50px 10px;
-                            text-align: center;
-
-                            // Warm Up Timer
-
-                            .timer_container {
-                                height: 100%;
-                                margin-top: 0px;
-                                padding: 0px;
-                            }
-
-                            .add_period {
-                                margin-bottom: auto;
-                            }
-
-                            .periods_container {
-                                max-height: 100%;
-                                margin-bottom: auto;
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

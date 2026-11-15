@@ -4,6 +4,11 @@ import { posts_preview_state } from "../state.js"
 export function syncFiles(select_posts:HTMLInputElement, posts_preview:HTMLDivElement):void {
     const data_transfer:DataTransfer = new DataTransfer() // Creates New Data Transfer
 
+    // Keeps Only Images And Videos And At Most 5 Files (The Preview Shows Only These, So No Hidden Extra File Is Uploaded)
+    posts_preview_state.current_files = posts_preview_state.current_files
+        .filter(one_file => one_file.type.startsWith("image/") || one_file.type.startsWith("video/"))
+        .slice(0, 5)
+
     posts_preview_state.current_files.forEach(one_file => data_transfer.items.add(one_file)) // Adds Each File To The Stored File Data
     select_posts.files = data_transfer.files // Synchronizes Selected Files With Stored File Data
 

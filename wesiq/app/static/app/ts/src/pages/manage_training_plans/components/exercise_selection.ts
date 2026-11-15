@@ -42,10 +42,10 @@ document.addEventListener("DOMContentLoaded", function() {
         one_exercise.addEventListener("dragstart", () => global_state.selection_dragged_exercise = one_exercise) // Sets Selection Dragged Exercise
         one_exercise.addEventListener("dragend", () => global_state.selection_dragged_exercise = null) // Deletes Selection Dragged Exercise
         
-        // Exercise Double Click Functionalities
-        one_exercise.addEventListener("dblclick", function(event:MouseEvent):void {
-            // Executes Only If The Click Is Outside The Increase Weight Button, Decrease Weight Button And Weight Print
-            if((event.target instanceof Node) && !(event.target as HTMLDivElement).classList.contains("increase_weight") && !(event.target as HTMLDivElement).classList.contains("decrease_weight") && !(event.target.parentNode as HTMLDivElement).classList.contains("weight")) {
+        // Exercise Click Functionalities (One Tap Adds The Exercise, Like The "Pridať" Rows Of The Native Library; Double Click Didn't Work On Phones)
+        one_exercise.addEventListener("click", function(event:MouseEvent):void {
+            // Executes Only If The Click Is Outside The Weight Controls (Including Their Icons)
+            if((event.target instanceof Element) && !event.target.closest(".weight_selection")) {
                 global_state.selection_dragged_exercise = this // Sets Selection Dragged Exercise
 
                 const page_url:URL = new URL(window.location.href) // Gets The Current URL Address

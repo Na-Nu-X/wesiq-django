@@ -113,105 +113,201 @@
 {% endblock banner %}
 
 {% block content %}
+    <!-- Create Post (Multi-Step Sheet Like The Native App: 1. Media, 2. Details, 3. Audience, Then Upload Progress And Done) -->
     <dialog class="upload_post_form_dialog" data-subscription_plan="{{ logged_in_user.subscription.plan|default:'free' }}">
-        <form class="upload_post_form" method="POST" enctype="multipart/form-data">
+        <form class="upload_post_form" method="POST" enctype="multipart/form-data" data-step="media">
             {% csrf_token %}
 
-            <h2>{% translate "Zdieľať príspevok" %}</h2>
+            <!-- Header -->
+            <div class="upload_header">
+                <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-xmark"></i></a> <!-- https://fontawesome.com/icons/xmark -->
 
-            <a class="back" href="#" title="{% translate 'Zavrieť' %}" aria-label="{% translate 'Zavrieť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
+                <div class="upload_titles">
+                    <h2 class="upload_title" aria-live="polite"
+                        data-title_media="{% translate 'Vyberte fotky a videá' %}"
+                        data-title_details="{% translate 'Popis a miesto' %}"
+                        data-title_audience="{% translate 'Kto uvidí príspevok' %}"
+                        data-title_uploading="{% translate 'Nahráva sa príspevok' %}"
+                        data-title_done="{% translate 'Príspevok bol odoslaný' %}"
+                    >{% translate "Vyberte fotky a videá" %}</h2>
 
-            <div class="posts_preview">
-                <div class="select_posts_container" tabindex="0">
-                    <label for="select_posts"><i class="fa-solid fa-photo-film"></i></label> <!-- https://fontawesome.com/icons/photo-film -->
-                    <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
+                    <p class="upload_subtitle"></p>
                 </div>
             </div>
-            
-            <div class="post_info_container">
-                <div class="description" name="description" contenteditable="true" data-placeholder="{% translate 'Popis príspevku' %}" aria-label="{% translate 'Popis príspevku' %}"></div>
-                <input type="hidden" class="description_input" name="description" value="">
-                
-                <input type="hidden" class="tagged_users" name="tagged_users" value="[]">
-                <input type="hidden" class="added_hashtags" name="added_hashtags" value="[]">
 
-                <div class="icons">
-                    <div class="settings">
-                        {% if logged_in_user.private_account %}
-                            <i class="disabled_public_visibility fa-solid fa-eye-low-vision" title="{% translate 'Viditeľnosť len pre sledovateľov' %}" aria-label="{% translate 'Viditeľnosť len pre sledovateľov' %}"></i> <!-- https://fontawesome.com/icons/eye-low-vision -->
+            <div class="step_indicator" aria-hidden="true"><span class="active"></span><span></span><span></span></div>
+
+            <!-- Step 1: Media -->
+            <section class="upload_step" data-step="media">
+                <div class="posts_preview">
+                    <div class="select_posts_container" tabindex="0">
+                        <label for="select_posts">
+                            <span class="picker_icon"><i class="fa-solid fa-photo-film"></i></span> <!-- https://fontawesome.com/icons/photo-film -->
+                            <span class="picker_title">{% translate "Vybrať fotky alebo videá" %}</span>
+                            <span class="picker_hint">{% blocktranslate with count=5 %}Až {{ count }} súborov v jednom príspevku{% endblocktranslate %}</span>
+                            <span class="add_title">{% translate "Pridať" %}</span>
+                        </label>
+
+                        <input type="file" name="select_posts" id="select_posts" multiple accept="image/*, video/*">
+                    </div>
+                </div>
+
+                <div class="limits_card">
+                    <i class="fa-solid fa-circle-info"></i> <!-- https://fontawesome.com/icons/circle-info -->
+
+                    <p>
+                        {% if logged_in_user.subscription.plan == "premium" %}
+                            {% blocktranslate with image_size="10 MB" video_size="100 MB" duration=3 %}Fotky do {{ image_size }}, videá do {{ video_size }} a {{ duration }} min.{% endblocktranslate %}
+
+                        {% elif logged_in_user.subscription.plan == "basic" %}
+                            {% blocktranslate with image_size="10 MB" video_size="50 MB" duration=2 %}Fotky do {{ image_size }}, videá do {{ video_size }} a {{ duration }} min.{% endblocktranslate %}
 
                         {% else %}
-                            <label for="public_visibility">
-                                <button class="public_visibility" type="button" title="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}" aria-label="{% translate 'Zapnúť viditeľnosť len pre sledovateľov' %}">
-                                    <i class="fa-solid fa-eye"></i> <!-- https://fontawesome.com/icons/eye --> <!-- <i class="fa-solid fa-eye-low-vision"></i> https://fontawesome.com/icons/eye-low-vision -->
-                                </button>
-                            </label>
+                            {% blocktranslate with image_size="2 MB" video_size="25 MB" duration=1 %}Fotky do {{ image_size }}, videá do {{ video_size }} a {{ duration }} min.{% endblocktranslate %}
 
                         {% endif %}
-                        
-                        {{ upload_post_form.public_visibility }}
-        
-                        <label for="allow_comments">
-                            <button class="allow_comments" type="button" title="{% translate 'Vypnúť komentáre' %}" aria-label="{% translate 'Vypnúť komentáre' %}">
-                                <i class="fa-solid fa-comment"></i> <!-- https://fontawesome.com/icons/comment --> <!-- <i class="fa-solid fa-comment-slash"></i> https://fontawesome.com/icons/comment-slash -->
-                            </button>
-                        </label>
+                    </p>
+                </div>
+            </section>
 
-                        {{ upload_post_form.allow_comments }}
-        
-                        <label for="hide_likes">
-                            <button class="hide_likes" type="button" title="{% translate 'Skryť počet označení páči sa mi to' %}" aria-label="{% translate 'Skryť počet označení páči sa mi to' %}">
-                                <i class="fa-solid fa-heart"></i> <!-- https://fontawesome.com/icons/heart --> <!-- <i class="fa-regular fa-heart"></i> -->
-                            </button>
-                        </label>
+            <!-- Step 2: Details -->
+            <section class="upload_step" data-step="details" hidden>
+                <div class="field_label">
+                    <span>{% translate "Popis príspevku" %}</span>
+                    <span class="description_counter">0/500</span>
+                </div>
 
-                        {{ upload_post_form.hide_likes }}
+                <div class="post_info_container">
+                    <div class="description" name="description" contenteditable="true" data-placeholder="{% translate 'Napíšte niečo o tréningu...' %}" aria-label="{% translate 'Popis príspevku' %}"></div>
+                    <input type="hidden" class="description_input" name="description" value="">
+
+                    <input type="hidden" class="tagged_users" name="tagged_users" value="[]">
+                    <input type="hidden" class="added_hashtags" name="added_hashtags" value="[]">
+
+                    <div class="icons">
+                        <div class="tags">
+                            <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
+                                <i class="fa-regular fa-face-smile"></i> <!-- https://fontawesome.com/icons/face-smile -->
+                            </button>
+
+                            <button class="tag_user" type="button" title="{% translate 'Označiť ľudí' %}" aria-label="{% translate 'Označiť ľudí' %}">
+                                <i class="fa-solid fa-at"></i> <!-- https://fontawesome.com/icons/at -->
+                            </button>
+
+                            <button class="add_hashtag" type="button" title="{% translate 'Pridať Hashtag' %}" aria-label="{% translate 'Pridať Hashtag' %}">
+                                <i class="fa-solid fa-hashtag"></i> <!-- https://fontawesome.com/icons/hashtag -->
+                            </button>
+                        </div>
                     </div>
 
-                    <div class="tags">
-                        <button class="add_emoji" type="button" title="{% translate 'Pridať emoji' %}" aria-label="{% translate 'Pridať emoji' %}">
-                            <i class="fa-regular fa-face-surprise"></i> <!-- https://fontawesome.com/icons/face-surprise -->
-                        </button>
+                    <div class="emoji_picker_container hidden">
+                        <emoji-picker></emoji-picker>
+                    </div>
 
-                        <button class="tag_user" type="button" title="{% translate 'Označiť ľudí' %}" aria-label="{% translate 'Označiť ľudí' %}">
-                            <i class="fa-solid fa-at"></i> <!-- https://fontawesome.com/icons/at -->
-                        </button>
-
-                        <button class="add_hashtag" type="button" title="{% translate 'Pridať Hashtag' %}" aria-label="{% translate 'Pridať Hashtag' %}">
-                            <i class="fa-solid fa-hashtag"></i> <!-- https://fontawesome.com/icons/hashtag -->
-                        </button>
+                    <div class="users_for_tag_container_wrapper">
+                        <div class="users_for_tag_container"></div>
                     </div>
                 </div>
 
-                <div class="emoji_picker_container hidden">
-                    <emoji-picker></emoji-picker>
+                <div class="tagged_users_container"></div>
+
+                <div class="location_container">
+                    <div class="location_input_container">
+                        <i class="fa-solid fa-location-dot"></i> <!-- https://fontawesome.com/icons/location-dot -->
+                        {{ upload_post_form.location }}
+
+                        <input type="hidden" class="latitude" name="latitude" value="">
+                        <input type="hidden" class="longitude" name="longitude" value="">
+                    </div>
+
+                    <div class="location_results_container">
+                        <div class="loading hidden"></div>
+                        <div class="location_results hidden" tabindex="-1"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Step 3: Audience -->
+            <section class="upload_step" data-step="audience" hidden>
+                <p class="form_report error" role="alert"></p>
+
+                <!-- The Real Checkboxes Of The Django Form Hold The Values -->
+                <div class="audience" role="tablist" aria-label="{% translate 'Kto uvidí príspevok' %}">
+                    {{ upload_post_form.public_visibility }}
+
+                    <button class="audience_option" type="button" role="tab" data-audience="everyone" {% if logged_in_user.private_account %}disabled{% endif %}>
+                        <i class="fa-solid fa-earth-europe"></i> <!-- https://fontawesome.com/icons/earth-europe -->
+                        <span>{% translate "Všetci" %}</span>
+                    </button>
+
+                    <button class="audience_option" type="button" role="tab" data-audience="followers">
+                        <i class="fa-solid fa-user-group"></i> <!-- https://fontawesome.com/icons/user-group -->
+                        <span>{% translate "Sledovatelia" %}</span>
+                    </button>
                 </div>
 
-                <div class="users_for_tag_container_wrapper">
-                    <div class="users_for_tag_container"></div>
+                <p class="audience_hint"
+                    data-hint_everyone="{% translate 'Príspevok sa zobrazí všetkým v komunite.' %}"
+                    data-hint_followers="{% translate 'Príspevok uvidia len vaši sledovatelia.' %}"
+                    data-is_private_account="{% if logged_in_user.private_account %}true{% else %}false{% endif %}"
+                ></p>
+
+                <div class="toggle_rows">
+                    {{ upload_post_form.allow_comments }}
+
+                    <label class="toggle_row" for="allow_comments">
+                        <span class="toggle_icon"><i class="fa-solid fa-comment"></i></span> <!-- https://fontawesome.com/icons/comment -->
+                        <span class="toggle_text"><span class="toggle_label">{% translate "Povoliť komentáre" %}</span></span>
+                        <span class="switch"></span>
+                    </label>
+
+                    {{ upload_post_form.hide_likes }}
+
+                    <label class="toggle_row" for="hide_likes">
+                        <span class="toggle_icon"><i class="fa-solid fa-heart"></i></span> <!-- https://fontawesome.com/icons/heart -->
+                        <span class="toggle_text">
+                            <span class="toggle_label">{% translate "Skryť počet označení páči sa mi to" %}</span>
+                            <span class="toggle_description">{% translate "Počet uvidíte len vy." %}</span>
+                        </span>
+                        <span class="switch"></span>
+                    </label>
                 </div>
+
+                <div class="summary_card">
+                    <div class="summary_media"></div>
+
+                    <div class="summary_text">
+                        <p class="summary_meta" data-files_label="{% translate 'Súbory: %(count)s' %}"></p>
+                        <p class="summary_caption" data-empty_label="{% translate 'Bez popisu' %}"></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Uploading -->
+            <section class="upload_step upload_status" data-step="uploading" hidden>
+                <p class="upload_percent">0%</p>
+                <div class="upload_track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div class="upload_fill"></div></div>
+                <p class="upload_hint" data-finishing_label="{% translate 'Dokončuje sa...' %}">{% translate "Nechajte stránku otvorenú, kým sa súbory nahrajú." %}</p>
+            </section>
+
+            <!-- Done -->
+            <section class="upload_step upload_status" data-step="done" hidden>
+                <span class="done_icon"><i class="fa-solid fa-check"></i></span> <!-- https://fontawesome.com/icons/check -->
+                <h3>{% translate "Hotovo!" %}</h3>
+                <p>{% translate "Príspevok sa spracováva a o chvíľu sa zobrazí v komunite." %}</p>
+            </section>
+
+            <!-- Footer -->
+            <div class="upload_footer">
+                <button class="step_back" type="button">{% translate "Späť" %}</button>
+                <button class="step_next" type="button" data-label="{% translate 'Pokračovať' %}" data-invalid_label="{% translate 'Odstráňte označené súbory' %}"><span>{% translate "Pokračovať" %}</span> <i class="fa-solid fa-arrow-right"></i></button> <!-- https://fontawesome.com/icons/arrow-right -->
+
+                <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">
+                <button class="upload_post_form_submit" type="submit" data-label="{% translate 'Zdieľať príspevok' %}" data-retry_label="{% translate 'Skúsiť znova' %}"><i class="fa-solid fa-paper-plane"></i> <span>{% translate "Zdieľať príspevok" %}</span></button> <!-- https://fontawesome.com/icons/paper-plane -->
+
+                <button class="upload_cancel" type="button">{% translate "Zrušiť nahrávanie" %}</button>
+                <button class="upload_done" type="button">{% translate "Hotovo" %}</button>
             </div>
-
-            <div class="tagged_users_container"></div>
-
-            <div class="location_container">
-                <div class="location_input_container">
-                    <i class="fa-solid fa-location-arrow"></i> <!-- https://fontawesome.com/icons/location-arrow -->
-                    {{ upload_post_form.location }}
-
-                    <input type="hidden" class="latitude" name="latitude" value="">
-                    <input type="hidden" class="longitude" name="longitude" value="">
-                </div>
-
-                <div class="location_results_container">
-                    <div class="loading hidden"></div>
-                    <div class="location_results hidden" tabindex="-1"></div>
-                </div>
-            </div>
-
-            <p class="form_report error" style="bottom: 115px;"></p>
-            <input type="hidden" name="upload_post_form_submit" value="upload_post_form_submit">
-            <input class="upload_post_form_submit" type="submit" value="{% translate 'Uverejniť príspevok' %}">
 
             <!-- Google reCAPTCHA V3 -->
             <input type="hidden" name="g-recaptcha-response" id="upload_post_form_recaptcha">

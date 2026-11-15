@@ -16,10 +16,18 @@ export function initializeOfficialTasksProgression():void {
     const MAX_RED:number = 255
     const MIN_RED:number = 82
 
-    const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
-    const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
-    const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+    const tasks:HTMLDivElement|null = document.querySelector(".todo .official_tasks .tasks") // Gets The Tasks Container (Missing When Logged Out)
+    if(!tasks) return
+
     const all_tasks:NodeListOf<HTMLDivElement> = tasks.querySelectorAll(".task") // Gets All Tasks
+
+    // Shows How Many Challenges Are Completed (Like "Splnené: 1 z 3" In The Native App)
+    const completed_amount:HTMLParagraphElement|null = document.querySelector(".todo .official_tasks .completed_amount")
+
+    if(completed_amount) {
+        const completed:number = tasks.querySelectorAll(".task .checkbox.checked").length // Counts The Completed Challenges
+        completed_amount.textContent = interpolate(completed_amount.dataset["label"] || "", { completed, total: all_tasks.length }, true)
+    }
 
     all_tasks.forEach(function(one_task:HTMLDivElement):void {
         const progress_percentage:number = Number(one_task.dataset["progress_percentage"]) || 0 // Gets The Progress Percentage Of The Task
@@ -35,15 +43,22 @@ export function checkOfficialTasksCompletion():void {
     const MAX_RED:number = 255
     const MIN_RED:number = 82
 
-    const todo:HTMLDivElement = document.querySelector(".todo") as HTMLDivElement // Gets The TODO Container
-    const official_tasks:HTMLDivElement = todo.querySelector(".official_tasks") as HTMLDivElement // Gets The Official Tasks Container
-    const tasks:HTMLDivElement = official_tasks.querySelector(".tasks") as HTMLDivElement // Gets The Tasks Container
+    const todo:HTMLDivElement|null = document.querySelector(".todo") // Gets The TODO Container (Missing When Logged Out)
+    const tasks:HTMLDivElement|null = todo ? todo.querySelector(".official_tasks .tasks") : null // Gets The Tasks Container
+    if(!todo || !tasks) return
 
     const _30_minutes_activity:HTMLDivElement|null = tasks.querySelector("[data-task='30_minutes_activity']") || null // Gets The "30 Minutes Activity" Official Task If Is Available
     const _1_hour_activity:HTMLDivElement|null = tasks.querySelector("[data-task='1_hour_activity']") || null // Gets The "1 Hour Activity" Official Task If Is Available
     const _2_hours_activity:HTMLDivElement|null = tasks.querySelector("[data-task='2_hours_activity']") || null // Gets The "2 Hours Activity" Official Task If Is Available
     const _3_hours_activity:HTMLDivElement|null = tasks.querySelector("[data-task='3_hours_activity']") || null // Gets The "3 Hours Activity" Official Task If Is Available
     const beat_average_activity_time:HTMLDivElement|null = tasks.querySelector("[data-task='beat_average_activity_time']") || null // Gets The "Beat Average Activity Time" Official Task If Is Available
+
+    // XP Challenges ("Získaj 50 / 100 / 150 XP Za Aktivitu", Completed While Recording Like In The Native App)
+    const xp_tasks:{ task:string, xp:number }[] = [
+        { task: "50_xp_activity", xp: 50 },
+        { task: "100_xp_activity", xp: 100 },
+        { task: "150_xp_activity", xp: 150 }
+    ]
 
     const average_activity_time:number = Number((document.querySelector(".activity .previous_activity .top .average_activity_time_container p .average_activity_time") as HTMLSpanElement).dataset["average_activity_time"]) || 0 // Gets The Weekly Average Activity Time
 
@@ -136,6 +151,25 @@ export function checkOfficialTasksCompletion():void {
             }
         }
     }
+
+    // XP Challenges
+    xp_tasks.forEach(function(one_xp_task:{ task:string, xp:number }):void {
+        const task_container:HTMLDivElement|null = tasks.querySelector(`[data-task='${one_xp_task.task}']`) // Gets The Challenge If It Is Today's
+
+        if(!task_container) return
+
+        const checkbox:HTMLDivElement = task_container.querySelector(".checkbox") as HTMLDivElement // Gets The Custom Checkbox Container
+        if(checkbox.classList.contains("checked") || task_container.dataset["is_completing"] === "true") return
+
+        const progress:number = Math.min(100, activity_summary.gained_xp / one_xp_task.xp * 100) // Calculates The Progress
+        task_container.style.setProperty("--progress", String(progress)) // Sets The Progress
+
+        // 100% Completed (XP Grows In Fractions, So The Request Is Sent Only Once)
+        if(progress >= 100) {
+            task_container.dataset["is_completing"] = "true"
+            completeOfficialTask(one_xp_task.task, task_container, success_sound).finally(() => delete task_container.dataset["is_completing"])
+        }
+    })
 
     // Longer Activity Than The Weekly Average Activity
     if(beat_average_activity_time) {

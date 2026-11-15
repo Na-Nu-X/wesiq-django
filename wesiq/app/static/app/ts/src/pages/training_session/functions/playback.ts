@@ -46,11 +46,22 @@ function updateActivitySummary(exercise:HTMLDivElement|null):void {
     }
 }
 
-// Function For Update Activity Timer
+// Function For Update Activity Timer (And The "X XP V Tejto Aktivite" Line Under It)
 function updateTimer(timer:HTMLHeadingElement):void {
     (timer.querySelector(".hours") as HTMLSpanElement).textContent = getFormattedTime("hours", activity_summary.elapsed_time, true);
     (timer.querySelector(".minutes") as HTMLSpanElement).textContent = getFormattedTime("minutes", activity_summary.elapsed_time, true);
     (timer.querySelector(".seconds") as HTMLSpanElement).textContent = getFormattedTime("seconds", activity_summary.elapsed_time, true)
+
+    const activity_xp_text:HTMLSpanElement|null = timer.parentElement ? timer.parentElement.querySelector(".activity_xp_text") : null // Gets The XP Line
+
+    if(activity_xp_text && activity_xp_text.dataset["label"]) {
+        activity_xp_text.textContent = interpolate(activity_xp_text.dataset["label"], { xp: Math.round(activity_summary.gained_xp) }, true)
+    }
+}
+
+// Function For Set The Playback State (Status Pill And Button Labels: Ready, Running Or Paused)
+function setPlaybackState(playback:HTMLDivElement, state:"ready"|"running"|"paused"):void {
+    playback.dataset["state"] = state
 }
 
 // Function For Start Activity
@@ -70,6 +81,7 @@ export function startActivity(container:HTMLDivElement, playback:HTMLDivElement)
     }
     
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-play", "fa-pause") // Shows The Pause Icon
+    setPlaybackState(playback, "running") // Shows "Nahráva Sa"
 
     // Starts Activity Timer
     if(!activity_interval.interval) {
@@ -91,6 +103,7 @@ export function pauseActivity(playback:HTMLDivElement):void {
     const play_pause:HTMLButtonElement = playback.querySelector(".play") as HTMLButtonElement // Gets The Play / Pause Button
 
     (play_pause.querySelector("i") as HTMLElement).classList.replace("fa-pause", "fa-play") // Shows The Play Icon
+    setPlaybackState(playback, activity_summary.elapsed_time > 0 ? "paused" : "ready") // Shows "Pozastavené" Or "Pripravené"
 
     // Stops Activity Timer
     if(activity_interval.interval) {
@@ -210,6 +223,7 @@ export async function stopActivity(container:HTMLDivElement, playback:HTMLDivEle
         activity_summary.training_plan = [] // Resets Training Plan Activity Summary
 
         updateTimer(timer) // Resets Elapsed Time On The Playback Timer
+        setPlaybackState(playback, "ready") // Shows "Pripravené"
         if(container.querySelector(".training_plan_container")) resetTrainingPlan(container) // Resets Training Plan
     }
 }

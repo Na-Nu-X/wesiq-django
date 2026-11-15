@@ -25,6 +25,18 @@ document.addEventListener("DOMContentLoaded", function():void {
         })
     }
 
+    // Switch To Registration Click Functionality (Swaps The Dialogs Instead Of Opening The Registration Page)
+    const switch_to_registration:HTMLAnchorElement|null = login_form.querySelector(".switch_to_registration")
+    const registration_form_dialog:HTMLDialogElement|null = document.querySelector(".registration_form_dialog")
+
+    if(switch_to_registration && registration_form_dialog) {
+        switch_to_registration.addEventListener("click", function(event:PointerEvent):void {
+            event.preventDefault() // Stays On The Homepage
+            login_form_dialog.close() // Closes The Login Form Dialog
+            registration_form_dialog.showModal() // Shows The Registration Form Dialog
+        })
+    }
+
     // Login Form Dialog Click Functionality
     login_form_dialog.addEventListener("click", function(event:PointerEvent):void {
         const login_form_rect:DOMRect = login_form.getBoundingClientRect() // Gets The Login Form Rect

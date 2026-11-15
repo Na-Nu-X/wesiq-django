@@ -957,85 +957,68 @@ $profile-glow: $surface-glow;
             }
         }
 
-        .bottom {
-            display: flex;
-            flex-direction: column;
+        // Posts / Saved Posts Tabs (Both Panels Share One Grid Cell, So Switching Never Changes The Height)
+        // Direct Child Only, The Header Has Its Own ".bottom" Row
+
+        > .bottom {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr);
+            align-items: start;
             position: relative;
-            padding-top: 10px;
+            padding-top: $space-sm;
+            overflow: hidden;
+
+            // Tab Switch ("SegmentedControl")
 
             .grid_select {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 5px;
-                margin: 0px 5px 10px;
-                padding: 5px;
-                border: $hairline solid $color-border;
-                border-radius: $medium-border-radius;
+                @include segmented_control;
+                grid-row: 1;
+                margin: 0px 0px $space-md;
 
                 .all_posts_icon,
                 .saved_posts_icon {
-                    all: unset;
-                    position: relative;
-                    width: 100%;
-                    margin: 0px auto;
-                    padding: 10px 0px;
-                    border-bottom: 1px solid transparent;
-                    text-align: center;
-                    border-radius: $small-border-radius;
-                    transition: transform 0.2s ease, background 0.3s ease;
+                    @include segment;
 
                     &::before {
                         display: none;
                     }
 
-                    &:hover,
-                    &:focus-visible,
-                    &.active {
-                        cursor: pointer;
-                        background: transparentize($blue-color, 0.8);
-
-                        .fa-buffer,
-                        .fa-bookmark {
-                            color: $blue-color;
-                        }
-                    }
-
                     .fa-buffer,
                     .fa-bookmark {
-                        font-size: 1.5em;
-                        color: $color-primary-text;
-                        transition: transform 0.2s ease, color 0.3s ease;
+                        font-size: 15px;
+                        color: inherit;
                     }
-
-                }
-
-                .all_posts_icon {
-                    grid-column: 1;
-                }
-
-                .saved_posts_icon {
-                    grid-column: 3;
                 }
             }
 
             .posts_container,
             .saved_posts_container {
                 @include scrollbar;
+                grid-row: 2;
+                grid-column: 1;
                 position: relative;
                 width: 100%;
                 max-height: calc(130px * 3);
-                transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+                transition: transform $duration-normal ease, opacity $duration-normal ease, visibility $duration-normal ease;
 
                 &.hidden {
-                    position: absolute;
-                    top: 50px;
-                    left: 0px;
-                    width: 100%;
-                    transform: translateX(100%);
                     opacity: 0;
                     visibility: hidden;
                     pointer-events: none;
                 }
+            }
+
+            // The Panels Slide Toward Their Tab
+            .posts_container.hidden {
+                transform: translateX(-$space-xxl);
+            }
+
+            .saved_posts_container.hidden {
+                transform: translateX($space-xxl);
+            }
+
+            .posts_container,
+            .saved_posts_container {
 
                 .posts,
                 .saved_posts {

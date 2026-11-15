@@ -3644,6 +3644,7 @@ def communityView(request):
         if request.method == "POST":
             # Upload Post Form
             if request.POST.get("upload_post_form_submit"):
+                wants_json = "application/json" in request.headers.get("Accept", "") # The Upload Dialog Sends The Form With fetch And Shows JSON Errors Itself
                 recaptcha_response = request.POST.get("g-recaptcha-response") # Gets The reCaptcha Response
                 
                 # Gets The reCaptcha Data
@@ -3662,8 +3663,15 @@ def communityView(request):
 
                 # Checks The reCaptcha Validity
                 if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
-                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo")) # Sets The Message
                     captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+
+                    if wants_json:
+                        return JsonResponse({
+                            "success": False,
+                            "message": _("Overenie reCaptcha zlyhalo")
+                        }, status = 400)
+
+                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo")) # Sets The Message
 
                 else:
                     upload_post_form = uploadPostForm(request.POST) # Gets The Upload Post Form
@@ -3873,6 +3881,13 @@ def communityView(request):
 
                                 except Exception:
                                     new_post.delete() # Deletes The New Post
+
+                                    if wants_json:
+                                        return JsonResponse({
+                                            "success": False,
+                                            "message": _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name}
+                                        }, status = 400)
+
                                     messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name}) # Sets The Message
                                     return redirect("community_url") # Redirects To The Community Page
 
@@ -3882,12 +3897,26 @@ def communityView(request):
                             }, status = 200)
 
                         except Exception as error:
-                            messages.add_message(request, messages.ERROR, _("Pri pridávaní príspevku došlo k chybe")) # Sets The Message
                             captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
-                    
+
+                            if wants_json:
+                                return JsonResponse({
+                                    "success": False,
+                                    "message": _("Pri pridávaní príspevku došlo k chybe")
+                                }, status = 500)
+
+                            messages.add_message(request, messages.ERROR, _("Pri pridávaní príspevku došlo k chybe")) # Sets The Message
+
                     else:
-                        messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo")) # Sets The Message
                         captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+
+                        if wants_json:
+                            return JsonResponse({
+                                "success": False,
+                                "message": _("Pridávanie príspevku zlyhalo")
+                            }, status = 400)
+
+                        messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo")) # Sets The Message
 
             # Mark Post As Seen
             if request.headers.get("X-Requested-Action") == "mark-post-as-seen":

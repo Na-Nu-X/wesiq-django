@@ -147,6 +147,8 @@ export function seenPostObserver(feed:HTMLDivElement):void {
 
 // Function For Mark The Post As Already Seen
 async function markPostAsSeen(id:string):Promise<void> {
+    if(!document.querySelector("header .banner .account")) return // Only Logged In Users Have Seen Posts (The Account Is Rendered Only For Them)
+
     try {
         const mark_post_as_seen_response:response = await sendPOST(window.location.pathname, id, "mark-post-as-seen") // Sends Post ID As A POST Data
 

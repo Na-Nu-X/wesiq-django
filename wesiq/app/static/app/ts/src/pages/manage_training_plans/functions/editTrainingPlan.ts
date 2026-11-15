@@ -1,3 +1,4 @@
+import { getDayName } from "../../../utils/getDayName.js"
 import { edit_training_plan_state } from "../state.js"
 
 import { 
@@ -66,6 +67,14 @@ export function generateTrainingPlan(edit_training_plan:HTMLDivElement):void {
     if(training_plan_days_order.length > 1) {
         const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(training_plan_days_order.length, edit_training_plan_state)
         renderTrainingPlanBars(edit_training_plan, training_plan_bar_container)
+
+        // Labels Each Bar With Its Plan ("Title · Day"), So They Work Like The Plan Chips Of The Native App
+        training_plan_bar_container.querySelectorAll<HTMLDivElement>(".bar").forEach(function(one_bar:HTMLDivElement, index:number):void {
+            const day:string|null = training_plan_days_order[index] ?? null // Gets The Day Of The Plan
+            const first_exercise:HTMLDivElement|undefined = [...exercises_data].find(one_exercise => (one_exercise.dataset["day"] || null) === day) // Gets One Exercise Of The Plan
+
+            one_bar.textContent = [first_exercise?.dataset["type"] || "", day !== null ? getDayName(Number(day)) : ""].filter(Boolean).join(" · ") // Plans Without A Day Show Only The Title
+        })
     }
 
     // Orders Exercises By Order Value In Exercises Data
