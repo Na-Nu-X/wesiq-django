@@ -87,8 +87,8 @@ class PasswordResetTests(SecurityTestCase):
 class WebPasswordResetFlowTests(SecurityTestCase):
     """
     The homepage, login and profile flows stored the code without its expiry marker, so every code was "expired" (shown as
-    "Overovací kód sa nezhoduje"), and the mail was translated in the request's language under the user's language prefix
-    (e.g. "/es/obnova-hesla", a 404).
+    "Overovací kód sa nezhoduje"), and the mail mixed the page's language with the account's language prefix
+    (e.g. "/es/obnova-hesla", a 404). The whole mail now uses the language of the page the code was requested from.
     """
 
     def reset_with_mailed_code(self, user, new_password):
@@ -115,26 +115,32 @@ class WebPasswordResetFlowTests(SecurityTestCase):
         user.refresh_from_db()
         return path
 
-    def test_login_page_flow_with_spanish_account_from_slovak_page(self):
+    def test_login_page_flow_with_spanish_account_from_english_page(self):
+        # Logged Out, The Footer Flags Only Change The Page, So The Account Can Still Be Spanish
         user = make_user("carlos", language = "es")
         self.client.cookies["email_address"] = user.email_address
 
-        self.client.get("/sk/prihlasenie/?password-reset=true") # Requested From A Slovak Page
+        self.client.get("/en/login/?password-reset=true") # Requested From An English Page
+
+        self.assertIn("Password reset", mail.outbox[-1].subject) # English Subject
+        self.assertIn("Hi carlos", mail.outbox[-1].body) # English Greeting, Not "Hola"
+
+        path = self.reset_with_mailed_code(user, "Brand-New-Pass-2026!")
+        self.assertTrue(path.startswith("/en/password-reset"), path) # The English Route Under The English Prefix
+        self.assertTrue(check_password("Brand-New-Pass-2026!", user.password))
+        self.assertIsNone(user.password_reset_code) # Single Use
+
+    def test_homepage_flow_from_spanish_page(self):
+        user = make_user("hana", language = "sk")
+        self.client.cookies["email_address"] = user.email_address
+
+        self.client.get("/es/?password-reset=true") # Requested From A Spanish Page
+
+        self.assertIn("Hola hana", mail.outbox[-1].body)
 
         path = self.reset_with_mailed_code(user, "Nuevo-Pass-2026!")
         self.assertTrue(path.startswith("/es/recuperacion-de-contrasena"), path) # The Spanish Route, Not "/es/obnova-hesla"
         self.assertTrue(check_password("Nuevo-Pass-2026!", user.password))
-        self.assertIsNone(user.password_reset_code) # Single Use
-
-    def test_homepage_flow(self):
-        user = make_user("hana", language = "sk")
-        self.client.cookies["email_address"] = user.email_address
-
-        self.client.get("/en/?password-reset=true") # Requested From An English Page
-
-        path = self.reset_with_mailed_code(user, "Nove-Heslo-2026!")
-        self.assertTrue(path.startswith("/sk/obnova-hesla"), path)
-        self.assertTrue(check_password("Nove-Heslo-2026!", user.password))
 
     def test_profile_flow(self):
         user = make_user("emma", language = "en")
