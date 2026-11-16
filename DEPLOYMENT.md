@@ -40,7 +40,7 @@ The repository root holds `docker-compose.yml` and `.env`. The Django project li
 ### Key Python packages
 `gunicorn` + `uvicorn[standard]` (production ASGI server), `channels`, `channels-redis`, `daphne`, `celery`, `django-celery-beat`, `django-redis`, `flower`, `djangorestframework`, `djangorestframework-simplejwt` (with token blacklist), `django-cors-headers`, `django-allauth` (Google OAuth), `django-unfold` (admin UI), `django-rosetta` (translation admin at `/rosetta/`), `django-ratelimit`, `django-user-agents`, `django-cleanup`, `django-ranged-response`, `stripe`, `quickchart-io`, `moviepy`, `Pillow`, `argon2-cffi` (password hashing), `psycopg2-binary`, `dj-database-url`.
 
-> `wesiq/requirements.txt` is **UTF-16 encoded**. pip reads it fine. Keep the encoding if you edit it.
+> `wesiq/requirements.txt` is plain UTF-8 with LF line endings.
 
 ### External services (outbound from the server)
 | Service | Purpose |
