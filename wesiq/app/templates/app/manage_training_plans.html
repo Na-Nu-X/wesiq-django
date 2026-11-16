@@ -9,19 +9,23 @@
 {% endblock style %}
 
 {% block banner %}
-    <div class="training_session">
-        <a href="{% url 'training_session_url' %}" title="{% translate 'Aktivita' %}" target="_self">{% translate "Aktivita" %}</a>
-    </div>
+    <a class="back_to_activity" href="{% url 'training_session_url' %}" title="{% translate 'Späť' %}" aria-label="{% translate 'Späť' %}" target="_self"><i class="fa-solid fa-chevron-left"></i></a> <!-- https://fontawesome.com/icons/chevron-left -->
 {% endblock banner %}
 
 {% block content %}
+    <!-- Header (Title Follows The Mode, Like The Native Plan Screens) -->
+    <header class="page_header">
+        <h1 class="page_title"><span class="title_create">{% translate "Nový plán" %}</span><span class="title_edit">{% translate "Moje plány" %}</span></h1>
+    </header>
+
     {% if not request.session.logged_in_user_id %}
         <div class="no_logged_in">
+            <span class="empty_icon"><i class="fa-solid fa-lock"></i></span> <!-- https://fontawesome.com/icons/lock -->
             <p>
                 {% translate "Zdá sa, že nie ste prihlásený." %}<br>
-                {% translate "Bez prihlásenia nie je možné vytvoriť tréningový plán." %}<br>
-                <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihláste sa." %}</a>
+                {% translate "Bez prihlásenia nie je možné vytvoriť tréningový plán." %}
             </p>
+            <a class="sign_in_button" href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihlásiť sa" %}</a>
         </div>
 
     {% endif %}
@@ -128,8 +132,8 @@
 
     <aside class="sidebar">
         <ul>
-            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i></a><span class="label">{% translate "Vytvoriť" %}</span></li> <!-- https://fontawesome.com/icons/plus -->
-            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i></a><span class="label">{% translate "Upraviť" %}</span></li> <!-- https://fontawesome.com/icons/pen -->
+            <li><a class="create" href="?create"><i class="fa-solid fa-plus"></i> <span>{% translate "Nový plán" %}</span></a><span class="label">{% translate "Vytvoriť" %}</span></li> <!-- https://fontawesome.com/icons/plus -->
+            <li><a class="edit" href="?edit"><i class="fa-solid fa-pen"></i> <span>{% translate "Moje plány" %}</span></a><span class="label">{% translate "Upraviť" %}</span></li> <!-- https://fontawesome.com/icons/pen -->
         </ul>
     </aside>
 
@@ -137,7 +141,8 @@
         <div class="top">
             <div class="new_training_plan" tabindex="0">
                 <div class="additional_info">
-                    <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="{% translate 'Názov' %}" aria-label="title" list="title">
+                    <span class="field_label">{% translate "Názov" %}</span>
+                    <input type="text" class="title" placeholder="{% translate 'Napríklad Horná časť tela' %}" aria-label="{% translate 'Názov' %}" list="title">
 
                     <datalist id="title">
                         <option value="{% translate 'Pull' %}">
@@ -147,6 +152,8 @@
                         <option value="{% translate 'Upper' %}">
                         <option value="{% translate 'Lower' %}">
                     </datalist>
+
+                    <span class="field_label">{% translate "Deň" %}</span>
 
                     <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
                     <div class="day_select_menu">
@@ -172,12 +179,13 @@
 
                 <div class="training_plan">
                     <div class="drop_zone active">
-                        {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
-                        <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                        <span class="empty_icon"><i class="fa-solid fa-dumbbell"></i></span> <!-- https://fontawesome.com/icons/dumbbell -->
+                        <p class="empty_title">{% translate "Zatiaľ žiadne cviky" %}</p>
+                        <p class="empty_message">{% translate "Pridajte cviky z knižnice alebo vytvorte vlastné." %}</p>
                     </div>
                 </div>
 
-                <button class="save">{% translate "Pridať tréningový plán" %}</button>
+                <button class="save"><i class="fa-solid fa-check"></i> {% translate "Uložiť plán" %}</button> <!-- https://fontawesome.com/icons/check -->
             </div>
 
             {% if training_plan|length > 0 %}
@@ -190,7 +198,8 @@
                     {% endfor %}
 
                     <div class="additional_info">
-                        <input type="text" class="title" placeholder="{% translate 'Názov' %}" aria-label="{% translate 'Názov' %}" list="title">
+                        <span class="field_label">{% translate "Názov" %}</span>
+                        <input type="text" class="title" placeholder="{% translate 'Napríklad Horná časť tela' %}" aria-label="{% translate 'Názov' %}" list="title">
 
                         <datalist id="title">
                             <option value="{% translate 'Pull' %}">
@@ -200,6 +209,8 @@
                             <option value="{% translate 'Upper' %}">
                             <option value="{% translate 'Lower' %}">
                         </datalist>
+
+                        <span class="field_label">{% translate "Deň" %}</span>
 
                         <!-- Custom Select Menu https://github.com/Kumailabbs/custom_select -->
                         <div class="day_select_menu">
@@ -225,21 +236,33 @@
 
                     <div class="training_plan">
                         <div class="drop_zone">
-                            {% comment %} <h3>Sem presunte cvik</h3> {% endcomment %}
-                            <i class="fa-solid fa-compress"></i> <!-- https://fontawesome.com/icons/compress -->
+                            <span class="empty_icon"><i class="fa-solid fa-dumbbell"></i></span> <!-- https://fontawesome.com/icons/dumbbell -->
+                            <p class="empty_title">{% translate "Zatiaľ žiadne cviky" %}</p>
+                            <p class="empty_message">{% translate "Pridajte cviky z knižnice alebo vytvorte vlastné." %}</p>
                         </div>
                     </div>
 
                     <div class="buttons">
-                        <button class="save">{% translate "Uložiť zmeny" %}</button>
-                        <button class="delete">{% translate "Vymazať" %}</button>
+                        <button class="save"><i class="fa-solid fa-check"></i> {% translate "Uložiť zmeny" %}</button> <!-- https://fontawesome.com/icons/check -->
+                        <button class="delete"><i class="fa-solid fa-trash"></i> {% translate "Odstrániť plán" %}</button> <!-- https://fontawesome.com/icons/trash -->
                     </div>
                 </div>
-                
+
+            {% else %}
+                <div class="edit_training_plan empty_plans hidden">
+                    <span class="empty_icon"><i class="fa-solid fa-clipboard-list"></i></span> <!-- https://fontawesome.com/icons/clipboard-list -->
+                    <p class="empty_title">{% translate "Zatiaľ nemáte žiadny plán" %}</p>
+                    <p class="empty_message">{% translate "Vytvorte si prvý." %}</p>
+                    <a class="create_plan_button" href="?create" target="_self"><i class="fa-solid fa-plus"></i> {% translate "Nový plán" %}</a>
+                </div>
+
             {% endif %}
         </div>
 
+        <!-- Exercise Library (Like The Native "Pridať Cvik" Sheet) -->
         <div class="exercise_selection">
+            <h2 class="library_title">{% translate "Pridať cvik" %}</h2>
+
             <div class="search_bar_menu">
                 <i class="fa-solid fa-magnifying-glass"></i> <!-- https://fontawesome.com/icons/magnifying-glass -->
                 
@@ -247,18 +270,18 @@
                     <i class="fa-solid fa-xmark"></i> <!-- https://fontawesome.com/icons/xmark -->
                 </button>
 
-                <input class="search_bar" type="text" placeholder="{% translate 'Nájsť cvik' %}" aria-label="{% translate 'Nájsť cvik' %}" autocomplete="off">
+                <input class="search_bar" type="text" placeholder="{% translate 'Hľadať cvik' %}" aria-label="{% translate 'Hľadať cvik' %}" autocomplete="off">
             </div>
 
             <div class="exercises">
-                <div class="custom_exercise exercise" draggable="true">
+                <div class="custom_exercise exercise" draggable="true" tabindex="0">
                     <i class='fa-solid fa-plus'></i> <!-- https://fontawesome.com/icons/plus -->
 
                     <p class="name">{% translate "Vlastný cvik" %}</p>
                 </div>
 
-                <div class="warm_up exercise" draggable="true">
-                    <i class="fa-solid fa-dumbbell"></i> <!-- https://fontawesome.com/icons/dumbbell -->
+                <div class="warm_up exercise" draggable="true" tabindex="0">
+                    <i class="fa-solid fa-fire"></i> <!-- https://fontawesome.com/icons/fire -->
 
                     <p class="name">{% translate "Rozcvička" %}</p>
                 </div>
@@ -274,8 +297,11 @@
                         data-categories="{{ one_exercise.categories }}"
                     >
                         {% if one_exercise.image_filename %}
-                            <img src="{% static 'images/exercises/' %}{{ one_exercise.image_filename }}" alt="">
-                        
+                            <img src="{% static 'images/exercises/' %}{{ one_exercise.image_filename }}" alt="" loading="lazy">
+
+                        {% else %}
+                            <span class="thumb_placeholder"><i class="fa-solid fa-dumbbell"></i></span> <!-- https://fontawesome.com/icons/dumbbell -->
+
                         {% endif %}
 
                         <p class="name">{{ one_exercise.exercise }}</p>
@@ -286,6 +312,8 @@
                             <p class="weight"><span>0</span><span>kg</span></p>
                             <button class="decrease_weight"><i class='fa-solid fa-minus'></i></button> <!-- https://fontawesome.com/icons/minus -->
                         </div>
+
+                        <span class="add_hint"><i class="fa-solid fa-plus"></i></span> <!-- https://fontawesome.com/icons/plus -->
                     </div>
         
                 {% endfor %}

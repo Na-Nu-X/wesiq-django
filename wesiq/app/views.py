@@ -165,15 +165,45 @@ def generateCode(length = 6, letters = False):
     return code # Returns The Code
 
 # Function For Send The Mail
+# Function For Send The Password Reset Code (Every Web Flow Uses It)
+def sendPasswordResetMail(user, language):
+    """
+    Issues The Code Through security.issue_password_reset_code (Expiry, Attempt Limit, Cooldown) And Sends The Mail.
+    The Whole Mail (Text, Greeting And The Link's Language Prefix) Uses One Language: The Language Of The Page The Code Was
+    Requested From, Because That Is What The Person Reads Right Now (Logged Out, The Footer Flags Only Change The Page,
+    Not The Account). Mixing Languages Produced Links Like "/es/obnova-hesla" (404).
+    Returns The Code, Or None While The Cooldown Is Active (The Previously Sent Code Stays Valid).
+    """
+    code = issue_password_reset_code(user) # Generates And Stores A Secure 6-Digit Code
+
+    if not code:
+        return None
+
+    with translation.override(language):
+        link_values = {"domain": settings.DOMAIN_URL, "language": translation.get_language(), "code": code} # The Language Prefix Of The User's Language (E.g. "pt-br")
+
+        sendMail(
+            user,
+            _("Obnova hesla"), # Subject
+            _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % link_values, # Text Content
+            _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % link_values, # HTML Content
+            _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+            code,
+            language = language
+        )
+
+    return code
+
 def sendMail(
     user, 
     subject, 
     text_content, 
     html_content, 
     html_content_end, 
-    html_content_middle = ""
+    html_content_middle = "",
+    language = None # The Greeting And Frame Language (The Account's Language By Default)
 ):
-    with translation.override(user.language):
+    with translation.override(language or user.language):
         subject = f"Wesiq - {subject}" # Sets The Subject
         text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}" # Sets The Text Content As A Fallback
         sender = settings.EMAIL_HOST_USER # Sets The Sender
@@ -1225,21 +1255,10 @@ def homepageView(request):
 
         if Users.objects.filter(email_address = email_address).exists():
             user = Users.objects.get(email_address = email_address) # Gets The User
-            code = generateCode() # Generates Random 6-Digit Code
 
-            # Sends The Mail
-            sendMail(
-                user,
-                _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # HTML Content
-                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                code
-            )
-
-            Users.objects.filter(id = user.id).update(password_reset_code = code) # Updates The Password Reset Code
-
-            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
+            # Issues The Code With Its Expiry Marker (Storing The Code Directly Made Every Code "Expired") And Sends It In The User's Language
+            if sendPasswordResetMail(user, translation.get_language()): # In The Language Of The Page
+                messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
 
             response = HttpResponseRedirect(reverse("password_reset_url")) # Redirects To The Password Reset Page
             # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
@@ -1828,21 +1847,10 @@ def loginView(request):
         
         if Users.objects.filter(email_address = email_address).exists():
             user = Users.objects.get(email_address = email_address) # Gets The User
-            code = generateCode() # Generates Random 6-Digit Code
 
-            # Sends The Mail
-            sendMail(
-                user,
-                _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # HTML Content
-                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                code
-            )
-
-            Users.objects.filter(id = user.id).update(password_reset_code = code) # Updates The Password Reset Code
-
-            messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
+            # Issues The Code With Its Expiry Marker (Storing The Code Directly Made Every Code "Expired") And Sends It In The User's Language
+            if sendPasswordResetMail(user, translation.get_language()): # In The Language Of The Page
+                messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
 
             response = HttpResponseRedirect(reverse("password_reset_url")) # Redirects To The Password Reset Page
             # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL
@@ -1923,19 +1931,9 @@ def passwordResetView(request):
             email_address = request.COOKIES.get("email_address") # Gets The E-mail Address
             
             user = Users.objects.filter(email_address__iexact = email_address).order_by("id").first() if email_address else None # Gets The User
-            code = issue_password_reset_code(user) if user else None # Generates A Secure 6-Digit Code (None While The Cooldown Is Active)
+            code = sendPasswordResetMail(user, translation.get_language()) if user else None # Issues The Code And Sends It In The Language Of The Page (None While The Cooldown Is Active)
 
             if code:
-
-                # Sends The Mail
-                sendMail(
-                    user,
-                    _("Obnova hesla"), # Subject
-                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # Text Content
-                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": user.language, "code": code}, # HTML Content
-                    _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                    code
-                )
 
                 messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": email_address}) # Sets The Message
 
@@ -3644,6 +3642,7 @@ def communityView(request):
         if request.method == "POST":
             # Upload Post Form
             if request.POST.get("upload_post_form_submit"):
+                wants_json = "application/json" in request.headers.get("Accept", "") # The Upload Dialog Sends The Form With fetch And Shows JSON Errors Itself
                 recaptcha_response = request.POST.get("g-recaptcha-response") # Gets The reCaptcha Response
                 
                 # Gets The reCaptcha Data
@@ -3662,8 +3661,15 @@ def communityView(request):
 
                 # Checks The reCaptcha Validity
                 if not recaptcha_api.get("success") or recaptcha_api.get("score", 0) < 0.1:
-                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo")) # Sets The Message
                     captureError(f"Verification by reCAPTCHA failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+
+                    if wants_json:
+                        return JsonResponse({
+                            "success": False,
+                            "message": _("Overenie reCaptcha zlyhalo")
+                        }, status = 400)
+
+                    messages.add_message(request, messages.ERROR, _("Overenie reCaptcha zlyhalo")) # Sets The Message
 
                 else:
                     upload_post_form = uploadPostForm(request.POST) # Gets The Upload Post Form
@@ -3873,6 +3879,13 @@ def communityView(request):
 
                                 except Exception:
                                     new_post.delete() # Deletes The New Post
+
+                                    if wants_json:
+                                        return JsonResponse({
+                                            "success": False,
+                                            "message": _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name}
+                                        }, status = 400)
+
                                     messages.add_message(request, messages.ERROR, _("Chyba pri spracovaní súboru:\n%(file)s") % {"file": one_file.name}) # Sets The Message
                                     return redirect("community_url") # Redirects To The Community Page
 
@@ -3882,12 +3895,26 @@ def communityView(request):
                             }, status = 200)
 
                         except Exception as error:
-                            messages.add_message(request, messages.ERROR, _("Pri pridávaní príspevku došlo k chybe")) # Sets The Message
                             captureError(f"An error occurred while adding the post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
-                    
+
+                            if wants_json:
+                                return JsonResponse({
+                                    "success": False,
+                                    "message": _("Pri pridávaní príspevku došlo k chybe")
+                                }, status = 500)
+
+                            messages.add_message(request, messages.ERROR, _("Pri pridávaní príspevku došlo k chybe")) # Sets The Message
+
                     else:
-                        messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo")) # Sets The Message
                         captureError(f"Uploading the post failed.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
+
+                        if wants_json:
+                            return JsonResponse({
+                                "success": False,
+                                "message": _("Pridávanie príspevku zlyhalo")
+                            }, status = 400)
+
+                        messages.add_message(request, messages.ERROR, _("Pridávanie príspevku zlyhalo")) # Sets The Message
 
             # Mark Post As Seen
             if request.headers.get("X-Requested-Action") == "mark-post-as-seen":
@@ -4953,21 +4980,9 @@ def profileView(request, username):
                             }, status = 500)
                 
                 if request.GET.get("password-reset"):
-                    code = generateCode() # Generates Random 6-Digit Code
-
-                    # Sends The Mail
-                    sendMail(
-                        logged_in_user,
-                        _("Obnova hesla"), # Subject
-                        _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # Text Content
-                        _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite <a href="%(domain)s%(language)s/obnova-hesla?password-reset-code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "language": logged_in_user.language, "code": code}, # HTML Content
-                        _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                        code
-                    )
-
-                    Users.objects.filter(id = logged_in_user_id).update(password_reset_code = code) # Updates The Password Reset Code
-
-                    messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address}) # Sets The Message
+                    # Issues The Code With Its Expiry Marker (Storing The Code Directly Made Every Code "Expired") And Sends It In The User's Language
+                    if sendPasswordResetMail(logged_in_user, translation.get_language()): # In The Language Of The Page
+                        messages.add_message(request, messages.SUCCESS, _("Overovací kód bol odoslaný na adresu\n%(email_address)s") % {"email_address": logged_in_user.email_address}) # Sets The Message
 
                     response = HttpResponseRedirect(reverse("password_reset_url")) # Redirects To The Password Reset Page
                     # response["Location"] += f"?password-reset-code={code}" # Add Parameter With Code To URL

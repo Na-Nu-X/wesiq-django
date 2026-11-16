@@ -20,6 +20,8 @@ export function initializeRecordVideoWatchTime(post_media_id:number, start_time:
 
 // Function For Record The Video Watch Time
 async function recordVideoWatchTime(post_media_id:number, watch_time:number):Promise<void> {
+    if(!document.querySelector("header .banner .account")) return // Only Logged In Users' Watch Time Is Recorded (The Server Answers 401 Otherwise)
+
     const url:string = "/api/update-video-watch-time/" // Sets The URL
     const form_data:FormData = new FormData() // Creates The Form Data
     const csrf_input:HTMLInputElement|null = document.querySelector("[name=csrfmiddlewaretoken]") as HTMLInputElement | null // Gets The CSRF Token Input

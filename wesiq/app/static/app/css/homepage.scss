@@ -74,6 +74,7 @@ header {
         // Search Bar
 
         .search_container {
+            @include search_dropdown(".search_result_container", calc(#{$min-touch-target} * 5 + #{$space-sm}));
             position: relative;
             max-width: $max-content-width;
             width: 100%;
@@ -88,30 +89,6 @@ header {
             // Search Results (Raised Panel Of "UserRow"-Like Rows)
 
             .search_result_container {
-                @include scrollbar;
-                position: absolute;
-                top: $min-touch-target;
-                width: 100%;
-                max-height: calc(#{$min-touch-target} * 5 + #{$space-sm});
-                padding: 0px $space-xs;
-                background-color: $color-surface-raised;
-                border: 0px solid $color-border;
-                border-radius: $radius-md;
-                box-shadow: $shadow-lg;
-                opacity: 0;
-                overflow-y: auto;
-                pointer-events: none;
-                transition: top $duration-normal ease, opacity $duration-normal ease;
-                z-index: 50;
-
-                &.active {
-                    top: $min-touch-target + $space-xs;
-                    padding: $space-xs;
-                    border-width: $hairline;
-                    opacity: 1;
-                    pointer-events: auto;
-                }
-
                 .search_result {
                     position: relative;
                     height: $min-touch-target;
@@ -149,7 +126,7 @@ header {
                         line-height: $min-touch-target;
                         padding: 0px $space-xxxl + $space-sm;
                         color: $color-text;
-                        text-align: left;
+                        text-align: center;
                         text-decoration: none;
                         border-radius: $radius-sm;
                         transition: background-color $duration-fast ease;

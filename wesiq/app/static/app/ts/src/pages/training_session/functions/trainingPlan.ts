@@ -28,12 +28,62 @@ import {
 import { getDayName } from "../../../utils/getDayName.js"
 import { randomColor } from "../../../utils/randomColor.js"
 
-// Function For Create Bar Labels
-function createBarLabels(bars:NodeListOf<HTMLDivElement>, exercises:NodeListOf<HTMLDivElement>):void {
-    bars.forEach(function(one_bar:HTMLDivElement, index:number):void {
-        one_bar.dataset["exercise"] = ((exercises[index] as HTMLDivElement).querySelector(".title") as HTMLHeadingElement).textContent // Sets Exercise Title To Bar Data
-        one_bar.classList.add("show") // Shows The Label
+// Function For Get The Target Of One Set (Reps, Time Or Steps, Like The Native Plan Preview)
+function getSetTarget(period:number, unit:string):string {
+    if(period === 0) return gettext("Do zlyhania") // To Failure
+    if(unit === "seconds") return getMinimalistFormattedTime(period) // Time
+    return String(period) // Reps Or Steps
+}
+
+// Function For Render The Start Screen Of The Plan (Title, "Day · Exercises · Sets" And The First Exercises)
+function renderPlanIntro(start_training:HTMLDivElement, day:string, plan_exercises:HTMLDivElement[]):void {
+    const plan_meta:HTMLParagraphElement|null = start_training.querySelector(".plan_meta") // Gets The Meta Line
+    const plan_preview:HTMLDivElement|null = start_training.querySelector(".plan_preview") // Gets The Preview List
+
+    const exercises:HTMLDivElement[] = plan_exercises.filter(one_exercise => one_exercise.dataset["exercise"] !== "Warm Up") // Gets The Exercises Without The Warm Up
+    const sets:number = exercises.reduce((sum:number, one_exercise:HTMLDivElement) => sum + (JSON.parse(one_exercise.dataset["periods"] || "[0]") as number[]).length, 0) // Counts All Sets
+
+    if(plan_meta) {
+        plan_meta.textContent = [
+            getDayName(Number(day)), // Empty For Plans Without A Day (Filtered Out Below)
+            interpolate(gettext("Cviky: %(count)s"), { count: exercises.length }, true),
+            interpolate(gettext("Série: %(count)s"), { count: sets }, true)
+        ].filter(Boolean).join(" · ")
+    }
+
+    if(!plan_preview) return
+
+    plan_preview.innerHTML = "" // Deletes The Previous Preview
+
+    plan_exercises.slice(0, 5).forEach(function(one_exercise:HTMLDivElement, index:number):void {
+        const is_warm_up:boolean = one_exercise.dataset["exercise"] === "Warm Up" // Checks If It Is The Warm Up
+        const periods:number[] = JSON.parse(one_exercise.dataset["periods"] || "[0]") as number[] // Gets The Sets
+
+        const row:HTMLDivElement = document.createElement("div") // Creates The Row
+        row.classList.add("preview_row")
+
+        const number:HTMLSpanElement = document.createElement("span")
+        number.classList.add("preview_index")
+        number.textContent = String(index + 1)
+
+        const name:HTMLSpanElement = document.createElement("span")
+        name.classList.add("preview_name")
+        name.textContent = is_warm_up ? plan_preview.dataset["warm_up_label"] || "" : one_exercise.dataset["exercise"] || ""
+
+        const target:HTMLSpanElement = document.createElement("span")
+        target.classList.add("preview_target")
+        target.textContent = is_warm_up ? getMinimalistFormattedTime(periods[0] || 0) : `${periods.length} × ${getSetTarget(periods[0] ?? 0, one_exercise.dataset["unit"] || "reps")}`
+
+        row.append(number, name, target)
+        plan_preview.appendChild(row)
     })
+
+    if(plan_exercises.length > 5) {
+        const more:HTMLParagraphElement = document.createElement("p") // Creates The "And More" Line
+        more.classList.add("preview_more")
+        more.textContent = (plan_preview.dataset["more_label"] || "").replace("%(count)s", String(plan_exercises.length - 5))
+        plan_preview.appendChild(more)
+    }
 }
 
 // Function For Update Training Plan Progress
@@ -260,6 +310,16 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
     if(days.length > 1) {
         const training_plan_bar_container:HTMLDivElement = createTrainingPlanBars(days.length, training_plan_state)
         renderTrainingPlanBars(training_plan_container, training_plan_bar_container)
+
+        // Labels Each Bar With Its Plan ("Title · Day"), So They Work Like The Plan Chips Of The Native App
+        training_plan_bar_container.querySelectorAll<HTMLDivElement>(".bar").forEach(function(one_bar:HTMLDivElement, index:number):void {
+            const day:string|null = days[index] ?? null // Gets The Day Of The Plan
+            const first_exercise:HTMLDivElement|undefined = [...data].find(one_exercise => (one_exercise.dataset["day"] || null) === day) // Gets One Exercise Of The Plan
+
+            one_bar.textContent = [first_exercise?.dataset["type"] || "", day !== null ? getDayName(Number(day)) : ""].filter(Boolean).join(" · ") // Plans Without A Day Show Only The Title
+            one_bar.setAttribute("role", "tab")
+            one_bar.setAttribute("aria-selected", String(index === training_plan_state.active_training_plan_index))
+        })
     }
 
     const selected_day:string|null = days[training_plan_state.active_training_plan_index] || null // Selects Current Or Upcoming Day Of Training Plan
@@ -281,7 +341,7 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
                 training_plan.dataset["title"] = training_plan_title_data; // Stores Training Plan Title Data
                 training_plan.dataset["day"] = day_data; // Stores Training Plan Day Data
 
-                (start_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}`; // Sets Training Plan Title On The Start Training Slide
+                (start_training.querySelector(".title") as HTMLParagraphElement).textContent = training_plan_title_data; // Sets Training Plan Title On The Start Training Slide
                 (finish_training.querySelector(".title") as HTMLParagraphElement).textContent = `${training_plan_title_data} - ${getDayName(Number(day_data))}` // Sets Training Plan Title On The Finish Training Slide
 
                 // Creates Warm Up
@@ -312,11 +372,12 @@ export function generateTrainingPlan(container:HTMLDivElement):void {
 
     const exercises:NodeListOf<HTMLDivElement> = training_plan.querySelectorAll<HTMLDivElement>(".exercise") // Gets All Training Plan Exercises
 
-    // Creates And Renders Bars
+    // Renders The Start Screen Of The Selected Plan
+    if(selected_day !== null) renderPlanIntro(start_training, selected_day, ordered_exercises.filter(one_exercise => (one_exercise.dataset["day"] || null) === selected_day))
+
+    // Creates And Renders The Progress Segments (One Per Exercise, Without Labels Like In The Native App)
     const bar_container:HTMLDivElement = createBars(exercises.length, training_plan_state)
     renderBars(training_plan, bar_container)
-
-    createBarLabels(bar_container.querySelectorAll<HTMLDivElement>(".bar"), exercises) // Creates Bar Labels
 
     const current_activity_info = training_plan.querySelector(".current_activity_info") as HTMLParagraphElement // Gets Current Activity Info
     training_plan.appendChild(current_activity_info) // Appends Current Activity Info At The End Of The Training Plan

@@ -149,7 +149,7 @@
 
             <div class="form_questions">
                 <p>{% translate "Zabudli ste heslo?" %} <a class="password_reset" href="?password-reset=true" title="{% translate 'Poslať overovací kód' %}">{% translate "Zmeniť heslo" %}</a></p>
-                <p>{% translate "Ešte nemáte účet?" %} <a href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "Vytvoriť účet" %}</a></p>
+                <p>{% translate "Ešte nemáte účet?" %} <a class="switch_to_registration" href="{% url 'registration_url' %}" title="{% translate 'Vytvoriť účet' %}" target="_self">{% translate "Vytvoriť účet" %}</a></p>
             </div>
         </form>
     </dialog>
@@ -242,7 +242,7 @@
             <input class="registration_form_submit" type="submit" value="{% translate 'Vytvoriť účet' %}">
 
             <div class="form_questions">
-                <p>{% translate "Už máte účet?" %} <a href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihlásiť sa" %}</a></p>
+                <p>{% translate "Už máte účet?" %} <a class="switch_to_login" href="{% url 'login_url' %}" title="{% translate 'Prihlásiť sa' %}" target="_self">{% translate "Prihlásiť sa" %}</a></p>
             </div>
 
             <!-- Google reCAPTCHA V3 -->

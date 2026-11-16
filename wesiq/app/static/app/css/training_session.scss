@@ -1,322 +1,540 @@
 @import "../../../../static/css/partials/variables";
 @import "../../../../static/css/partials/mixins";
 
-// Training page palette (aliases of shared glass tokens)
-
-$training-surface: $surface;
-$training-surface-border: $surface-border;
-$training-surface-hover: $surface-hover;
-$training-glow: $surface-glow;
-
-/**************
- Header Styles
-**************/
-
-// Banner
-
-.banner {
-    .left {
-        .manage_training_plans {
-            a {
-                display: flex;
-                align-items: center;
-                gap: 5px;
-                width: max-content;
-                padding: 5px 10px;
-                background-color: transparent;
-                border: 1px solid $dark-blue-color;
-                border-radius: $big-border-radius;
-                cursor: pointer;
-                transition: transform 0.1s ease;
-            }
-
-            &.not_allowed {
-                a {
-                    cursor: not-allowed;
-                    opacity: 0.6;
-
-                    &:hover,
-                    &:focus-visible {
-                        transform: none;
-                        box-shadow: none;
-                    }
-                }
-            }
-        }
-    }
-}
-
 /************
- Main Styles
+ Main Styles (Laid Out Like The Native Activity Screen: One Column Of Cards)
 ************/
 
 .training_page {
-    max-width: $main-width;
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+    width: 100%;
+    max-width: $max-content-width;
     margin: 0px auto;
 
     .training_section {
-        position: relative;
-        margin: 0px auto 50px;
-        overflow: visible;
-
-        &.activity_section {
-            max-width: $secondary-width;
-        }
-
-        &.tasks_section {
-            max-width: $main-width;
-        }
-
-        &.history_section {
-            max-width: $secondary-width;
-            margin-bottom: 30px;
-        }
+        display: flex;
+        flex-direction: column;
+        gap: $space-lg;
+        width: 100%;
     }
 
+    // Card Title ("Text" Heading)
     .section_title {
-        margin-bottom: 25px;
-        text-align: center;
-        font-family: $article-heading-font;
-        font-size: 1.8em;
+        @include typography(heading);
+        margin: 0px;
+        text-align: left;
+        color: $color-text;
+    }
+
+    // Section Label ("Text" Overline)
+    .section_overline {
+        @include typography(overline);
+        margin-bottom: -$space-sm;
+        color: $color-text-muted;
     }
 }
 
+// Header ("Header" Large)
+
+.page_header {
+    display: flex;
+    flex-direction: column;
+    gap: $space-xs;
+
+    .page_title {
+        @include typography(title);
+        color: $color-text;
+    }
+
+    .page_subtitle {
+        @include typography(callout);
+        color: $color-text-secondary;
+    }
+}
+
+// Plan Shortcuts ("Chip" Row)
+
+.plan_chips {
+    display: flex;
+    justify-content: center;
+    gap: $space-sm;
+    overflow-x: auto;
+    scrollbar-width: none;
+
+    .chip {
+        @include chip;
+        text-decoration: none;
+    }
+}
+
+/*********
+ Activity
+*********/
+
 .activity {
-    @include flex_center($direction: column);
-    max-width: 100%;
-    width: 100%;
-    min-height: auto;
-    margin: 0px auto;
+    display: flex;
+    flex-direction: column;
+    gap: $space-lg;
+
+    // Sign In Card ("Card" Highlighted)
+
+    .sign_in_card {
+        @include card(highlighted, $space-md);
+        display: flex;
+        align-items: center;
+        gap: $space-md;
+
+        > i {
+            font-size: 18px;
+            color: $color-primary;
+        }
+
+        p {
+            @include typography(callout);
+            flex: 1;
+            color: $color-text;
+        }
+
+        .sign_in_button {
+            @include button(primary, sm);
+            flex-shrink: 0;
+        }
+    }
+
+    // Timer Card
 
     .record_activity {
-        @include flex_center($direction: column);
-        width: 100%;
-        margin-bottom: 20px;
-        padding: 20px 50px 30px;
-        border: $hairline solid $color-border;
-        border-radius: $medium-border-radius;
-        border-radius: $medium-border-radius;
+        @include card(default, $space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
+        transition: border-color $duration-normal ease;
+
+        &[data-state="running"] {
+            border-color: $color-border-strong;
+        }
+
+        .timer_top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            // Status Pill (Ready, Recording, Paused)
+            .status {
+                @include typography(label);
+                display: inline-flex;
+                align-items: center;
+                gap: $space-xs + 2px;
+                padding: 4px $space-sm + 2px;
+                color: $color-text-secondary;
+                background-color: $color-surface-raised;
+                border-radius: $radius-pill;
+
+                .dot {
+                    width: 7px;
+                    height: 7px;
+                    background-color: $color-text-muted;
+                    border-radius: $radius-pill;
+                }
+
+                .status_running,
+                .status_paused {
+                    display: none;
+                }
+            }
+        }
+
+        &[data-state="running"] .timer_top .status {
+            color: $color-success;
+            background-color: $color-success-soft;
+
+            .dot {
+                background-color: $color-success;
+            }
+
+            .status_ready {
+                display: none;
+            }
+
+            .status_running {
+                display: inline;
+            }
+        }
+
+        &[data-state="paused"] .timer_top .status {
+            .dot {
+                background-color: $color-warning;
+            }
+
+            .status_ready {
+                display: none;
+            }
+
+            .status_paused {
+                display: inline;
+            }
+        }
 
         .timer {
-            margin-bottom: 20px;
             @include typography(timer);
-            color: $color-text;
+            padding-top: $space-sm;
+            font-size: 52px;
+            line-height: 64px;
+            text-align: center;
             white-space: nowrap;
+            color: $color-text;
 
             span {
+                font: inherit;
                 font-variant-numeric: tabular-nums;
-                display: inline-block;
-                width: 80px;
-                font-family: inherit;
+            }
+        }
+
+        .activity_xp {
+            @include typography(callout);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: $space-xs;
+            margin-top: -$space-sm;
+            font-variant-numeric: tabular-nums;
+            color: $color-text-secondary;
+
+            i {
+                font-size: 12px;
+                color: $color-text-muted;
+            }
+
+            span {
                 font-size: inherit;
             }
         }
 
         .buttons {
-            @include flex_center;
-            gap: 20px;
-            width: 100%;
+            display: flex;
+            gap: $space-sm;
+            padding-top: $space-xs;
 
-            .play,
+            .play {
+                @include button(primary, lg);
+                flex: 1;
+
+                .label_pause,
+                .label_resume {
+                    display: none;
+                }
+            }
+
             .stop {
-                @include blue_button;
-                position: relative;
-                width: 90%;
-
-                .fa-play, .fa-pause, .fa-stop {
-                    @include position_center;
-                    font-size: 20px;
-                    color: $color-on-primary;
-                }
-
-                .fa-play {
-                    left: calc(50% + 2.5px);
-                }
+                @include button(secondary, lg);
 
                 .fa-stop {
                     color: $color-danger;
                 }
             }
+        }
 
-            .stop {
-                color: $color-text;
-                background-color: $color-surface-raised;
-                border-color: $color-border;
-                box-shadow: none;
+        &[data-state="ready"] .buttons .stop {
+            opacity: $disabled-opacity;
+            box-shadow: none;
+            pointer-events: none;
+        }
 
-                &:hover,
-                &:focus-visible {
-                    background-color: $color-surface-pressed;
-                }
+        &[data-state="running"] .buttons .play {
+            .label_start {
+                display: none;
             }
 
-            .play {
-                @include glow_animated_border;
-                background: $color-primary-solid;
-                color: $color-on-primary;
-                border-color: $blue-color;
+            .label_pause {
+                display: inline;
+            }
+        }
 
-                &:hover,
-                &:focus-visible {
-                    background: $color-primary-solid-pressed;
-                }
+        &[data-state="paused"] .buttons .play {
+            .label_start {
+                display: none;
+            }
+
+            .label_resume {
+                display: inline;
             }
         }
     }
 
-    .no_training_plan,
-    .no_logged_in {
-        max-width: $secondary-width;
-        width: 100%;
-        margin-bottom: 40px;
-        padding: 20px 10px;
+    // No Training Plan ("Card" Empty State)
+
+    .no_training_plan {
+        @include card(default, $space-lg);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $space-sm;
         text-align: center;
-        background-color: $color-surface;
-        border: $hairline solid $color-border;
-        border-radius: $medium-border-radius;
-        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 
-        &:hover {
-            background: transparent;
-            border-color: $color-border-strong;
-            cursor: pointer;
-        }
+        .no_plan_icon {
+            @include empty_state_icon(48px);
+            margin-bottom: $space-xs;
 
-        a {
-            color: $secondary-color;
-            text-decoration: none;
-            font-style: italic;
-
-            &:hover,
-            &:active,
-            &:focus-visible {
-                text-decoration: underline;
+            i {
+                font-size: 20px;
             }
         }
+
+        h3 {
+            @include typography(heading);
+            color: $color-text;
+        }
+
+        p {
+            @include typography(callout);
+            color: $color-text-secondary;
+        }
+
+        .create_plan_button {
+            @include button(primary);
+            margin-top: $space-sm;
+        }
     }
+
+    // Training Plan Card
 
     .training_plan_container {
-        @include flex_center($direction: column);
+        @include card(default, $space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
         width: 100%;
-        margin-bottom: 40px;
+
+        // Data For The Script (Hidden, Otherwise Each Empty Div Adds A Flex Gap)
+        .one_exercise_data {
+            display: none;
+        }
+
+        .plan_card_header {
+            @include typography(overline);
+            order: -2;
+            display: flex;
+            align-items: center;
+            gap: $space-sm;
+            min-height: 28px;
+            color: $color-text-muted;
+
+            i {
+                font-size: 14px;
+                color: $color-primary;
+            }
+        }
+
+        // Plan Picker ("Chip" Row, One Chip Per Plan)
+
+        .training_plan_bar_container {
+            order: -1;
+            display: flex;
+            gap: $space-sm;
+            margin: 0px (-$space-lg);
+            padding: 0px $space-lg $space-xxs;
+            overflow-x: auto;
+            scrollbar-width: none;
+
+            .bar {
+                @include chip;
+                flex-shrink: 0;
+
+                &.active {
+                    @include chip_selected;
+                }
+            }
+        }
 
         .training_plan {
-            @include animated_border;
             position: relative;
             display: flex;
             flex-direction: column;
+            gap: $space-md;
             width: 100%;
-            height: 250px;
-            border-radius: $medium-border-radius;
+            min-height: 0px;
             overflow: hidden;
 
             &.blur {
-                animation: blur 0.3s ease-out;
+                animation: blur $duration-normal ease-out;
             }
 
-            .start_training, 
+            // Slides (Only The Active One Is In The Flow)
+
+            .start_training,
             .exercise,
             .finish_training,
             .break,
             .warm_up {
                 display: flex;
-                align-items: center;
-                justify-content: space-between;
+                flex-direction: column;
+                align-items: stretch;
+                gap: $space-lg;
                 width: 100%;
-                height: 200px;
-                padding: 10px 50px 0px;
-                transition: transform 0.5s ease;
-                z-index: 100;
+                animation: fadeIn $duration-normal ease;
 
                 &:not(.active) {
-                    position: absolute;
-                    top: 0px;
-                    transform: translateX(100%);
-
-                    .left {
-                        opacity: 0;
-                    }
-                }
-
-                .left {
-                    opacity: 1;
-                    transition: opacity 0.5s ease;
-
-                    p {
-                        color: $color-text-muted;
-                        font-size: 0.85em;
-                        text-transform: uppercase;
-                        letter-spacing: 1px;
-
-                        &:first-child {
-                            margin-bottom: 5px;
-                        }
-                    }
-
-                    h3 {
-                        font-family: $article-heading-font;
-                        font-size: 2em;
-                        color: $secondary-color;
-                    }
-                }
-
-                .start_training_button,
-                .next_exercise_button,
-                .finish_training_button,
-                .add_time,
-                .skip_break_button,
-                .skip_warm_up_button {
-                    @include icon_button(solid, 50px);
-                    position: relative;
-
-                    .fa-play,
-                    .fa-angle-right,
-                    .fa-plus,
-                    .fa-stop {
-                        @include position_center;
-                        font-size: 20px;
-                        color: inherit;
-                    }
-
-                    .fa-play {
-                        left: calc(50% + 2.5px);
-                    }
+                    display: none;
                 }
             }
 
-            .exercise {
+            // Start (Title, Meta And Exercise Preview)
+
+            .start_training {
                 .left {
+                    display: flex;
+                    flex-direction: column;
+                    gap: $space-xs;
+
                     .title {
-                        max-width: 350px;
+                        @include typography(title);
+                        color: $color-text;
                     }
 
-                    .reps,
+                    .plan_meta {
+                        @include typography(callout);
+                        color: $color-text-secondary;
+                    }
+
+                    .plan_preview {
+                        display: flex;
+                        flex-direction: column;
+                        gap: $space-sm;
+                        margin-top: $space-md;
+                        padding: $space-md;
+                        background-color: $color-surface-raised;
+                        border-radius: $radius-md;
+
+                        &:empty {
+                            display: none;
+                        }
+
+                        .preview_row {
+                            display: flex;
+                            align-items: center;
+                            gap: $space-sm;
+
+                            .preview_index {
+                                @include typography(caption);
+                                width: 16px;
+                                font-variant-numeric: tabular-nums;
+                                color: $color-text-muted;
+                            }
+
+                            .preview_name {
+                                @include typography(callout);
+                                @include crop_text;
+                                flex: 1;
+                                min-width: 0;
+                                color: $color-text;
+                            }
+
+                            .preview_target {
+                                @include typography(caption);
+                                flex-shrink: 0;
+                                color: $color-text-secondary;
+                            }
+                        }
+
+                        .preview_more {
+                            @include typography(caption);
+                            color: $color-text-muted;
+                        }
+                    }
+                }
+
+                .start_training_button {
+                    @include button(primary, lg, 100%);
+                }
+            }
+
+            // Exercise (Name, Big Target, Set Counter)
+
+            .exercise:not(.warm_up) {
+                align-items: center;
+                padding: $space-sm 0px;
+                text-align: center;
+
+                .left {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: $space-xs;
+
+                    .title {
+                        @include typography(heading);
+                        color: $color-text;
+                    }
+
+                    .reps {
+                        @include typography(timer);
+                        font-size: 48px;
+                        line-height: 60px;
+                        color: $color-primary;
+                    }
+
                     .sets {
-                        font-family: $article-heading-font;
-                        font-size: 1.2em;
+                        @include typography(label);
+                        color: $color-text-secondary;
 
                         .current,
                         .total {
-                            font-family: inherit;
-                            font-size: inherit;
+                            font: inherit;
                         }
                     }
                 }
+
+                .next_exercise_button {
+                    @include button(primary, md, 100%);
+                }
             }
 
+            // Warm Up And Break (Countdown)
+
+            .warm_up,
             .break {
+                align-items: center;
+                text-align: center;
+
+                .title,
+                .break_title {
+                    @include typography(heading);
+                    color: $color-text;
+                }
+            }
+
+            .break .break_timer,
+            .warm_up .warm_up_timer {
+                @include timer;
+                width: 120px;
+                height: 120px;
+            }
+
+            .skip_warm_up_button {
+                @include button(secondary, md, 100%);
+            }
+
+            .break_buttons {
+                display: flex;
+                gap: $space-sm;
+                width: 100%;
+
                 .add_time {
+                    @include button(secondary);
+                    position: relative;
                     overflow: visible;
 
                     .add_time_message {
+                        @include typography(label);
                         visibility: hidden;
                         opacity: 0;
                         position: absolute;
                         top: 0%;
                         left: 50%;
                         transform: translate(-50%, -50%);
-                        text-align: center;
-                        color: $blue-color;
+                        color: $color-primary-text;
                         z-index: 200;
 
                         &.animate {
@@ -324,255 +542,196 @@ $training-glow: $surface-glow;
                         }
                     }
                 }
-            }
 
-            .warm_up {
-                .title {
-                    width: 50px;
-                    font-family: $article-heading-font;
-                    font-size: 2em;
-                }
-
-                .skip_warm_up_button {
-                    width: 50px;
+                .skip_break_button {
+                    @include button(primary);
+                    flex: 1;
                 }
             }
 
-            // Timer
+            // Finish
 
-            .break .break_timer,
-            .warm_up .warm_up_timer {
-                @include timer;
+            .finish_training {
+                align-items: center;
+                text-align: center;
+
+                .left {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    gap: $space-sm;
+
+                    .finish_icon {
+                        @include flex_center;
+                        width: 56px;
+                        height: 56px;
+                        color: $color-premium;
+                        background-color: $color-premium-soft;
+                        border-radius: $radius-pill;
+
+                        i {
+                            font-size: 24px;
+                        }
+                    }
+
+                    h3 {
+                        @include typography(title);
+                        color: $color-text;
+                    }
+
+                    p {
+                        @include typography(callout);
+                        color: $color-text-secondary;
+                    }
+
+                    .title {
+                        @include typography(caption);
+                        color: $color-text-muted;
+                    }
+                }
+
+                .finish_training_button {
+                    @include button(primary, lg, 100%);
+                }
             }
+
+            // Progress Segments (One Per Exercise, No Labels, Like The Native Plan Card)
 
             .bar_container {
-                position: relative;
+                order: -1;
                 display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                gap: 10px;
-                margin: auto 10px 0px;
+                gap: 4px;
 
                 .bar {
                     --progress: 0%;
-                    --progress-color: rgb(255, 207, 32);
 
                     position: relative;
-                    width: 100%;
-                    height: 10px;
-                    border: $hairline solid $color-divider;
-                    border-radius: calc(10px / 2);
+                    flex: 1;
+                    min-width: 0;
+                    height: 6px;
+                    overflow: hidden;
+                    background-color: $color-surface-strong;
+                    border-radius: $radius-pill;
+                    outline-offset: 2px;
 
-                    // Progress
-                    &:before {
+                    &::before {
                         content: "";
                         position: absolute;
                         top: 0px;
                         left: 0px;
                         width: 0%;
                         height: 100%;
+                        background-color: $color-primary;
                         border-radius: inherit;
+                        transition: width $duration-slow linear;
                     }
 
                     &.active {
-                        &:before {
+                        background-color: $color-primary-soft;
+
+                        &::before {
                             width: var(--progress);
-                            background-color: var(--progress-color);
-                            box-shadow: 0px 0px 10px var(--progress-color);
-                            transition: width 0.5s linear, background-color 0.5s ease;
-                        }
-                    }
-
-                    // Label
-                    &:after {
-                        pointer-events: none;
-                        opacity: 0;
-                        content: attr(data-exercise);
-                        position: absolute;
-                        top: -5px;
-                        left: 50%;
-                        transform: translate(-50%, 0%);
-                        width: calc(100% + 10px);
-                        text-align: center;
-                        font-size: 0.8em;
-                        line-height: 0.8em;
-                        color: $color-text-muted;
-                        text-overflow: ellipsis;
-                        overflow: hidden;
-                        transition: opacity 0.3s ease, transform 0.3s ease;
-                    }
-
-                    &.show {
-                        &:after {
-                            opacity: 0.5;
-                            transform: translate(-50%, -100%);
                         }
                     }
                 }
             }
+
+            // The Segments Only Matter Once The Training Runs
+            &:has(.start_training.active) .bar_container {
+                display: none;
+            }
+
+            // XP Boost ("Card" Premium Soft)
 
             .current_activity_info {
                 --progress: 100%;
 
+                @include typography(caption);
                 position: relative;
-                margin: 10px 0px;
+                padding: $space-md;
                 text-align: center;
-                font-family: $article-heading-font;
-                z-index: 100;
+                color: $color-text-secondary;
+                background-color: $color-surface-raised;
+                border-radius: $radius-md;
+                overflow: hidden;
 
                 &::before {
                     content: "";
                     position: absolute;
-                    top: 50%;
-                    left: 10px;
-                    transform: translateY(-50%);
-                    width: 100%;
-                    width: calc(100% - 20px - var(--progress));
-                    height: 1px;
-                    background-color: transparentize($blue-color, 0.5);
-                    box-shadow: 0px 0px 10px $blue-color;
-                    z-index: -1;
+                    left: 0px;
+                    bottom: 0px;
+                    width: calc(100% - var(--progress));
+                    height: 3px;
+                    background-color: $color-premium;
                 }
 
                 span {
-                    font-family: $article-heading-font;
-                    color: $color-text-muted;
-                    opacity: 0.5;
+                    font-size: inherit;
+                    color: inherit;
                 }
 
                 .fa-bolt {
-                    color: $blue-color;
-                }
-            }
-        }
-
-        .training_plan_bar_container {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            gap: 10px;
-            width: 100%;
-            margin-top: 10px;
-
-            .bar {
-                width: 100%;
-                height: 10px;
-                border: $hairline solid $color-border;
-                border-radius: calc(10px / 2);
-                transition: background-color 0.3s ease;
-
-                &.active,
-                &:hover {
-                    cursor: pointer;
-                    background-color: $blue-color;
-                    box-shadow: 0px 0px 10px $blue-color;
+                    color: $color-premium;
                 }
             }
         }
     }
 
+    // Last 7 Days ("StatsGrid": Four Tiles)
+
     .previous_activity {
-        max-width: 100%;
-        width: 100%;
-        margin-top: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: $space-sm;
 
-        .top {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            margin-bottom: 15px;
-
-            .average_activity_time_container,
-            .activities_amount_container {
-                display: flex;
-                flex-direction: column;
-                width: 100%;
-                padding: 20px 10px;
-                text-align: center;
-                background-color: $color-surface;
-                border: $hairline solid $color-border;
-                border-radius: $medium-border-radius;
-                transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
-
-                &:hover {
-                    background: transparent;
-                    border-color: $color-border-strong;
-                    cursor: pointer;
-                }
-
-                p {
-                    .title {
-                        @include flex_center;
-                        gap: 5px;
-                        font-size: 0.8em;
-                        text-align: center;
-                        color: $color-text-muted;
-
-                        i {
-                            color: $blue-color;
-                        }
-                    }
-
-                    .average_activity_time,
-                    .activities_amount {
-                        display: block;
-                        margin-top: 15px;
-                        line-height: 1;
-                        font-size: 1.5em;
-                        font-weight: semibold;
-                        color: $blue-color;
-                        white-space: nowrap;
-                    }
-                }
-            }
+        .top,
+        .bottom {
+            display: contents;
         }
 
-        .bottom {
-            padding: 15px;
-            background-color: $color-surface;
-            border: $hairline solid $color-border;
-            border-radius: $medium-border-radius;
-            transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+        .stat_tile {
+            @include card(default, $space-md);
 
-            &:hover {
-                background: transparent;
-                border-color: $color-border-strong;
-                cursor: pointer;
-            }
+            p {
+                display: flex;
+                flex-direction: column;
+                gap: $space-xs;
+                min-width: 0;
 
-            .latest_activity_container,
-            .longest_activity_container {
-                p {
-                    @include flex_center;
-                    gap: 5px;
+                .title {
+                    @include typography(caption);
+                    @include crop_text;
+                    color: $color-text-secondary;
 
                     i {
-                        color: $blue-color;
+                        margin-right: $space-xs;
+                        font-size: 12px;
+                        color: $color-primary;
                     }
+                }
 
-                    span {
-                        text-align: center;
-                        white-space: nowrap;
-                        color: $color-text-muted;
+                .average_activity_time,
+                .activities_amount,
+                .value {
+                    @include typography(heading);
+                    @include crop_text;
+                    font-variant-numeric: tabular-nums;
+                    color: $color-text;
+                }
 
-                        &.no_latest_activity,
-                        &.no_longest_activity {
-                            white-space: normal;
-                            color: $color-text-muted;
-                        }
-                    }
-
-                    .xp,
-                    .none {
-                        font-size: 1.2em;
-                        font-weight: semibold;
-                        color: $blue-color;
-                    }
+                .detail {
+                    @include typography(caption);
+                    @include crop_text;
+                    color: $color-text-muted;
                 }
             }
         }
     }
 }
+
+/****************
+ Activity Summary (Shown After Finishing An Activity)
+****************/
 
 .activity_summary {
     @include flex_center($direction: column);
@@ -609,8 +768,8 @@ $training-glow: $surface-glow;
         max-width: 90vw;
         height: 250px;
         padding: 20px;
-        background: $training-surface;
-        border: 1px solid $training-surface-border;
+        background: $color-surface;
+        border: 1px solid $color-border;
         border-radius: $medium-border-radius;
 
         canvas {
@@ -638,8 +797,8 @@ $training-glow: $surface-glow;
         width: 250px;
         height: 250px;
         padding: 15px;
-        background: $training-surface;
-        border: 1px solid $training-surface-border;
+        background: $color-surface;
+        border: 1px solid $color-border;
         border-radius: 50%;
 
         &::before {
@@ -658,398 +817,545 @@ $training-glow: $surface-glow;
     }
 }
 
+/******************
+ Challenges & Tasks
+******************/
+
 .todo {
     display: flex;
-    justify-content: center;
-    gap: 20px;
-    width: 100%;
-    margin: 0px auto;
+    flex-direction: column;
+    gap: $space-lg;
 
     .official_tasks,
     .custom_tasks {
-        max-width: $secondary-width;
-        width: 100%;
-        padding: 20px;
-        border: $hairline solid $color-border;
-        border-radius: $medium-border-radius;
+        @include card(default, $space-lg);
+        display: flex;
+        flex-direction: column;
+        gap: $space-md;
+    }
 
-        h3.section_title {
-            margin-bottom: 10px;
-        }
+    .card_header {
+        display: flex;
+        align-items: center;
+        gap: $space-sm;
+        min-height: 36px;
 
-        .info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0px 5px + 2.5px;
-            margin-bottom: 5px;
-
-            .delete_completed {
-                all: unset;
-                font-size: 0.9em;
-                color: $color-text-secondary;
-
-                &:hover,
-                &:active {
-                    text-decoration: underline;
-                    cursor: pointer;
-                }
-            }
-
-            .tasks_amount {
-                font-size: 0.9em;
-                color: $color-text-secondary;
-            }
-        }
-
-        .tasks {
+        .card_titles {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-top: 10px;
+            gap: $space-xxs;
+            flex: 1;
+            min-width: 0;
+        }
 
-            .task {
-                --progress: 0;
-                --progress-color: rgba(75, 75, 250, 0.1);
+        .completed_amount {
+            @include typography(caption);
+            color: $color-text-muted;
+        }
 
-                position: relative;
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 10px;
-                background: transparentize($main-color, 0.5);
-                padding: 0px 15px;
-                border: $hairline solid $color-border;
-                border-radius: $small-border-radius;
-                transition: transform 0.2s ease;
+        // Remaining Time Pill
+        .remaining_hours {
+            @include typography(caption);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px $space-sm;
+            white-space: nowrap;
+            color: $color-text-secondary;
+            background-color: $color-surface-raised;
+            border-radius: $radius-pill;
 
-                &:hover {
-                    cursor: pointer;
-                }
-
-                &::before {
-                    content: "";
-                    position: absolute;
-                    left: 0px;
-                    transform: scaleX(min(calc(var(--progress) / 100), 1));
-                    transform-origin: left;
-                    width: 100%;
-                    height: 100%;
-                    background-color: var(--progress-color);
-                    border-radius: inherit;
-                    pointer-events: none;
-                }
-
-                .title {
-                    @include crop_text;
-                    flex-grow: 1;
-                    height: 50px;
-                    line-height: 50px;
-                }
+            i {
+                font-size: 11px;
             }
         }
     }
 
-    .official_tasks {
-        .remaining_hours {
-            text-align: center;
-            font-size: 0.9em;
-            color: $color-text-secondary;
-            margin-bottom: 10px;
-        }
+    // Daily Challenges ("ChallengesCard" Rows: Icon, Label, XP, Progress Track)
 
+    .official_tasks {
         .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: $space-md;
+
             .task {
-                &:has(.checkbox.checked) {
-                    --progress: 100;
-                    --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: $color-success-border;
-                }
+                --progress: 0;
+
+                display: flex;
+                align-items: center;
+                gap: $space-md;
 
                 .checkbox {
-                    position: relative;
-                    display: block;
+                    @include flex_center;
                     flex-shrink: 0;
-                    width: 15px;
-                    height: 15px;
-                    border-radius: 2px;
-                    outline: $hairline solid $color-border;
-                    background: transparentize($main-color, 0.5);
+                    width: 32px;
+                    height: 32px;
+                    color: $color-primary;
+                    background-color: $color-primary-soft;
+                    border-radius: $radius-pill;
 
-                    &::before {
-                        content: "";
-                        position: absolute;
-                        width: inherit;
-                        height: inherit;
-                        background-image: url("../../../../static/images/check.png"); // https://www.flaticon.com/free-icon/check_16750043
-                        background-size: contain;
-                        transform: scale(0);
-                        opacity: 0;
-                        transition: transform 0.2s ease, opacity 0.2s ease;
+                    i {
+                        font-size: 13px;
+                        color: inherit;
+                    }
+
+                    .done_icon {
+                        display: none;
                     }
 
                     &.checked {
-                        outline: 1px solid darken($green-color, 10%);
+                        color: $color-success;
+                        background-color: $color-success-soft;
 
-                        &::before {
-                            transform: scale(1.5);
-                            opacity: 1;
-                            transition: transform 0.3s ease, opacity 0.3s ease;
+                        .type_icon {
+                            display: none;
+                        }
+
+                        .done_icon {
+                            display: block;
                         }
                     }
                 }
 
-                .xp {
-                    @include flex_center($direction: column);
-                    user-select: none;
-                    width: 4ch;
-                    padding-left: 15px;
-                    color: $green-color;
-                    border-left: 1px solid $training-surface-border;
+                .task_body {
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) auto;
+                    align-items: start;
+                    gap: $space-xs + 2px $space-sm;
+                    flex: 1;
+                    min-width: 0;
 
-                    span {
-                        font-variant-numeric: tabular-nums;
+                    .title {
+                        @include typography(callout);
+                        overflow-wrap: anywhere;
+                        color: $color-text;
+                    }
+
+                    .xp {
+                        @include typography(label);
                         white-space: nowrap;
+                        color: $color-premium;
+                    }
 
-                        &:nth-child(1) {
-                            font-weight: bold;
-                        }
+                    .track {
+                        grid-column: 1 / -1;
+                        height: 5px;
+                        overflow: hidden;
+                        background-color: $color-surface-strong;
+                        border-radius: $radius-pill;
 
-                        &:nth-child(2) {
-                            font-size: 0.8em;
-                            opacity: 0.8;
+                        .fill {
+                            display: block;
+                            width: calc(var(--progress) * 1%);
+                            max-width: 100%;
+                            height: 100%;
+                            background-color: $color-primary;
+                            border-radius: $radius-pill;
+                            transition: width $duration-slow linear;
                         }
+                    }
+                }
+
+                // Completed
+                &:has(.checkbox.checked) .task_body {
+                    .title {
+                        color: $color-text-secondary;
+                    }
+
+                    .xp {
+                        color: $color-success;
+                    }
+
+                    .track {
+                        display: none;
                     }
                 }
             }
         }
 
         .no_logged_in {
-            text-align: center;
+            @include typography(callout);
+            color: $color-text-secondary;
 
             a {
-                color: $secondary-color;
+                font-weight: 600;
+                color: $color-primary-text;
                 text-decoration: none;
-                font-style: italic;
-
-                &:hover,
-                &:active {
-                    text-decoration: underline;
-                }
             }
         }
     }
 
+    // My Tasks ("CustomTasksCard")
+
     .custom_tasks {
-        padding: 20px 15px;
+        .card_header {
+            .section_title {
+                flex: 1;
+            }
 
-        .tasks {
-            @include scrollbar;
-            max-height: calc(50px * 3 + 15px * 2);
-            padding: 0px 5px 5px;
-
-            .add_task_container {
+            .info {
                 display: flex;
-                flex-shrink: 0;
-                height: 50px;
-                background: transparentize($main-color, 0.5);
-                border: $hairline solid $color-border;
-                border-radius: $small-border-radius;
-                overflow: hidden;
-                transition: border-color 0.3s ease;
+                align-items: center;
+                gap: $space-sm;
 
-                &:focus-within {
-                    border-color: $blue-color;
+                .tasks_amount {
+                    @include typography(caption);
+                    font-variant-numeric: tabular-nums;
+                    color: $color-text-muted;
+
+                    span {
+                        font-size: inherit;
+                    }
                 }
 
-                .new_task {
-                    flex: 1;
-                    min-width: 0;
-                    padding: 0px 15px;
-                    vertical-align: middle;
-                    background: transparent;
-                    color: $secondary-color;
-                    border: none;
-                    outline: none;
+                .delete_completed {
+                    @include button(ghost, sm);
+                }
+            }
+        }
 
-                    &::placeholder {
-                        color: $color-text-secondary;
-                    }
+        .tasks {
+            display: flex;
+            flex-direction: column;
+            gap: $space-xxs;
+            margin: 0px (-$space-sm);
+
+            // Add Row ("TextField" + Solid Icon Button)
+            .add_task_container {
+                display: flex;
+                align-items: center;
+                gap: $space-sm;
+                margin: 0px $space-sm $space-sm;
+
+                .new_task {
+                    @include form_input;
+                    flex: 1;
+                    margin: 0px;
                 }
 
                 .add_task {
-                    all: unset;
-                    margin: 5px 15px 5px 0px;
-                    text-align: center;
-                    color: $blue-color;
-                    transition: transform 0.2s ease, color 0.3s ease;
+                    @include icon_button(solid, 48px);
 
-                    &:hover {
-                        color: $color-primary-text;
-                        cursor: pointer;
-                    }
-
-                    .fa-plus {
-                        display: block;
-                        font-size: 1.5em;
+                    i {
+                        font-size: 18px;
                     }
                 }
             }
 
+            // Task Row
             .task {
-                transition: transform 0.2s ease;
-
-                &::before {
-                    transition: transform 0.3s ease, background-color 0.3s ease;
-                }
+                position: relative;
+                display: flex;
+                align-items: center;
+                gap: $space-md;
+                min-height: 48px;
+                padding: $space-xs ($space-sm - 1px);
+                background-color: $color-surface;
+                border: $hairline solid transparent;
+                border-radius: $radius-md;
+                cursor: grab;
+                transition: background-color $duration-fast ease, border-color $duration-fast ease, opacity $duration-fast ease;
 
                 &:hover {
-                    cursor: pointer;
+                    background-color: $color-surface-raised;
                 }
 
-                &:has(input[type="checkbox"]:checked) {
-                    --progress: 100;
-                    --progress-color: rgba(82, 207, 32, 0.1);
-                    border-color: $color-success-border;
-
-                    .checkbox {
-                        outline: 1px solid darken($green-color, 10%);
-
-                        &::before {
-                            transform: scale(1.5);
-                            opacity: 1;
-                            transition: transform 0.3s ease, opacity 0.3s ease;
-                        }
-                    }
+                &:focus-visible {
+                    outline: 2px solid $color-primary;
+                    outline-offset: -2px;
                 }
 
+                // Other Tasks While One Is Dragged (Drop Targets)
                 &.dragging {
-                    transform: scale(0.98);
-                    opacity: 0.8;
+                    border-color: $color-border;
+                }
+
+                &:active {
+                    cursor: grabbing;
                 }
 
                 .checkbox {
-                    position: relative;
-                    display: block;
+                    @include flex_center;
                     flex-shrink: 0;
-                    width: 15px;
-                    height: 15px;
-                    border-radius: 2px;
-                    outline: $hairline solid $color-border;
-                    background: transparentize($main-color, 0.5);
+                    width: 22px;
+                    height: 22px;
+                    border: 2px solid $color-border-strong;
+                    border-radius: $radius-sm;
+                    pointer-events: none;
+                    transition: background-color $duration-fast ease, border-color $duration-fast ease;
 
-                    &::before {
-                        content: "";
-                        position: absolute;
-                        width: inherit;
-                        height: inherit;
-                        background-image: url("../../../../static/images/check.png"); // https://www.flaticon.com/free-icon/check_16750043
-                        background-size: contain;
-                        transform: scale(0);
-                        opacity: 0;
-                        transition: transform 0.2s ease, opacity 0.2s ease;
+                    i {
+                        display: none;
+                        font-size: 11px;
+                        color: $color-on-primary;
                     }
                 }
 
                 .title {
+                    @include typography(body);
+                    flex: 1;
+                    min-width: 0;
+                    overflow-wrap: anywhere;
+                    color: $color-text;
                     cursor: pointer;
                 }
 
                 .date {
-                    user-select: none;
-                    width: 7ch;
-                    padding-left: 10px;
-                    text-align: center;
-                    color: $color-text-secondary;
-                    border-left: $hairline solid $color-divider;
-                    font-size: 0.8em;
-                    font-variant-numeric: tabular-nums;
-                    white-space: nowrap;
+                    @include typography(caption);
+                    flex-shrink: 0;
+                    color: $color-text-muted;
                 }
 
                 input[type="checkbox"] {
                     display: none;
                 }
 
-                // Custom Task Properties
-
                 .show_custom_task_properties_button {
                     @include show_properties_button;
-                    margin-left: auto;
+                    width: 32px;
+                    height: 32px;
+                    color: $color-text-muted;
                 }
 
                 .custom_task_properties {
                     @include properties_menu;
+                }
+
+                // Completed
+                &:has(input[type="checkbox"]:checked) {
+                    .checkbox {
+                        background-color: $color-success;
+                        border-color: $color-success;
+
+                        i {
+                            display: block;
+                        }
+                    }
+
+                    .title {
+                        color: $color-text-muted;
+                        text-decoration: line-through;
+                    }
                 }
             }
         }
     }
 }
 
-// Activity History
+/********
+ History ("HistoryCard")
+********/
 
 .activity_history_container {
-    margin: 0px auto;
-    padding: 5px;
-    background: $color-surface;
-    border: $hairline solid $color-border;
-    border-radius: $medium-border-radius;
+    @include card(default, $space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: $space-md;
+
+    .history_toggle {
+        display: none;
+    }
 
     .activity_history {
-        @include scrollbar;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        max-width: 100%;
-        width: 100%;
-        max-height: calc(50px * 5 + 10px);
-        padding: 15px;
+        gap: $space-xs;
 
         .one_activity {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-shrink: 0;
-            height: 50px;
-            padding: 0px 15px;
-            background-color: $color-surface;
-            border: $hairline solid $color-border;
-            border-radius: $medium-border-radius;
-            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+            flex-direction: column;
+            gap: $space-sm;
 
-            &:hover {
-                background: transparent;
-                border-color: $color-border-strong;
+            > summary,
+            > .row {
+                display: flex;
+                align-items: center;
+                gap: $space-md;
+                min-height: 52px;
+                border-radius: $radius-md;
+                list-style: none;
+            }
+
+            > summary {
                 cursor: pointer;
+
+                &::-webkit-details-marker {
+                    display: none;
+                }
+
+                &:hover {
+                    opacity: 0.85;
+                }
             }
 
-            p {
-                font-size: 0.9em;
+            .activity_icon {
+                @include flex_center;
+                flex-shrink: 0;
+                width: 32px;
+                height: 32px;
+                color: $color-primary;
+                background-color: $color-primary-soft;
+                border-radius: $radius-pill;
+
+                i {
+                    font-size: 13px;
+                }
             }
 
-            .training_plan_title,
-            .gained_xp {
-                color: $blue-color;
-                // text-shadow: 0 0 10px $blue-color;
+            .activity_text {
+                display: flex;
+                flex-direction: column;
+                flex: 1;
+                min-width: 0;
+
+                .training_plan_title {
+                    @include typography(body_strong);
+                    @include crop_text;
+                    color: $color-text;
+                }
+
+                .date {
+                    @include typography(caption);
+                    color: $color-text-muted;
+                }
             }
 
-            .training_plan_title {
-                @include crop_text;
-                width: 180px;
+            .values {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+
+                .elapsed_time {
+                    @include typography(label);
+                    font-variant-numeric: tabular-nums;
+                    color: $color-text;
+                }
+
+                .gained_xp {
+                    @include typography(caption);
+                    font-variant-numeric: tabular-nums;
+                    color: $color-premium;
+                }
             }
 
-            .elapsed_time {
-                width: 60px;
+            .chevron {
+                font-size: 11px;
+                color: $color-text-muted;
+                transition: rotate $duration-normal ease;
             }
 
-            .gained_xp {
-                width: 50px;
+            &[open] .chevron {
+                rotate: 180deg;
             }
 
-            .date {
-                width: 40px;
+            // Exercise Breakdown
+            .summary {
+                display: flex;
+                flex-direction: column;
+                gap: $space-sm;
+                margin: 0px 0px $space-sm (32px + $space-md);
+                padding: $space-md;
+                background-color: $color-surface-raised;
+                border-radius: $radius-md;
+
+                .summary_bar {
+                    display: flex;
+                    gap: 2px;
+                    height: 8px;
+                    overflow: hidden;
+                    border-radius: $radius-pill;
+
+                    span {
+                        min-width: 4px;
+                    }
+                }
+
+                .summary_row {
+                    display: flex;
+                    align-items: center;
+                    gap: $space-sm;
+
+                    .swatch {
+                        flex-shrink: 0;
+                        width: 8px;
+                        height: 8px;
+                        border-radius: $radius-pill;
+                    }
+
+                    .summary_exercise {
+                        @include typography(callout);
+                        @include crop_text;
+                        flex: 1;
+                        min-width: 0;
+                        color: $color-text;
+                    }
+
+                    .summary_time {
+                        @include typography(caption);
+                        color: $color-text-secondary;
+                    }
+
+                    .summary_xp {
+                        @include typography(caption);
+                        min-width: 44px;
+                        text-align: right;
+                        color: $color-premium;
+                    }
+                }
             }
+        }
+    }
+
+    // Shows The First 5 Activities Until "Zobraziť Všetko" Is Toggled
+    .history_toggle:not(:checked) + .activity_history .one_activity:nth-child(n + 6) {
+        display: none;
+    }
+
+    .history_more {
+        @include button(ghost, sm);
+        align-self: center;
+
+        .show_less {
+            display: none;
+        }
+    }
+
+    .history_toggle:checked ~ .history_more {
+        .show_all {
+            display: none;
+        }
+
+        .show_less {
+            display: inline;
+        }
+    }
+
+    // Empty State
+    .empty_history {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: $space-sm;
+        padding: $space-xxl 0px;
+        text-align: center;
+
+        .empty_icon {
+            @include empty_state_icon(48px);
+
+            i {
+                font-size: 18px;
+            }
+        }
+
+        .empty_title {
+            @include typography(body_strong);
+            color: $color-text;
+        }
+
+        .empty_message {
+            @include typography(callout);
+            color: $color-text-secondary;
         }
     }
 }
@@ -1058,21 +1364,10 @@ $training-glow: $surface-glow;
  Key Frames
 ***********/
 
-@keyframes bluePulse {
-    0% {
-        background-color: $blue-color;
-    }
-
-    100% {
-        background-color: lighten($blue-color, 2%);
-    }
-}
-
 @keyframes blur {
     0% {
-        filter: blur(5px);
-        opacity: 0.5;
-        background-color: $blue-color;
+        filter: blur(4px);
+        opacity: 0.6;
     }
 }
 
@@ -1094,173 +1389,12 @@ $training-glow: $surface-glow;
  Media Queries
 **************/
 
-@media (width <= 1060px) {
-    .todo {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-    }
-}
-
-@media (width <= 500px) {
-    header {
-        // Banner
-
-        .banner {
-            gap: 10px;
-        }
-    }
-
-    .content {
-        padding-top: 30px + 104px + 20px + 20px;
-    }
-
-    .activity {
-        .record_activity {
-            padding: 20px;
-
-            .buttons {
-                flex-direction: column;
-
-                .play,
-                .stop {
-                    width: 100%;
-                }
-            }
-        }
-
-        .previous_activity {
-            margin-bottom: 10px;
-
-            .top {
-                gap: 10px;
-                margin-bottom: 10px;
-            }
-        }
-    }
-}
-
 @media (width <= 400px) {
     .activity {
         .record_activity {
             .timer {
-                font-size: 2.5em;
-
-                span {
-                    width: 65px;
-                    margin-left: 0px;
-                }
-            }
-        }
-
-        .training_plan_container {
-            .training_plan {
-                height: calc(100vh - 97px - 20px - 125px - 10px);
-
-                .start_training, 
-                .exercise,
-                .finish_training,
-                .break,
-                .warm_up {
-                    flex-direction: column;
-                    justify-content: space-between;
-                    height: calc(100% - 50px);
-                    padding: 50px 10px;
-                    text-align: center;
-                }
-            }
-        }
-
-        .previous_activity {
-            .top {
-                .average_activity_time_container,
-                .activities_amount_container {
-                    p {
-                        .average_activity_time,
-                        .activities_amount {
-                            font-size: 1.2em;
-                        }
-                    }
-                }
-            }
-
-            .bottom {
-                display: flex;
-                flex-direction: row;
-                border-radius: $big-border-radius;
-                padding: 10px 0px;
-
-                .latest_activity_container,
-                .longest_activity_container {
-                    width: 50%;
-
-                    p {
-                        flex-direction: column;
-                        gap: 0px;
-
-                        i {
-                            margin-bottom: 5px;
-                        }
-
-                        span {
-                            font-size: 0.9em;
-                        }
-                    }
-                }
-
-                .latest_activity_container {
-                    padding-right: 5px - 1px;
-                }
-
-                .longest_activity_container {
-                    padding-left: 5px - 1px;
-                }
-            }
-        }
-    }
-}
-
-@media (width <= 275px) {
-    .activity {
-        .previous_activity {
-            .top {
-                gap: 0px;
-                padding: 10px;
-                border: $hairline solid $color-border;
-                border-radius: $big-border-radius;
-
-                .average_activity_time_container,
-                .activities_amount_container {
-                    display: block;
-                    width: 50%;
-                    padding: 0px;
-                    text-align: center;
-                    border: none;
-
-                    p {
-                        @include flex_center($direction: column);
-                    }
-                }
-
-                .average_activity_time_container {
-                    padding-right: 5px;
-                }
-
-                .activities_amount_container {
-                    padding-left: 5px;
-                }
-            }
-
-            .bottom {
-                padding: 10px;
-
-                .latest_activity_container {
-                    padding-right: 5px;
-                }
-
-                .longest_activity_container {
-                    padding-left: 5px;
-                }
+                font-size: 44px;
+                line-height: 52px;
             }
         }
     }

@@ -24,9 +24,9 @@ export async function saveTrainingPlan(container:HTMLDivElement, state:{active_e
 
     if(exercises.length === 0) {
         // Shows Error Animation
-        (training_plan.querySelector(".fa-compress") as HTMLElement).classList.remove("error_animation")
-        void (training_plan.querySelector(".fa-compress") as HTMLElement).offsetWidth;
-        (training_plan.querySelector(".fa-compress") as HTMLElement).classList.add("error_animation")
+        (training_plan.querySelector(".drop_zone .empty_icon") as HTMLElement).classList.remove("error_animation")
+        void (training_plan.querySelector(".drop_zone .empty_icon") as HTMLElement).offsetWidth;
+        (training_plan.querySelector(".drop_zone .empty_icon") as HTMLElement).classList.add("error_animation")
     }
 
     // Checks For Empty Exercise Title Inputs In Custom Exercises In The Training Plan

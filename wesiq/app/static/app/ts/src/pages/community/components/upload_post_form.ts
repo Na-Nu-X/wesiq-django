@@ -38,6 +38,7 @@ import {
 
 import { syncFiles } from "../functions/postPreview.js"
 import { uploadPost } from "../functions/uploadPost.js"
+import { initializeUploadPostSteps } from "../functions/uploadPostSteps.js"
 
 import type { tag } from "../state.js"
 
@@ -57,10 +58,6 @@ document.addEventListener("DOMContentLoaded", function():void {
     const select_posts_container:HTMLDivElement = upload_post_form.querySelector(".select_posts_container") as HTMLDivElement // Gets The Select Posts Container
 
     const post_info_container:HTMLDivElement = upload_post_form.querySelector(".post_info_container") as HTMLDivElement // Gets The Post Info Container
-
-    const public_visibility:HTMLButtonElement|null = post_info_container.querySelector(".icons .settings label .public_visibility") as HTMLButtonElement || null // Gets The Public Visibility Icon
-    const allow_comments:HTMLButtonElement = post_info_container.querySelector(".icons .settings label .allow_comments") as HTMLButtonElement // Gets The Allow Comments Icon
-    const hide_likes:HTMLButtonElement = post_info_container.querySelector(".icons .settings label .hide_likes") as HTMLButtonElement // Gets The Hide Likes Icon
 
     const description:HTMLDivElement = upload_post_form.querySelector(".description") as HTMLDivElement // Gets The Description
     const add_emoji:HTMLButtonElement = post_info_container.querySelector(".icons .tags .add_emoji") as HTMLButtonElement // Gets The Add Emoji Icon
@@ -91,38 +88,59 @@ document.addEventListener("DOMContentLoaded", function():void {
 
     let debounce_timeout:number // Debounce Timeout Between API Requests
 
+    const steps = initializeUploadPostSteps(upload_post_form_dialog, upload_post_form) // Initializes The Steps (Media, Details, Audience, Uploading, Done)
+
+    // Functions
+
+    // Function For Close The Dialog (Asks Before Throwing Away A Draft, Like The Native App)
+    function requestClose():void {
+        const step:string = upload_post_form.dataset["step"] || "media" // Gets The Current Step
+
+        if(step === "uploading") return // Can't Close While Uploading (Cancel The Upload First)
+
+        if(step === "done") {
+            window.location.reload() // Reloads The Feed, Which Shows The Processing Post
+            return
+        }
+
+        if(steps.isDirty()) {
+            if(!window.confirm(`${gettext("Zahodiť príspevok?")}\n${gettext("Vybrané fotky a text sa neuložia.")}`)) return
+            steps.reset() // Discards The Draft
+        }
+
+        upload_post_form_dialog.close() // Hides The Upload Post Form Dialog
+    }
+
     // Events
 
     // Upload Post Form Click Functionality
     upload_post_button.addEventListener("click", () => upload_post_form_dialog.showModal()) // Shows The Upload Post Form Dialog
 
     // Upload Post Form Dialog Click Functionality
+    // Clicks On The Backdrop Target The Dialog Itself (Coordinates Can't Be Used, Keyboard Clicks Report 0, 0)
     upload_post_form_dialog.addEventListener("click", function(event:PointerEvent):void {
-        const upload_post_form_dimensions:DOMRect = upload_post_form.getBoundingClientRect() // Gets The Upload Post Form Dimensions
+        const is_back:boolean = (event.target as HTMLElement).closest(".back") !== null // Checks If The Close Button Was Clicked
 
-        if (
-            event.clientX < upload_post_form_dimensions.left ||
-            event.clientX > upload_post_form_dimensions.right ||
-            event.clientY < upload_post_form_dimensions.top ||
-            event.clientY > upload_post_form_dimensions.bottom ||
-            (event.target as HTMLAnchorElement).classList.contains("back") ||
-            ((event.target as HTMLElement).parentNode as HTMLAnchorElement).classList.contains("back")
-        ) {
-            this.close() // Hides The Upload Post Form Dialog
-        }
+        if(is_back) event.preventDefault() // The Close Button Is A Link
+        if(event.target === this || is_back) requestClose() // Hides The Upload Post Form Dialog
+    })
+
+    // Upload Post Form Dialog Escape Functionality (Same Rules As The Close Button)
+    upload_post_form_dialog.addEventListener("cancel", function(event:Event):void {
+        event.preventDefault() // Prevents The Default Closing
+        requestClose()
     })
 
     // Upload Post Form Submit Functionality
     upload_post_form.addEventListener("submit", async function(event:SubmitEvent):Promise<void> {
         event.preventDefault() // Prevents Default Behaviour
 
-        const upload_post_form_submit:HTMLInputElement = upload_post_form.querySelector(".upload_post_form_submit") as HTMLInputElement // Gets The Upload Post Form Submit Button
+        if(upload_post_form.dataset["step"] !== "audience") return // Only The Last Step Uploads (Enter In A Field Mustn't Submit Early)
+
         const form_data:FormData = new FormData(event.target as HTMLFormElement) // Gets The Form Data
 
         const posts_preview:HTMLDivElement = this.querySelector(".posts_preview") as HTMLDivElement // Gets The Post Preview Container
         const all_posts:NodeListOf<HTMLDivElement> = posts_preview.querySelectorAll<HTMLDivElement>(".post") // Gets All Posts From The Post Preview
-
-        const form_report:HTMLParagraphElement = upload_post_form.querySelector(".form_report") as HTMLParagraphElement // Gets The Form Report Paragraph
 
         // Stores The Data Of Every Media
         const media_data:{
@@ -144,7 +162,7 @@ document.addEventListener("DOMContentLoaded", function():void {
 
         form_data.append("media_data", JSON.stringify(media_data)) // Appends The Media Order To The Form Data
 
-        uploadPost(upload_post_form_submit, form_data, form_report) // Uploads The Post
+        uploadPost(form_data, steps) // Uploads The Post
     })
 
     // Select Posts Change Functionality
@@ -412,128 +430,6 @@ document.addEventListener("DOMContentLoaded", function():void {
         if(event.key === "Enter") {
             select_posts.click() // Opens The Select Files Dialog
             upload_post_form_dialog.showModal() // Shows The Upload Post Form Dialog
-        }
-    })
-
-    if(public_visibility) {
-        // Public Visibility Click Functionality
-        public_visibility.addEventListener("click", function(event:PointerEvent):void {
-            const icon:HTMLElement = event.target as HTMLElement // Gets The Public Visibility Icon
-    
-            // Sets The Private Visibility
-            if(icon.classList.contains("fa-eye")) {
-                icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
-                this.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
-                this.ariaLabel = gettext("Vypnúť viditeľnosť len pre sledovateľov")
-            }
-    
-            // Sets The Public Visibility
-            else if(icon.classList.contains("fa-eye-low-vision")) {
-                icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
-                this.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
-                this.ariaLabel = gettext("Zapnúť viditeľnosť len pre sledovateľov")
-            }
-        })
-
-        // Public Visibility Keydown Functionality
-        public_visibility.addEventListener("keydown", function(event:KeyboardEvent):void {
-            if(event.key === "Enter") {
-                const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Public Visibility Icon
-        
-                // Sets The Private Visibility
-                if(icon.classList.contains("fa-eye")) {
-                    icon.classList.replace("fa-eye", "fa-eye-low-vision") // Changes The Icon
-                    this.title = gettext("Vypnúť viditeľnosť len pre sledovateľov")
-                    this.ariaLabel = gettext("Vypnúť viditeľnosť len pre sledovateľov")
-                }
-        
-                // Sets The Public Visibility
-                else if(icon.classList.contains("fa-eye-low-vision")) {
-                    icon.classList.replace("fa-eye-low-vision", "fa-eye") // Changes The Icon
-                    this.title = gettext("Zapnúť viditeľnosť len pre sledovateľov")
-                    this.ariaLabel = gettext("Zapnúť viditeľnosť len pre sledovateľov")
-                }
-            }
-        })
-    }
-    
-    // Allow Comments Click Functionality
-    allow_comments.addEventListener("click", function(event:PointerEvent):void {
-        const icon:HTMLElement = event.target as HTMLElement // Gets The Allow Comments Icon
-
-        // Disables The Comments
-        if(icon.classList.contains("fa-comment")) {
-            icon.classList.replace("fa-comment", "fa-comment-slash") // Changes The Icon
-            this.title = gettext("Zapnúť komentáre")
-            this.ariaLabel = gettext("Zapnúť komentáre")
-        }
-        
-        // Enables The Comments
-        else if(icon.classList.contains("fa-comment-slash")) {
-            icon.classList.replace("fa-comment-slash", "fa-comment") // Changes The Icon
-            this.title = gettext("Vypnúť komentáre")
-            this.ariaLabel = gettext("Vypnúť komentáre")
-        }
-    })
-
-    // Allow Comments Click Functionality
-    allow_comments.addEventListener("keydown", function(event:KeyboardEvent):void {
-        if(event.key === "Enter") {
-            const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Allow Comments Icon
-
-            // Disables The Comments
-            if(icon.classList.contains("fa-comment")) {
-                icon.classList.replace("fa-comment", "fa-comment-slash") // Changes The Icon
-                this.title = gettext("Zapnúť komentáre")
-                this.ariaLabel = gettext("Zapnúť komentáre")
-            }
-            
-            // Enables The Comments
-            else if(icon.classList.contains("fa-comment-slash")) {
-                icon.classList.replace("fa-comment-slash", "fa-comment") // Changes The Icon
-                this.title = gettext("Vypnúť komentáre")
-                this.ariaLabel = gettext("Vypnúť komentáre")
-            }
-        }
-    })
-
-    // Hide Likes Click Functionality
-    hide_likes.addEventListener("click", function(event:PointerEvent):void {
-        const icon:HTMLElement = event.target as HTMLElement // Gets The Hide Likes Icon
-
-        // Hides The Like Counter
-        if(icon.classList.contains("fa-solid")) {
-            icon.classList.replace("fa-solid", "fa-regular") // Changes The Icon
-            this.title = gettext("Zobraziť počet označení páči sa mi to")
-            this.ariaLabel = gettext("Zobraziť počet označení páči sa mi to")
-        }
-
-        // Shows The Like Counter
-        else if(icon.classList.contains("fa-regular")) {
-            icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
-            this.title = gettext("Skryť počet označení páči sa mi to")
-            this.ariaLabel = gettext("Skryť počet označení páči sa mi to")
-        }
-    })
-
-    // Allow Comments Click Functionality
-    hide_likes.addEventListener("keydown", function(event:KeyboardEvent):void {
-        if(event.key === "Enter") {
-            const icon:HTMLElement = (event.target as HTMLButtonElement).querySelector("i") as HTMLElement // Gets The Hide Likes Icon
-    
-            // Hides The Like Counter
-            if(icon.classList.contains("fa-solid")) {
-                icon.classList.replace("fa-solid", "fa-regular") // Changes The Icon
-                this.title = gettext("Zobraziť počet označení páči sa mi to")
-                this.ariaLabel = gettext("Zobraziť počet označení páči sa mi to")
-            }
-    
-            // Shows The Like Counter
-            else if(icon.classList.contains("fa-regular")) {
-                icon.classList.replace("fa-regular", "fa-solid") // Changes The Icon
-                this.title = gettext("Skryť počet označení páči sa mi to")
-                this.ariaLabel = gettext("Skryť počet označení páči sa mi to")
-            }
         }
     })
 

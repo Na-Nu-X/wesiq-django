@@ -49,7 +49,7 @@ Translation conventions: msgids are Slovak, and fixes to Slovak wording go into 
 
 Local stripe webhook testing (from `.env.example`): `docker run --rm -it stripe/stripe-cli listen --forward-to host.docker.internal:8000/stripe/webhook/`
 
-Note: `wesiq/requirements.txt` is UTF-16 encoded. Keep that encoding when you edit it, or convert it on purpose.
+Note: `wesiq/requirements.txt` is UTF-8 with LF line endings (it used to be UTF-16). Keep it that way.
 
 ## Architecture
 

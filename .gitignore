@@ -20,6 +20,9 @@ node_modules/
 # Environment Variables
 .env
 
+# Collected Static Files (collectstatic)
+wesiq/staticfiles/
+
 # Logs
 logs/
 

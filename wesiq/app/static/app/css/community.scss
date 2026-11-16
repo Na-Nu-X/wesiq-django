@@ -163,81 +163,160 @@ header {
         @include sheet_dialog;
         padding: 0px;
 
+        // Create Post Sheet (Header, Step Bars, One Step At A Time, Footer Buttons)
+
         .upload_post_form {
             @include dialog_sheet_content;
+            gap: $space-lg;
+            min-height: min(640px, calc(100dvh - #{$space-xxl * 2}));
 
-            &::before {
-                @include circle_decoration($top: -250px, $left: -50px, $width: 400px, $height: 400px);
+            // Sections Use "display: flex", So The [hidden] Attribute Needs Help
+            [hidden] {
+                display: none !important;
             }
 
-            &::after {
-                @include circle_decoration($bottom: -200px, $right: -50px, $width: 400px, $height: 400px);
-            }
+            // Header ("Sheet" Title, Subtitle And A Close Button)
 
-            h2 {
-                margin-bottom: 30px;
-                color: $secondary-color;
-                animation: fadeInScale 0.3s ease-out;
-            }
+            .upload_header {
+                display: flex;
+                align-items: flex-start;
+                gap: $space-sm;
 
-            .back {
-                @include form_back;
-            }
+                .back {
+                    @include icon_button(soft, 38px);
+                    position: static;
+                    order: 2;
+                    margin-left: auto;
+                    text-decoration: none;
 
-            .posts_preview {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-                gap: 10px;
-                margin: 0px auto 20px;
-
-                &.drag_active {
-                    border: 2px dashed $color-border-strong;
-                    transition: background-color 0.3s ease;
-                    animation: dropZone 1s infinite alternate;
-                }
-
-                .post,
-                .select_posts_container {
-                    position: relative;
-                    width: 100%;
-                    height: 100%;
-                    aspect-ratio: 1 / 1;
-                    border-radius: $small-border-radius;
-                    overflow: hidden;
-                    cursor: pointer;
-                    transition: transform 0.3s ease;
-
-                    &:hover,
-                    &:after {
-                        cursor: move;
+                    i {
+                        font-size: 15px;
                     }
                 }
 
-                .select_posts_container {
-                    border: 2px dashed $color-border-strong;
-                    transition: border-color 0.3s ease, transform 0.2s ease;
+                .upload_titles {
+                    display: flex;
+                    flex-direction: column;
+                    gap: $space-xxs;
+                    padding-top: $space-xs;
 
-                    &:hover {
-                        border-color: $blue-color;
+                    .upload_title {
+                        @include typography(heading);
+                        min-height: 0px;
+                        margin: 0px;
+                        padding: 0px;
+                        text-align: left;
+                        color: $color-text;
+                    }
+
+                    .upload_subtitle {
+                        @include typography(callout);
+                        color: $color-text-secondary;
+
+                        &:empty {
+                            display: none;
+                        }
+                    }
+                }
+            }
+
+            // Step Indicator (Three Bars)
+
+            .step_indicator {
+                display: flex;
+                gap: $space-xs;
+
+                span {
+                    flex: 1;
+                    height: 4px;
+                    background-color: $color-surface-strong;
+                    border-radius: $radius-pill;
+                    transition: background-color $duration-normal ease;
+
+                    &.active {
+                        background-color: $color-primary;
+                    }
+                }
+            }
+
+            &[data-step="uploading"] .step_indicator,
+            &[data-step="done"] .step_indicator {
+                display: none;
+            }
+
+            .upload_step {
+                display: flex;
+                flex-direction: column;
+                gap: $space-lg;
+                flex: 1;
+                animation: fadeIn $duration-normal ease;
+            }
+
+            // Media Step: Picker Card, Then A Row Of Tiles With An "Add" Tile
+
+            .posts_preview {
+                display: flex;
+                gap: $space-md;
+                margin: 0px (-$space-xl);
+                padding: $space-xxs $space-xl $space-xs;
+                overflow-x: auto;
+                scrollbar-width: thin;
+
+                &.drag_active {
+                    outline: 2px dashed $color-primary;
+                    outline-offset: -2px;
+                    border-radius: $radius-lg;
+                }
+
+                .select_posts_container {
+                    order: 99;
+                    flex: 1 0 100%;
+                    border: $hairline dashed $color-border-strong;
+                    border-radius: $radius-lg;
+                    cursor: pointer;
+                    transition: background-color $duration-fast ease, border-color $duration-fast ease;
+
+                    &:hover,
+                    &:focus-visible {
+                        background-color: $color-primary-soft;
+                        border-color: $color-primary;
                     }
 
                     label {
-                        @include flex_center;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: center;
+                        justify-content: center;
+                        gap: $space-sm;
                         width: 100%;
                         height: 100%;
+                        padding: $space-xxl;
+                        text-align: center;
                         cursor: pointer;
 
-                        &:hover {
-                            .fa-photo-film {
-                                color: $blue-color;
+                        .picker_icon {
+                            @include empty_state_icon(64px);
+                            margin-bottom: $space-xs;
+
+                            i {
+                                font-size: 26px;
                             }
                         }
 
-                        .fa-photo-film {
-                            pointer-events: none;
-                            font-size: 1.5em;
-                            color: transparentize($blue-color, 0.5);
-                            transition: color 0.3s ease;
+                        .picker_title {
+                            @include typography(heading);
+                            color: $color-text;
+                        }
+
+                        .picker_hint {
+                            @include typography(callout);
+                            color: $color-text-secondary;
+                        }
+
+                        .add_title {
+                            display: none;
+                            @include typography(label);
+                            color: $color-primary-text;
                         }
                     }
 
@@ -246,26 +325,95 @@ header {
                     }
                 }
 
+                // With Media The Picker Becomes A Small "Add" Tile After The Tiles
+                &.has_media .select_posts_container {
+                    flex: 0 0 132px;
+                    height: 165px;
+
+                    label {
+                        gap: $space-xs;
+                        padding: $space-sm;
+
+                        .picker_icon {
+                            width: 40px;
+                            height: 40px;
+                            margin: 0px;
+                            background: none;
+
+                            i {
+                                font-size: 22px;
+                            }
+                        }
+
+                        .picker_title,
+                        .picker_hint {
+                            display: none;
+                        }
+
+                        .add_title {
+                            display: block;
+                        }
+                    }
+                }
+
+                // Media Tile (4:5 Like The Feed)
+
+                counter-reset: media_tile;
+
                 .post {
                     position: relative;
+                    flex: 0 0 132px;
+                    height: 165px;
+                    overflow: hidden;
+                    background-color: $color-surface-raised;
+                    border: $hairline solid $color-border;
+                    border-radius: $radius-md;
+                    cursor: grab;
+                    counter-increment: media_tile;
+                    transition: opacity $duration-fast ease, border-color $duration-fast ease;
+
+                    // Order Badge
+                    &::before {
+                        content: counter(media_tile);
+                        position: absolute;
+                        top: $space-sm;
+                        left: $space-sm;
+                        min-width: 22px;
+                        height: 22px;
+                        padding: 0px 6px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 12px;
+                        font-weight: 700;
+                        color: $color-on-primary;
+                        background-color: $color-overlay;
+                        border-radius: $radius-pill;
+                        z-index: 40;
+                    }
 
                     &.drag_active {
-                        transform: scale(0.9);
+                        opacity: 0.55;
+                    }
+
+                    // Invalid File (Too Large, Long Or Short)
+                    &:has(.tooltip) {
+                        border: 2px solid $color-danger;
                     }
 
                     .loading {
-                        @include loading($size: 5px);
+                        @include loading($size: 6px);
                         @include position_center;
                     }
 
                     .loading_progress {
+                        @include typography(caption);
                         position: absolute;
-                        bottom: 0px;
+                        bottom: $space-sm;
                         left: 50%;
                         transform: translateX(-50%);
-                        font-size: 0.8em;
                         color: $color-text-secondary;
-                        transition: opacity 1s ease, visibility 1s ease;
+                        transition: opacity $duration-slow ease, visibility $duration-slow ease;
                         z-index: 50;
 
                         &.hidden {
@@ -275,72 +423,54 @@ header {
                     }
 
                     .remove_post {
-                        @include flex_center;
-                        all: unset;
+                        @include icon_button(soft, 28px);
                         position: absolute;
-                        right: 0px;
-                        width: 25px;
-                        height: 25px;
-                        margin: 5px;
-                        background-color: transparentize($main-color, 0.8);
-                        border-radius: 50%;
+                        top: $space-xs;
+                        right: $space-xs;
+                        background-color: $color-overlay;
                         z-index: 50;
-
-                        &:hover,
-                        &:focus-visible {
-                            cursor: pointer;
-
-                            .fa-xmark {
-                                color: $color-primary-text;
-                            }
-                        }
 
                         .fa-xmark {
                             display: block;
-                            color: $blue-color;
-                            font-size: 1.2em;
-                            transition: color 0.3s ease;
+                            font-size: 13px;
+                            color: $color-on-primary;
                         }
                     }
 
                     img,
                     video {
-                        width: inherit;
-                        height: inherit;
+                        display: block;
+                        width: 100%;
+                        height: 100%;
                         object-fit: cover;
-                        filter: blur(2px);
-                        transition: filter 0.3s ease;
                     }
 
+                    // Video Controls (Mute, Custom Cover)
                     .video_settings {
                         position: absolute;
-                        top: 0;
-                        left: 0;
+                        left: $space-xs;
+                        bottom: $space-xs;
                         display: flex;
-                        gap: 5px;
-                        margin: 5px;
+                        gap: $space-xs;
+                        z-index: 45;
 
                         .toggle_mute_label,
                         .select_thumbnail_label {
                             @include flex_center;
-                            width: 25px;
-                            height: 25px;
-                            z-index: 50;
-
-                            &:hover,
-                            &:focus-visible {
-                                cursor: pointer;
-
-                                i {
-                                    color: $color-primary-text;
-                                }
-                            }
+                            width: 30px;
+                            height: 30px;
+                            background-color: $color-overlay;
+                            border-radius: $radius-pill;
+                            cursor: pointer;
 
                             i {
                                 display: block;
-                                color: $blue-color;
-                                font-size: 1.2em;
-                                transition: color 0.3s ease;
+                                font-size: 13px;
+                                color: $color-on-primary;
+                            }
+
+                            &:hover i {
+                                color: $color-primary-text;
                             }
                         }
 
@@ -350,23 +480,82 @@ header {
                         }
                     }
 
+                    &:has(.tooltip) .video_settings {
+                        bottom: 34px; // Leaves Room For The Issue Banner
+                    }
+
+                    // Issue Banner (Shows The Reason Instead Of A Hover Tooltip)
                     .tooltip {
-                        @include tooltip($top: -1.5px);
+                        @include typography(caption);
                         position: absolute;
-                        bottom: 5px;
-                        left: 50%;
-                        transform: translateX(-50%);
+                        left: 0px;
+                        right: 0px;
+                        bottom: 0px;
+                        display: flex;
+                        align-items: center;
+                        gap: $space-xs;
+                        padding: $space-xs + 2px $space-sm;
+                        color: $color-on-primary;
+                        background-color: rgba(255, 92, 106, 0.92);
                         z-index: 50;
 
                         &::before {
-                            max-width: none;
-                            width: 100px;
+                            content: attr(data-tooltip);
+                            order: 2;
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
                         }
 
                         .fa-triangle-exclamation {
-                            color: $color-premium;
-                            cursor: pointer;
+                            font-size: 11px;
+                            color: inherit;
                         }
+                    }
+                }
+            }
+
+            // Upload Limits ("Card" Raised)
+
+            .limits_card {
+                @include card(raised, $space-md, $radius-lg);
+                display: flex;
+                align-items: flex-start;
+                gap: $space-sm;
+
+                i {
+                    margin-top: 2px;
+                    font-size: 14px;
+                    color: $color-text-secondary;
+                }
+
+                p {
+                    @include typography(caption);
+                    color: $color-text-secondary;
+                }
+            }
+
+            // Details Step: Label Row With A Counter
+
+            .field_label {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin-bottom: -$space-sm;
+                padding: 0px $space-xs;
+
+                span:first-child {
+                    @include typography(label);
+                    color: $color-text-secondary;
+                }
+
+                .description_counter {
+                    @include typography(caption);
+                    font-variant-numeric: tabular-nums;
+                    color: $color-text-muted;
+
+                    &.full {
+                        color: $color-danger;
                     }
                 }
             }
@@ -391,14 +580,20 @@ header {
                 &:has(.description:focus) {
                     border-color: $color-primary;
                     background-color: $color-surface;
+                }
 
-                    .users_for_tag_container_wrapper {
-                        border-color: $color-primary;
+                // Open Tag List: The Description And The Users Form One Panel
+                &:has(.users_for_tag_container.active) {
+                    border-color: $color-primary;
+                    border-bottom-color: $color-divider;
+                    background-color: $color-surface;
+                    border-radius: $radius-md $radius-md 0px 0px;
+
+                    .icons {
+                        border-radius: 0px;
                     }
                 }
 
-                &:not(:has(.users_for_tag_container.active)) {
-                }
 
                 .description {
                     @include typography(body);
@@ -451,8 +646,7 @@ header {
                     height: 25px;
                     padding: 0px 10px;
                     background-color: $color-primary-soft;
-                    border-bottom-right-radius: $small-border-radius;
-                    border-bottom-left-radius: $small-border-radius;
+                    border-radius: 0px 0px ($radius-md - $hairline) ($radius-md - $hairline);
 
                     .settings {
                         display: flex;
@@ -513,12 +707,12 @@ header {
                     opacity: 0;
                     max-width: calc(100% + 2px);
                     width: calc(100% + 2px);
-                    padding: 5px;
-                    background-color: $color-primary-soft;
-                    border-right: $hairline solid $color-divider;
-                    border-left: $hairline solid $color-divider;
-                    border-bottom: $hairline solid $color-divider;
-                    border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    padding: $space-xs;
+                    background-color: $color-surface;
+                    border: $hairline solid $color-primary;
+                    border-top: none;
+                    border-radius: 0px 0px $radius-lg $radius-lg;
+                    box-shadow: $shadow-lg;
                     z-index: 50;
                     transition: border-color 0.3s ease, display 0.5s ease allow-discrete, top 0.3s ease, opacity 0.5s ease;
 
@@ -537,28 +731,27 @@ header {
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
-                        gap: 10px;
+                        gap: $space-xxs;
                         width: 100%;
-                        max-height: calc(3 * 48px + 30px + 5px);
-                        padding: 5px;
+                        max-height: calc(3 * 48px + #{$space-xxs * 2});
+
+                        // User Row ("UserRow")
 
                         .one_user {
                             position: relative;
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: $space-md;
                             flex-shrink: 0;
-                            height: 50px;
-                            padding: 0px 10px;
-                            background-color: $color-surface;
-                            color: $secondary-color;
-                            border: $hairline solid $color-border;
-                            border-radius: $medium-border-radius;
-                            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                            height: 48px;
+                            padding: 0px $space-sm;
+                            background-color: transparent;
+                            color: $color-text;
+                            border-radius: $radius-sm;
+                            transition: background-color $duration-fast ease;
 
                             &:hover {
-                                background: transparent;
-                                border-color: $color-border-strong;
+                                background-color: $color-surface-pressed;
                                 cursor: pointer;
                             }
 
@@ -572,13 +765,14 @@ header {
                             }
 
                             .profile_picture {
-                                @include profile_picture;
+                                @include profile_picture(32px, 32px);
                                 pointer-events: none;
                             }
 
                             .username {
+                                @include typography(body_strong);
                                 pointer-events: none;
-                                color: $secondary-color;
+                                color: $color-text;
                             }
 
                             .delete_from_history {
@@ -650,7 +844,7 @@ header {
                 .location_input_container {
                     position: relative;
 
-                    .fa-location-arrow {
+                    > i {
                         position: absolute;
                         top: ($min-touch-target + 6px) * 0.5;
                         left: $space-md + 4px;
@@ -661,7 +855,7 @@ header {
                         z-index: 1;
                     }
 
-                    &:focus-within .fa-location-arrow {
+                    &:focus-within > i {
                         color: $color-primary;
                     }
 
@@ -673,15 +867,30 @@ header {
                     }
                 }
 
+                // Open Results: The Location Field And The Places Form One Panel
+
+                &:has(.location_results:not(.hidden)) .location {
+                    border-color: $color-primary;
+                    border-bottom-color: $color-divider;
+                    background-color: $color-surface;
+                    border-radius: $radius-md $radius-md 0px 0px;
+                }
+
                 .location_results_container {
                     position: relative;
-                    max-height: calc((50px * 2) + 20px + 20px + 5px);
-                    padding: 10px;
+                    max-height: calc((44px * 3) + #{$space-xs * 2});
 
-                    &:not(:has(.location_results.hidden)) {
-                        background-color: $color-primary-soft;
-                        border: $hairline solid $color-border;
-                        border-radius: 0px 0px $small-border-radius $small-border-radius;
+                    // Room For The Spinner While Places Load
+                    &:has(.loading:not(.hidden)) {
+                        min-height: 50px;
+                    }
+
+                    &:has(.location_results:not(.hidden)) {
+                        padding: $space-xs;
+                        background-color: $color-surface;
+                        border: $hairline solid $color-primary;
+                        border-top: none;
+                        border-radius: 0px 0px $radius-lg $radius-lg;
                     }
 
                     .loading {
@@ -693,42 +902,38 @@ header {
                         @include scrollbar;
                         display: flex;
                         flex-direction: column;
-                        gap: 10px;
-                        max-height: calc((50px * 2) + 20px);
-                        margin-bottom: 50px;
-                        padding: 5px 10px;
-                        border-bottom-right-radius: $small-border-radius;
-                        border-bottom-left-radius: $small-border-radius;
+                        gap: $space-xxs;
+                        max-height: calc(44px * 3);
                         opacity: 1;
-                        transition: visibility 0.3s ease, opacity 0.3s ease, margin-bottom 0.3s ease;
+                        transition: opacity $duration-fast ease;
 
                         &.hidden {
                             visibility: hidden;
                             opacity: 0;
-                            height: 50px;
-                            margin-bottom: 0px;
+                            height: 0px;
 
                             .place {
                                 pointer-events: none;
                             }
                         }
 
+                        // Place Row (List Row)
+
                         .place {
+                            @include typography(callout);
                             display: flex;
                             align-items: center;
-                            gap: 10px;
+                            gap: $space-md;
                             flex-shrink: 0;
-                            height: 50px;
-                            padding: 0px 10px;
-                            background-color: $color-surface;
-                            color: $secondary-color;
-                            border: $hairline solid $color-border;
-                            border-radius: $medium-border-radius;
-                            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+                            height: 44px;
+                            padding: 0px $space-md;
+                            background-color: transparent;
+                            color: $color-text;
+                            border-radius: $radius-sm;
+                            transition: background-color $duration-fast ease;
 
                             &:hover {
-                                background: transparent;
-                                border-color: $color-border-strong;
+                                background-color: $color-surface-pressed;
                                 cursor: pointer;
                             }
 
@@ -745,13 +950,308 @@ header {
                 }
             }
 
+            // Audience Step: Error Card, Segmented Control, Toggle Rows, Summary
+
             .form_report {
                 @include form_report;
+                margin: 0px;
             }
 
-            .upload_post_form_submit {
-                @include blue_button($border-radius: $big-border-radius);
-                margin-top: 40px;
+            .audience {
+                @include segmented_control;
+
+                #public_visibility {
+                    display: none;
+                }
+
+                .audience_option {
+                    @include segment;
+
+                    i {
+                        font-size: 13px;
+                    }
+
+                    &:disabled {
+                        opacity: $disabled-opacity;
+                        cursor: not-allowed;
+                    }
+                }
+            }
+
+            .audience_hint {
+                @include typography(caption);
+                margin-top: -$space-sm;
+                padding: 0px $space-xs;
+                color: $color-text-secondary;
+            }
+
+            // Toggle Rows ("ToggleRow" In A Card, The Real Checkbox Sits Before Its Row)
+
+            .toggle_rows {
+                @include card(default, $space-xs);
+                display: flex;
+                flex-direction: column;
+
+                #allow_comments,
+                #hide_likes {
+                    position: absolute;
+                    opacity: 0;
+                    pointer-events: none;
+                }
+
+                .toggle_row {
+                    display: flex;
+                    align-items: center;
+                    gap: $space-md;
+                    min-height: 60px;
+                    padding: $space-sm $space-md;
+                    border-radius: $radius-md;
+                    cursor: pointer;
+                    transition: background-color $duration-fast ease;
+
+                    &:hover {
+                        background-color: $color-surface-pressed;
+                    }
+
+                    .toggle_icon {
+                        @include flex_center;
+                        flex-shrink: 0;
+                        width: 34px;
+                        height: 34px;
+                        color: $color-text-muted;
+                        background-color: $color-primary-soft;
+                        border-radius: $radius-pill;
+
+                        i {
+                            font-size: 15px;
+                        }
+                    }
+
+                    .toggle_text {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                        flex: 1;
+                        min-width: 0;
+                        text-align: left;
+
+                        .toggle_label {
+                            @include typography(body_strong);
+                            color: $color-text;
+                        }
+
+                        .toggle_description {
+                            @include typography(caption);
+                            color: $color-text-secondary;
+                        }
+                    }
+
+                    // Switch
+                    .switch {
+                        position: relative;
+                        flex-shrink: 0;
+                        width: 40px;
+                        height: 22px;
+                        background-color: $color-surface-strong;
+                        border-radius: $radius-pill;
+                        transition: background-color $duration-normal ease;
+
+                        &::before {
+                            content: "";
+                            position: absolute;
+                            top: 2px;
+                            left: 2px;
+                            width: 18px;
+                            height: 18px;
+                            background-color: $color-text-secondary;
+                            border-radius: 50%;
+                            box-shadow: $shadow-sm;
+                            transition: left $duration-normal ease, background-color $duration-normal ease;
+                        }
+                    }
+                }
+
+                input:checked + .toggle_row {
+                    .toggle_icon {
+                        color: $color-primary;
+                    }
+
+                    .switch {
+                        background-color: $color-primary-solid;
+
+                        &::before {
+                            left: 20px;
+                            background-color: $color-on-primary;
+                        }
+                    }
+                }
+
+                input:focus-visible + .toggle_row {
+                    outline: 2px solid $color-primary;
+                    outline-offset: -2px;
+                }
+            }
+
+            // Summary ("Card" Raised With The Cover And The Caption)
+
+            .summary_card {
+                @include card(raised, $space-md, $radius-lg);
+                display: flex;
+                align-items: center;
+                gap: $space-md;
+
+                .summary_media {
+                    flex-shrink: 0;
+                    width: 56px;
+                    height: 70px;
+                    overflow: hidden;
+                    background-color: $color-surface-pressed;
+                    border-radius: $radius-sm;
+
+                    img,
+                    video {
+                        display: block;
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                    }
+                }
+
+                .summary_text {
+                    display: flex;
+                    flex-direction: column;
+                    gap: $space-xxs;
+                    min-width: 0;
+
+                    .summary_meta {
+                        @include typography(label);
+                        color: $color-text-secondary;
+                    }
+
+                    .summary_caption {
+                        @include typography(callout);
+                        display: -webkit-box;
+                        -webkit-line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        overflow: hidden;
+                        overflow-wrap: anywhere;
+                        color: $color-text;
+
+                        &.empty {
+                            color: $color-text-muted;
+                        }
+                    }
+                }
+            }
+
+            // Uploading And Done
+
+            .upload_status {
+                align-items: center;
+                justify-content: center;
+                padding: $space-huge 0px;
+                text-align: center;
+
+                .upload_percent {
+                    @include typography(display);
+                    font-variant-numeric: tabular-nums;
+                    color: $color-primary;
+                }
+
+                .upload_track {
+                    width: 100%;
+                    height: 8px;
+                    overflow: hidden;
+                    background-color: $color-surface-strong;
+                    border-radius: $radius-pill;
+
+                    .upload_fill {
+                        width: 0%;
+                        height: 100%;
+                        background-color: $color-primary;
+                        border-radius: $radius-pill;
+                        transition: width $duration-fast linear;
+                    }
+                }
+
+                .upload_hint,
+                p {
+                    @include typography(callout);
+                    color: $color-text-secondary;
+                }
+
+                .done_icon {
+                    @include flex_center;
+                    width: 72px;
+                    height: 72px;
+                    color: $color-success;
+                    background-color: $color-success-soft;
+                    border: $hairline solid $color-success;
+                    border-radius: $radius-pill;
+
+                    i {
+                        font-size: 30px;
+                    }
+                }
+
+                h3 {
+                    @include typography(heading);
+                    color: $color-text;
+                }
+            }
+
+            // Footer (Sticks To The Bottom Of The Sheet, Shows The Buttons Of The Current Step)
+
+            .upload_footer {
+                position: sticky;
+                bottom: calc(-#{$space-xxl});
+                display: flex;
+                gap: $space-sm;
+                margin: auto (-$space-xl) (-$space-xxl);
+                padding: $space-md $space-xl calc(#{$space-lg} + env(safe-area-inset-bottom));
+                background-color: $color-surface;
+                border-top: $hairline solid $color-divider;
+                z-index: 100;
+
+                .step_back,
+                .upload_cancel {
+                    @include button(secondary);
+                }
+
+                .upload_cancel {
+                    @include button(danger, md, 100%);
+                }
+
+                .step_next,
+                .upload_post_form_submit,
+                .upload_done {
+                    @include button(primary, md, 100%);
+                    flex: 1;
+                }
+
+                // Hidden Unless The Current Step Needs Them (After The Button Mixins, Which Set "display")
+                .step_back,
+                .step_next,
+                .upload_post_form_submit,
+                .upload_cancel,
+                .upload_done {
+                    display: none;
+                }
+            }
+
+            &[data-step="media"] .upload_footer .step_next,
+            &[data-step="details"] .upload_footer .step_back,
+            &[data-step="details"] .upload_footer .step_next,
+            &[data-step="audience"] .upload_footer .step_back,
+            &[data-step="audience"] .upload_footer .upload_post_form_submit,
+            &[data-step="uploading"] .upload_footer .upload_cancel,
+            &[data-step="done"] .upload_footer .upload_done {
+                display: inline-flex;
+            }
+
+            &[data-step="details"] .upload_footer .step_back,
+            &[data-step="audience"] .upload_footer .step_back {
+                flex: 0 0 auto;
             }
         }
     }
@@ -885,6 +1385,7 @@ header {
 
         .search_posts_container {
             @include search_bar;
+            @include search_dropdown(".history_container", calc(40px * 3 + #{$space-sm}));
             z-index: 200;
 
             .search_bar_container {
@@ -899,30 +1400,7 @@ header {
             }
 
             .history_container {
-                @include scrollbar;
-                position: absolute;
-                top: $min-touch-target;
-                width: 100%;
-                max-height: calc(40px * 3 + #{$space-sm});
-                padding: $space-xs;
-                background-color: $color-surface-raised;
-                border: $hairline solid $color-border;
-                border-radius: $radius-md;
-                box-shadow: $shadow-lg;
-                opacity: 0;
-                pointer-events: none;
-                overflow-y: auto;
-                transition: top $duration-normal ease, opacity $duration-normal ease;
-                z-index: 50;
-
-                &:empty {
-                    display: none;
-                }
-
                 &.active {
-                    top: $min-touch-target + $space-xs;
-                    opacity: 1;
-                    pointer-events: auto;
 
                     .searched_post {
                         p {
@@ -931,6 +1409,8 @@ header {
                     }
                 }
 
+                // History Row (Same As The Homepage Search Results)
+
                 .searched_post {
                     position: relative;
                     height: 40px;
@@ -938,14 +1418,12 @@ header {
                     i {
                         position: absolute;
                         top: 50%;
-                        left: 0px;
+                        left: $space-md;
                         transform: translateY(-50%);
-                        width: 15px + 10px;
-                        height: 100%;
-                        line-height: 40px;
-                        padding-left: 10px;
+                        width: 20px;
+                        text-align: center;
                         pointer-events: all;
-                        color: $color-text-secondary;
+                        color: $color-text-muted;
                         cursor: pointer;
                         transition: display 0.3s ease allow-discrete, opacity 0.3s ease;
                         z-index: 100;
@@ -956,29 +1434,30 @@ header {
                         }
 
                         &.fa-xmark {
-                            font-size: 20px;
+                            font-size: 15px;
                         }
                     }
 
                     p {
+                        @include typography(callout);
+                        @include crop_text;
                         pointer-events: none;
                         position: relative;
                         display: block;
                         height: inherit;
                         line-height: 40px;
+                        padding: 0px $space-xxxl + $space-sm;
                         text-align: center;
-                        transition: background-color 0.2s ease;
+                        color: $color-text;
+                        border-radius: $radius-sm;
+                        transition: background-color $duration-fast ease;
 
                         &:hover,
                         &:focus-visible {
-                            background-color: $color-surface;
+                            background-color: $color-surface-pressed;
                         }
                     }
                 }
-            }
-
-            &:has(.search_bar:hover) .history_container, &:has(.search_bar:focus) .history_container {
-                border-color: $blue-color !important;
             }
         }
 

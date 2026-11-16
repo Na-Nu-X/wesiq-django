@@ -46,14 +46,26 @@
 // Loading Spinner (Activity Indicator)
 
 @mixin loading($size: 10px) {
+    position: relative; // Page Stylesheets May Replace It (E.g. With "position_center")
     width: $size * 3;
     height: $size * 3;
-    border: 3px solid $color-surface-strong;
-    border-top-color: $color-primary;
-    border-radius: 50%;
     transition: opacity $duration-slow ease, visibility $duration-slow ease;
-    animation: preloaderSpin 0.8s infinite linear;
     z-index: 3000;
+
+    // The Ring Spins On A Pseudo Element, Rotating The Element Itself Would Combine With Its Centering Transform And Make It Orbit
+    &::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: $size * 3;
+        height: $size * 3;
+        margin: -$size * 1.5 0px 0px (-$size * 1.5);
+        border: 3px solid $color-surface-strong;
+        border-top-color: $color-primary;
+        border-radius: 50%;
+        animation: preloaderSpin 0.8s infinite linear;
+    }
 
     &.hidden {
         opacity: 0;
@@ -1303,10 +1315,56 @@
         @include form_input;
         height: $min-touch-target;
         min-height: $min-touch-target;
-        padding: 0px $space-huge 0px 40px;
-        text-align: left;
+        margin-bottom: 0px; // Keeps The Wrapper As Tall As The Field, So The Icons Are Vertically Centered
+        padding: 0px 44px;
+        text-align: center;
         border-radius: $radius-pill;
         z-index: 50;
+    }
+}
+
+// Search Dropdown (Results / History Attached Under A "search_bar", Use On The Element Containing Both)
+// The Open State Comes From The "active" Class The Scripts Toggle On The Dropdown
+
+@mixin search_dropdown($dropdown, $max-height: calc(40px * 3)) {
+    position: relative;
+
+    // Open: The Field And The Dropdown Form One Panel (Rounded Top, Divider, Rounded Bottom)
+    &:has(> #{$dropdown}.active:not(:empty)) .search_bar {
+        border-color: $color-primary;
+        border-bottom-color: $color-divider;
+        background-color: $color-surface;
+        border-radius: ($min-touch-target * 0.5) ($min-touch-target * 0.5) 0px 0px;
+    }
+
+    > #{$dropdown} {
+        @include scrollbar;
+        position: absolute;
+        top: $min-touch-target;
+        left: 0px;
+        width: 100%;
+        max-height: $max-height;
+        padding: 0px $space-xs;
+        background-color: $color-surface;
+        border: $hairline solid $color-primary;
+        border-top: none;
+        border-radius: 0px 0px $radius-lg $radius-lg;
+        box-shadow: $shadow-lg;
+        opacity: 0;
+        pointer-events: none;
+        overflow-y: auto;
+        transition: opacity $duration-fast ease;
+        z-index: 50;
+
+        &:empty {
+            display: none;
+        }
+
+        &.active {
+            padding: $space-xs;
+            opacity: 1;
+            pointer-events: auto;
+        }
     }
 }
 

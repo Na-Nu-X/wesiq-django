@@ -6025,15 +6025,16 @@ def get_password_reset_code(request):
         code = issue_password_reset_code(user) # Generates And Stores A Secure 6-Digit Code (None While The Cooldown Is Active)
 
         if code:
-            # Sends The Mail
-            sendMail(
-                user,
-                _("Obnova hesla"), # Subject
-                _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s/password-reset?code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "code": code}, # Text Content
-                _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím kliknite na <a href="%(domain)s/password-reset?code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "code": code}, # HTML Content
-                _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
-                code # Middle Of HTML Content
-            )
+            # Sends The Mail (Translated In The User's Language Like Its Greeting, Not In The App's Request Language)
+            with translation.override(user.language):
+                sendMail(
+                    user,
+                    _("Obnova hesla"), # Subject
+                    _("dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím použite nasledujúci odkaz a zadajte nasledovný overovací kód.\n\n%(domain)s/password-reset?code=%(code)s - %(code)s\n\nAk ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.\nTím Wesiq.") % {"domain": settings.DOMAIN_URL, "code": code}, # Text Content
+                    _('dostali sme žiadosť o obnovenie hesla k vášmu účtu. Ak ste to boli vy, prosím kliknite na <a href="%(domain)s/password-reset?code=%(code)s" title="Obnoviť heslo" target="_blank">tento</a> odkaz a zadajte nasledovný overovací kód.') % {"domain": settings.DOMAIN_URL, "code": code}, # HTML Content
+                    _('Ak ste o obnovu hesla nežiadali, tento e-mail prosím ignorujte.'), # End Of HTML Content
+                    code # Middle Of HTML Content
+                )
 
         return generic_response
 
