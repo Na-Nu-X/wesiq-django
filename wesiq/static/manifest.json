@@ -7,13 +7,23 @@
     "theme_color": "#000000",
     "icons": [
       {
-        "src": "/static/images/icon-128.png",
+        "src": "/static/wesiq_128.png",
         "sizes": "128x128",
         "type": "image/png"
       },
       {
-        "src": "/static/images/icon-512.png",
+        "src": "/static/wesiq_192.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "/static/wesiq_512.png",
         "sizes": "512x512",
+        "type": "image/png"
+      },
+      {
+        "src": "/static/wesiq_1024.png",
+        "sizes": "1024x1024",
         "type": "image/png"
       }
     ]

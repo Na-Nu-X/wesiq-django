@@ -8,7 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Wesiq - {% block title %}{% endblock title %}</title>
-    <link rel="icon" type="image/x-icon" href="{% static 'icon-32.png' %}"> <!-- https://www.flaticon.com/free-icon/weight_8881792 -->
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'wesiq_32.png' %}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{% static 'wesiq_192.png' %}">
 
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block style %}{% endblock style %}
@@ -21,7 +22,7 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-VRNHVE1MY3"></script> <!-- Google Analytics -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js Library -->
 
-    <link rel="apple-touch-icon" href="{% static 'icon-192.png' %}"> <!-- https://www.flaticon.com/free-icon/weight_8881792 -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'wesiq_180.png' %}">
     <link rel="manifest" href="{% static 'manifest.json' %}">
     <meta name="theme-color" content="#060b18">
     <meta name="color-scheme" content="dark">
@@ -182,9 +183,8 @@
         <h2>Wesiq</h2>
 
         <div class="contact_us">
-            <p><i class="fa-regular fa-envelope"></i> <a href="mailto:behulpatrik@gmail.com" title="{% translate 'Napísať...' %}">behulpatrik@gmail.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
-
-            <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="{% translate 'Zavolať...' %}">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone -->
+            <p><i class="fa-regular fa-envelope"></i> <a href="mailto:support@wesiq.com" title="{% translate 'Napísať...' %}">support@wesiq.com</a></p> <!-- https://fontawesome.com/icons/envelope -->
+            {% comment %} <p><i class="fa-solid fa-phone"></i> <a href="tel:+421940322633" title="{% translate 'Zavolať...' %}">+421 940 322 633</a></p> <!-- https://fontawesome.com/icons/phone --> {% endcomment %}
         </div>
 
         <div class="social_media">
