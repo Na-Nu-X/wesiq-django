@@ -1,4 +1,5 @@
 from pathlib import Path
+from urllib.parse import urlsplit, urlunsplit
 import os
 import dj_database_url
 from celery.schedules import crontab
@@ -21,6 +22,11 @@ def env_int(name, default = 0):
 
 def env_list(name, default = ""):
     return [one_item.strip() for one_item in os.environ.get(name, default).split(",") if one_item.strip()]
+
+# Returns The Same Redis URL Pointing To Another Database Number (e.g. redis://host:6379/0 -> redis://host:6379/1)
+def redis_url_with_db(url, db):
+    parts = urlsplit(url)
+    return urlunsplit((parts.scheme, parts.netloc, f"/{db}", parts.query, parts.fragment))
 
 # General
 DOMAIN_URL = os.environ.get("DOMAIN_URL") # Stores The Domain URL
@@ -152,6 +158,8 @@ STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
 
+STATIC_ROOT = BASE_DIR / "staticfiles" # collectstatic Target, Served By Nginx In Production
+
 # Default Primary Key Field Type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -164,6 +172,10 @@ DATABASES = {
     "default": dj_database_url.parse(os.environ.get("DATABASE_URL"))
 }
 
+# Redis (Django Cache, Channels Layer And Default Celery Broker)
+# Docker Uses The "redis" Service Name; On A VM Set e.g. "redis://127.0.0.1:6379/0" (Password: "redis://:password@host:6379/0")
+REDIS_URL = os.environ.get("REDIS_URL") or "redis://redis:6379/0"
+
 # Channels
 ASGI_APPLICATION = "core.asgi.application"
 
@@ -172,7 +184,7 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
 
         "CONFIG": {
-            "hosts": [("redis", 6379)]
+            "hosts": [REDIS_URL]
         }
     }
 }
@@ -253,8 +265,8 @@ EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS")
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
 
 # Celery
-CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL", "redis://redis:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND", "redis://redis:6379/0")
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL") or REDIS_URL
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND") or REDIS_URL
 CELERY_TIMEZONE = "Europe/Bratislava"
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
@@ -269,7 +281,7 @@ CELERY_BEAT_SCHEDULE = {
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://redis:6379/1",
+        "LOCATION": redis_url_with_db(REDIS_URL, 1), # Database 1, So The Cache Stays Separate From Celery (Database 0)
 
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
