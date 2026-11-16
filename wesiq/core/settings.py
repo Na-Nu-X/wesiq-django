@@ -256,13 +256,14 @@ ACCOUNT_USERNAME_BLACKLIST = [
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
 
-# Gmail
+# E-mail
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
 EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD")
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS")
+EMAIL_PORT = int(os.environ.get("EMAIL_PORT", 587))
+EMAIL_USE_TLS = os.environ.get("EMAIL_USE_TLS", "True").lower() == "true"
 EMAIL_BACKEND = os.environ.get("EMAIL_BACKEND")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Wesiq <noreply@wesiq.com>")
 
 # Celery
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL") or REDIS_URL
@@ -344,6 +345,7 @@ STRIPE_WEBHOOK_SECRET = os.environ.get("STRIPE_WEBHOOK_SECRET")
 
 # RevenueCat (Native App In-App Purchases) - Shared Secret Sent In The Webhook's Authorization Header
 REVENUECAT_WEBHOOK_AUTH = os.environ.get("REVENUECAT_WEBHOOK_AUTH")
+REVENUECAT_SECRET_KEY = os.environ.get("REVENUECAT_SECRET_KEY") # Secret API Key ("sk_..."), Reads The Current Subscription State
 
 # GeoDjango
 possible_gdal_paths = [
