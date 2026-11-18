@@ -167,7 +167,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
                     "message": message, # Stores The Message To The Event
                     "attachments": [],
-                    "post": {},
+                    "post": None, # No Shared Post (Plain Message)
                     "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
@@ -315,7 +315,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     "chat_id": new_chat.id, # Stores The Chat ID To The Event
                     "message": message, # Stores The Message To The Event
                     "attachments": attachments_data, # Stores The Attachments To The Event
-                    "post": {},
+                    "post": None, # No Shared Post (Plain Message)
                     "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
                     "sender_id": self.sender.id, # Stores The Sender's ID To The Event
                     "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event

@@ -1480,6 +1480,53 @@ class Subscription(models.Model):
         blank = True
     )
 
+    STORE_CHOICES = [
+        ("stripe", "Stripe"),
+        ("play_store", "Google Play"),
+        ("app_store", "App Store"),
+        ("promotional", "RevenueCat")
+    ]
+
+    store = models.CharField(
+        verbose_name = _("Store"),
+        help_text = _("Where the subscription was bought (Stripe on the website, Google Play or App Store in the app)."),
+        max_length = 20,
+        choices = STORE_CHOICES,
+        null = True,
+        blank = True
+    )
+
+    store_subscription_id = models.CharField(
+        verbose_name = _("Store Subscription ID"),
+        help_text = _("Transaction ID of the Google Play / App Store subscription (from RevenueCat)."),
+        max_length = 255,
+        null = True,
+        blank = True
+    )
+
+    store_product_id = models.CharField(
+        verbose_name = _("Store Product ID"),
+        help_text = _("Google Play / App Store product of the subscription."),
+        max_length = 255,
+        null = True,
+        blank = True
+    )
+
+    revenuecat_app_user_id = models.CharField(
+        verbose_name = _("RevenueCat App User ID"),
+        help_text = _("ID of the user in RevenueCat (the Wesiq user ID)."),
+        max_length = 255,
+        null = True,
+        blank = True
+    )
+
+    expires_at = models.DateTimeField(
+        verbose_name = _("Expires At"),
+        help_text = _("End of the paid period of a Google Play / App Store subscription."),
+        null = True,
+        blank = True
+    )
+
     plan = models.CharField(
         verbose_name = _("Plan"),
         help_text = _("Activated subscription plan."), 
@@ -1519,7 +1566,17 @@ class Subscription(models.Model):
 
     @property
     def remaining_time(self):
-        if not self.stripe_subscription_id or not self.is_active:
+        if not self.is_active:
+            return _("Žiadne aktívne predplatné")
+
+        # Google Play / App Store Subscriptions Store Their End Date (Never Ask Stripe About Them)
+        if self.store in ("play_store", "app_store", "promotional"):
+            if not self.expires_at:
+                return _("Nepodarilo sa načítať dáta.")
+
+            return self._formatRemaining(int((self.expires_at - datetime.now(datetime_timezone.utc)).total_seconds()))
+
+        if not self.stripe_subscription_id:
             return _("Žiadne aktívne predplatné")
 
         try:
@@ -1539,28 +1596,29 @@ class Subscription(models.Model):
             end_date = datetime.fromtimestamp(end_time, tz = datetime_timezone.utc) # Gets The End Date
             now = datetime.now(datetime_timezone.utc) # Gets The Current Time
 
-            remaining_time = end_date - now # Calculates The Remaining Time
-
-            remaining_seconds = int(remaining_time.total_seconds()) # Calculates The Remaining Seconds
-
-            if remaining_seconds <= 0:
-                return _("Predplatné vypršalo.")
-
-            remaining_days = remaining_seconds // 86400 # Calculates The Remaining Days
-
-            if remaining_days > 0:
-                return _("Ostáva %(remaining_days)s dní") % {
-                    "remaining_days": remaining_days
-                }
-
-            remaining_hours = remaining_seconds // 3600 # Calculates The Remaining Hours
-
-            return _("Ostáva %(remaining_hours)s hodín") % {
-                "remaining_hours": remaining_hours
-            }
+            return self._formatRemaining(int((end_date - now).total_seconds())) # Formats The Remaining Time
 
         except Exception:
             return _("Nepodarilo sa načítať dáta.")
+
+    # Function For Format The Remaining Seconds Of The Paid Period
+    @staticmethod
+    def _formatRemaining(remaining_seconds):
+        if remaining_seconds <= 0:
+            return _("Predplatné vypršalo.")
+
+        remaining_days = remaining_seconds // 86400 # Calculates The Remaining Days
+
+        if remaining_days > 0:
+            return _("Ostáva %(remaining_days)s dní") % {
+                "remaining_days": remaining_days
+            }
+
+        remaining_hours = remaining_seconds // 3600 # Calculates The Remaining Hours
+
+        return _("Ostáva %(remaining_hours)s hodín") % {
+            "remaining_hours": remaining_hours
+        }
 
     class Meta:
         verbose_name = _("Predplatné")

@@ -14,6 +14,10 @@ urlpatterns = [
     path("register/", views.register, name = "register_url"),
     path("get-logged-in-user/", views.get_logged_in_user, name = "get_logged_in_user_url"),
 
+    # Subscriptions (Google Play / App Store Through RevenueCat)
+    path("revenuecat-webhook/", views.revenuecat_webhook, name = "revenuecat_webhook_url"),
+    path("sync-subscription/", views.sync_subscription, name = "sync_subscription_url"),
+
     path("load-first-users/", views.load_first_users, name = "load_first_users_url"),
     path("search-users/", views.search_users, name = "search_users_url"),
     path("toggle-follow/", views.toggle_follow, name = "toggle_follow_url"),

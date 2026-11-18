@@ -6183,3 +6183,51 @@ msgstr "Todos os direitos reservados."
 
 #~ msgid "Zavolať..."
 #~ msgstr "Ligar..."
+
+#: app/views.py:1638
+msgid "Predplatné z Google Play alebo App Store zrušíte v nastaveniach obchodu."
+msgstr "Assinaturas do Google Play ou da App Store são canceladas nas configurações da loja."
+
+#: app/api/views.py:334
+msgid "Predplatné sa nepodarilo overiť. Skúste to znova neskôr."
+msgstr "Não foi possível verificar a assinatura. Tente novamente mais tarde."
+
+#: app/models.py:1491
+msgid "Store"
+msgstr "Loja"
+
+#: app/models.py:1492
+msgid "Where the subscription was bought (Stripe on the website, Google Play or App Store in the app)."
+msgstr "Onde a assinatura foi comprada (Stripe no site, Google Play ou App Store no aplicativo)."
+
+#: app/models.py:1500
+msgid "Store Subscription ID"
+msgstr "ID da assinatura na loja"
+
+#: app/models.py:1501
+msgid "Transaction ID of the Google Play / App Store subscription (from RevenueCat)."
+msgstr "ID da transação da assinatura do Google Play / App Store (do RevenueCat)."
+
+#: app/models.py:1508
+msgid "Store Product ID"
+msgstr "ID do produto na loja"
+
+#: app/models.py:1509
+msgid "Google Play / App Store product of the subscription."
+msgstr "Produto do Google Play / App Store da assinatura."
+
+#: app/models.py:1516
+msgid "RevenueCat App User ID"
+msgstr "ID de usuário no RevenueCat"
+
+#: app/models.py:1517
+msgid "ID of the user in RevenueCat (the Wesiq user ID)."
+msgstr "ID do usuário no RevenueCat (o ID de usuário do Wesiq)."
+
+#: app/models.py:1524
+msgid "Expires At"
+msgstr "Expira em"
+
+#: app/models.py:1525
+msgid "End of the paid period of a Google Play / App Store subscription."
+msgstr "Fim do período pago de uma assinatura do Google Play / App Store."

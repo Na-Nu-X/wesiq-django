@@ -35,7 +35,7 @@ from django.core.mail import EmailMultiAlternatives
 import math
 from django.db.models import Sum, Avg
 from django.db.models import F, IntegerField, ExpressionWrapper, Value
-import random, os, secrets, mimetypes
+import random, os, secrets, mimetypes, hmac, re
 from pathlib import Path
 from django.core.files.storage import FileSystemStorage
 from django.core.cache import cache
@@ -47,6 +47,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.password_validation import validate_password
 from app.forms import editAccountForm
+from app.revenuecat import RevenueCatError, syncUserSubscription
 from app.security import (
     issue_password_reset_code, verify_password_reset_code, clear_password_reset_code, revoke_user_refresh_tokens,
     visible_posts_q, EDITABLE_POST_SETTINGS, parse_bool, record_activity, ActivityValidationError,
@@ -185,7 +186,7 @@ def sendMail(
     with translation.override(user.language):
         subject = f"Wesiq - {subject}" # Sets The Subject
         text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}" # Sets The Text Content As A Fallback
-        sender = settings.EMAIL_HOST_USER # Sets The Sender
+        sender = settings.DEFAULT_FROM_EMAIL # Sets The Sender (Wesiq <noreply@wesiq.com>)
         receiver = [user.email_address] # Sets The Receiver
 
         # Sets The HTML Content
@@ -197,7 +198,7 @@ def sendMail(
             {_('Tím')} Wesiq.</p>
         """
 
-        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver, reply_to=["support@wesiq.com"])
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send() # Sends The Mail
 
@@ -232,87 +233,116 @@ def apple_app_site_association(request):
 # Webhooks #
 ############
 
-# NOTE: Not Routed Yet. Before Adding It To app/api/urls.py, Set REVENUECAT_WEBHOOK_AUTH In .env To The Same
-# Value As The "Authorization" Header Configured In The RevenueCat Dashboard.
+# Function For Convert A RevenueCat App User ID To A Wesiq User ID (The App Logs In With str(user.id); Anonymous
+# "$RCAnonymousID:..." Customers And Anything Else Return None)
+def toWesiqUserId(app_user_id):
+    value = str(app_user_id or "").strip()
+    return int(value) if re.fullmatch(r"[0-9]{1,18}", value) else None # ASCII Digits Only ("²".isdigit() Is True, But int() Fails)
+
+# RevenueCat Webhook (Google Play / App Store Subscriptions). The Dashboard Sends The Same "Authorization" Header As
+# REVENUECAT_WEBHOOK_AUTH. Every Event Re-Reads The Customer From RevenueCat (app/revenuecat.py), So Late, Repeated Or
+# Out-Of-Order Events Can't Leave A Wrong Plan Behind
 @csrf_exempt
 def revenuecat_webhook(request):
     if request.method != "POST":
-        return JsonResponse({
-            "success": False, 
-            "message": str(_("Platba sa dá uskutočniť len pomocou POST metódy."))
-        }, status = 405)
+        return JsonResponse({"success": False}, status = 405)
 
     # Authenticates RevenueCat (Without This Anyone Could Grant Themselves A Subscription)
     expected_authorization = getattr(settings, "REVENUECAT_WEBHOOK_AUTH", None)
     received_authorization = request.META.get("HTTP_AUTHORIZATION", "")
 
-    if not expected_authorization or not secrets.compare_digest(received_authorization.encode(), expected_authorization.encode()):
+    # RevenueCat Sends The Exact Value From Its Dashboard (No "Bearer " Is Added), So The Raw Header Is Compared In Constant Time
+    if not expected_authorization or not hmac.compare_digest(received_authorization.encode(), expected_authorization.encode()):
         captureError(f"Unauthorized RevenueCat webhook call.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n") # Captures The Error
         return JsonResponse({"success": False}, status = 401)
 
     try:
-        data = json.loads(request.body) # Gets The Data
-        event = data.get("event", {}) # Gets The Event
-        event_type = event.get("type") # Gets The Event Type
-        app_user_id = event.get("app_user_id") # Gets The App User ID
-        entitlement_ids = event.get("entitlement_ids") or [] # Gets The Entitlement IDs
-        transaction_id = event.get("transaction_id") or "" # Gets The Transaction ID (From Apple / Google)
-        amount = event.get("price_in_purchased_currency") or 0 # Gets The Amount (Price)
+        event = (json.loads(request.body) or {}).get("event") or {} # Gets The Event
 
-        try:
-            user = Users.objects.get(id = int(app_user_id)) # Gets The User
+    except ValueError:
+        return JsonResponse({"success": False}, status = 400)
 
-        except (Users.DoesNotExist, ValueError, TypeError):
-            # 200 So RevenueCat Doesn't Retry An Event That Can Never Succeed
-            return JsonResponse({
-                "success": False, 
-                "message": str(_("Používateľ sa nenašiel."))
-            }, status = 200)
+    event_type = event.get("type") # Gets The Event Type
 
-        plan = "free" # Stores The Subscription Plan
-        if "premium_access" in entitlement_ids: plan = "premium" # Sets The Subscription Plan To Premium
-        elif "basic_access" in entitlement_ids: plan = "basic" # Sets The Subscription Plan To Basic
+    if event_type == "TEST":
+        return JsonResponse({"success": True}, status = 200) # "Send Test Event" In The Dashboard
 
-        with transaction.atomic():
-            # Subscription Purchase Or Renewal
-            if event_type in ["INITIAL_PURCHASE", "RENEWAL"]:
-                subscription, created = Subscription.objects.select_for_update().get_or_create(user = user)
-                subscription.stripe_subscription_id = transaction_id # Stores The Apple / Google ID
-                subscription.plan = plan
-                subscription.is_active = True
-                subscription.is_cancelled = False
-                subscription.save() # Saves The Subscription
+    # A Transfer (Restore On Another Account) Moves The Purchase, So Both Sides Are Synced. Other Events Belong To One
+    # Customer, Who May Also Be Known Under Aliases (E.g. An Anonymous Purchase Later Linked To The Account)
+    if event_type == "TRANSFER":
+        app_user_ids = list(event.get("transferred_from") or []) + list(event.get("transferred_to") or [])
 
-                # RevenueCat Retries Deliveries, So The Same Transaction Is Recorded Only Once (Idempotency)
-                if not transaction_id or not Transactions.objects.filter(stripe_intent_id = transaction_id).exists():
-                    Transactions.objects.create(
-                        user_id = user.id,
-                        stripe_intent_id = transaction_id, # Stores The Apple / Google ID
-                        amount = amount,
-                        status = "succeeded",
-                        title = f"In-App Subscription ({plan.capitalize()})"
-                    )
+    else:
+        app_user_ids = [event.get("app_user_id"), event.get("original_app_user_id")] + list(event.get("aliases") or [])
 
-            # Subscription Cancellation Or Expiration
-            elif event_type in ["CANCELLATION", "EXPIRATION"]:
-                Subscription.objects.filter(user = user).update(
-                    plan = "free",
-                    is_active = False,
-                    is_cancelled = event_type == "CANCELLATION"
+    user_ids = list(dict.fromkeys(user_id for user_id in map(toWesiqUserId, app_user_ids) if user_id is not None)) # Unique Wesiq User IDs, In Order
+
+    # A Refund Ends Access Right Away; A Normal Cancellation Only Stops Auto-Renew (Access Stays Until "expires_date")
+    revoked_product_id = event.get("product_id") if event_type == "CANCELLATION" and event.get("cancel_reason") == "CUSTOMER_SUPPORT" else None
+
+    try:
+        for user_id in user_ids:
+            user = Users.objects.filter(id = user_id).first() # Gets The User
+
+            if not user:
+                continue
+
+            subscription = syncUserSubscription(user, revoked_product_id = revoked_product_id) # Updates The Subscription From RevenueCat
+
+            # Records Each Paid Period Once (RevenueCat Retries Deliveries)
+            transaction_id = event.get("transaction_id") or ""
+
+            if event_type in ("INITIAL_PURCHASE", "RENEWAL") and transaction_id and not Transactions.objects.filter(stripe_intent_id = transaction_id).exists():
+                Transactions.objects.create(
+                    user_id = user.id,
+                    stripe_intent_id = transaction_id, # Stores The Google Play / App Store Transaction ID
+                    amount = event.get("price_in_purchased_currency") or 0,
+                    status = "succeeded",
+                    title = f"In-App Subscription ({(subscription.plan if subscription else 'free').capitalize()}, {event.get('currency') or ''})"
                 )
 
-        return JsonResponse({
-            "success": True, 
-            "message": str(_("Predplatné bolo úspešne aktualizované."))
-        }, status = 200)
+    except RevenueCatError as error:
+        captureError(f"The RevenueCat subscription could not be synced.\n\t- Event: {event_type} {event.get('id')}\n\t- Error: {error}\n") # Captures The Error
+        return JsonResponse({"success": False}, status = 503) # RevenueCat Retries Later
 
     except Exception as error:
-        captureError(f"An error occurred while activating the mobile subscription.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+        captureError(f"An error occurred while processing the RevenueCat webhook.\n\t- Event: {event_type} {event.get('id')}\n\t- Error: {error}\n") # Captures The Error
+        return JsonResponse({"success": False}, status = 500)
 
-        return JsonResponse({
-            "success": False, 
-            "message": str(_("Pri aktivácii predplatného došlo k chybe."))
-        }, status = 500)
+    return JsonResponse({"success": True}, status = 200)
+
+# Function For Sync The Logged In User's Store Subscription Right After A Purchase Or Restore In The App
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@ratelimit(key = "user", rate = "10/m", method = "POST", block = False)
+def sync_subscription(request):
+    if getattr(request, "limited", False):
+        return Response({
+            "success": False,
+            "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
+        }, status = 429)
+
+    try:
+        subscription = syncUserSubscription(request.user) # Reads The Current State From RevenueCat
+
+    except RevenueCatError as error:
+        captureError(f"The subscription could not be synced.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {request.user.id}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False,
+            "message": str(_("Predplatné sa nepodarilo overiť. Skúste to znova neskôr."))
+        }, status = 503)
+
+    return Response({
+        "success": True,
+        "message": str(_("Predplatné bolo úspešne aktualizované.")),
+
+        "subscription": {
+            "plan": subscription.plan,
+            "is_active": subscription.is_active
+        } if subscription else None
+    }, status = 200)
 
 ###############
 # General API #
@@ -345,14 +375,22 @@ def login(request):
                 "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
             }, status = 200)
 
-        clean_username = identifier[1:] if identifier.startswith("@") else identifier # Gets The Clean Username (Without The At Sign)
+        identifier = "".join(character for character in str(identifier) if character not in "\u200b\u200c\u200d\u2060\ufeff").strip() # Removes Invisible Characters Some Mobile Keyboards Insert
+        clean_username = identifier.lstrip("@") # Gets The Clean Username (Accepts "username" And "@username")
 
         try:
-            # Gets The User
-            user = Users.objects.get(
-                Q(username__iexact = clean_username) |
-                Q(email_address__iexact = identifier)
-            )
+            # Gets The User (E-mail Addresses Aren't Unique, So The One Whose Password Matches Wins)
+            if "@" in clean_username:
+                candidates = list(Users.objects.filter(email_address__iexact = clean_username).order_by("id"))
+            
+            # Usernames Registered On The Website Are Stored With A Leading "@", Those From The App Without It
+            else:
+                candidates = list(Users.objects.filter(Q(username__iexact = clean_username) | Q(username__iexact = f"@{clean_username}")).order_by("id"))
+
+            if not candidates:
+                raise Users.DoesNotExist(f"No user matches the identifier {identifier}.")
+
+            user = next((candidate for candidate in candidates if check_password(password, candidate.password)), candidates[0])
 
             # Checks The Password Validity
             if check_password(password, user.password):
@@ -4258,14 +4296,6 @@ def edit_account(request):
                 "message": str(_("Účet %(username)s bol odstránený") % {"username": logged_in_user.username})
             }, status = 200)
 
-        edit_window = timedelta(days = 7) # Profile Details Can Be Changed Once Per 7 Days
-
-        if logged_in_user.last_edit is not None and timezone.now() - logged_in_user.last_edit < edit_window:
-            return Response({
-                "success": False, 
-                "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + edit_window).strftime('%d.%m. %Y')})
-            }, status = 429)
-
         # 1) Validates Everything First, So An Invalid Field Can't Leave The Account Half-Updated
         errors = {} # Stores The Validation Errors Per Field
         cleaned = {} # Stores The Cleaned Values Of Changed Fields
@@ -4316,6 +4346,16 @@ def edit_account(request):
                 "errors": errors,
                 "message": str(_("Niektoré údaje sú neplatné"))
             }, status = 400)
+
+        # Only Profile Details (Name, Bio, Contact, Picture) Are Limited To Once Per 7 Days; Privacy, Data Saving And Links Can Change Anytime
+        edit_window = timedelta(days = 7)
+        changes_details = bool(cleaned) or bool(selected_profile_picture) or (delete_profile_picture and bool(logged_in_user.profile_picture_name)) # Checks If Any Rate-Limited Detail Would Change
+
+        if changes_details and logged_in_user.last_edit is not None and timezone.now() - logged_in_user.last_edit < edit_window:
+            return Response({
+                "success": False, 
+                "message": str(_("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + edit_window).strftime('%d.%m. %Y')})
+            }, status = 429)
 
         # 2) Applies The Changes
         now = timezone.now()
@@ -4533,7 +4573,7 @@ def get_chats(request):
         unread_chats = Chat.objects.filter(
             receiver = logged_in_user,
             is_read = False
-        ).select_related("sender")
+        ).select_related("sender").order_by("-created_at") # Newest First, So The Preview Is The Latest Message
         
         unread_sender_ids = unread_chats.values_list("sender_id", flat = True) # Gets The Sender IDs Of Unread Chats
 
@@ -4550,7 +4590,9 @@ def get_chats(request):
                     "subscription": {
                         "is_active": one_unread_chat.sender.subscription.is_active
                     } if hasattr(one_unread_chat.sender, "subscription") else None
-                }
+                },
+
+                "content": one_unread_chat.content # The App Shows It As The Conversation Preview (Same As Read Chats)
             }
 
             for one_unread_chat in unread_chats
@@ -4562,7 +4604,7 @@ def get_chats(request):
             is_read = True
         ).exclude(
             sender_id__in = unread_sender_ids
-        ).select_related("sender")
+        ).select_related("sender").order_by("-created_at") # Newest First, So The Preview Is The Latest Message
 
         # Creates Valid Format Of Read Chats For JSON Response
         read_chats_data = [
@@ -4658,8 +4700,8 @@ def get_chat(request, username):
 
             # Gets Sender's And Receiver's Chats
             chats = Chat.objects.filter(
-                Q(sender = logged_in_user) & Q(receiver = receiver) | 
-                Q(sender = receiver)
+                Q(sender = logged_in_user, receiver = receiver) |
+                Q(sender = receiver, receiver = logged_in_user) # Only Messages Sent To The Logged In User (Not The Receiver's Messages To Other People)
             ).select_related(
                 "sender__subscription",
                 "post",

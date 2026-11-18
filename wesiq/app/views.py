@@ -206,7 +206,7 @@ def sendMail(
     with translation.override(language or user.language):
         subject = f"Wesiq - {subject}" # Sets The Subject
         text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}" # Sets The Text Content As A Fallback
-        sender = settings.EMAIL_HOST_USER # Sets The Sender
+        sender = settings.DEFAULT_FROM_EMAIL # Sets The Sender (Wesiq <noreply@wesiq.com>)
         receiver = [user.email_address] # Sets The Receiver
 
         # Sets The HTML Content
@@ -218,7 +218,7 @@ def sendMail(
             {_('Tím')} Wesiq.</p>
         """
 
-        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver, reply_to=["support@wesiq.com"])
         mail_message.attach_alternative(html_content, "text/html")
         mail_message.send() # Sends The Mail
 
@@ -434,6 +434,7 @@ def stripeWebhook(request):
 
                 subscription, created = Subscription.objects.get_or_create(user = user) # Gets Or Creates The Subscription
                 subscription.stripe_subscription_id = stripe_subscription_id
+                subscription.store = "stripe" # Website Subscription (The Store Sync Never Overwrites It)
                 subscription.plan = plan
                 subscription.is_active = True
                 subscription.is_cancelled = False
@@ -463,9 +464,12 @@ def stripeWebhook(request):
 
         try:
             subscription = Subscription.objects.get(stripe_subscription_id = stripe_subscription_id) # Gets The Subscription
-            subscription.plan = "free"
-            subscription.is_active = False
-            subscription.save() # Saves The Updated Subscription
+
+            # Ends Only A Stripe Subscription (The Row May Have Moved To A Google Play / App Store Subscription Since)
+            if subscription.store in (None, "stripe"):
+                subscription.plan = "free"
+                subscription.is_active = False
+                subscription.save() # Saves The Updated Subscription
 
         except Subscription.DoesNotExist:
             pass
@@ -1629,7 +1633,11 @@ def homepageView(request):
             if request.POST.get("cancel_subscription_submit"):
                 subscription = getattr(logged_in_user, "subscription", None) # Gets The Current Subscription
                 
-                if subscription and subscription.stripe_subscription_id:
+                # Google Play / App Store Subscriptions Can Only Be Cancelled In The Store
+                if subscription and subscription.is_active and subscription.store in ("play_store", "app_store"):
+                    messages.add_message(request, messages.ERROR, _("Predplatné z Google Play alebo App Store zrušíte v nastaveniach obchodu.")) # Sets The Message
+
+                elif subscription and subscription.stripe_subscription_id and subscription.store in (None, "stripe"):
                     try:
                         # Cancels Subscription Billing At The End Of The Billing Period
                         stripe.Subscription.modify(
@@ -4817,7 +4825,15 @@ def profileView(request, username):
 
                                     return HttpResponseRedirect(reverse("homepage_url")) # Redirects To The Homepage
 
-                                if logged_in_user.last_edit == None or timezone.now() - logged_in_user.last_edit >= timedelta(days = 7):
+                                # Only Profile Details (Name, Bio, Contact, Picture) Are Limited To Once Per 7 Days; Privacy, Data Saving And Links Can Change Anytime
+                                edit_window = timedelta(days = 7)
+                                changes_details = (
+                                    bool(request.FILES.get("select_profile_picture"))
+                                    or (delete_profile_picture and bool(logged_in_user.profile_picture_name))
+                                    or any(value != "" and value != getattr(logged_in_user, field_name) for field_name, value in (("bio", bio), ("first_name", first_name), ("last_name", last_name), ("email_address", email_address), ("phone_number", phone_number)))
+                                ) # Checks If Any Rate-Limited Detail Would Change (Empty Fields Keep The Current Value)
+
+                                if not changes_details or logged_in_user.last_edit is None or timezone.now() - logged_in_user.last_edit >= edit_window:
                                     selected_profile_picture = request.FILES.get("select_profile_picture") # Gets The Selected Profile Picture
                                     
                                     # Validates Before Anything Is Changed, So A Rejected Request Has No Side Effects
@@ -4853,7 +4869,7 @@ def profileView(request, username):
                                         logged_in_user.profile_picture_name = new_profile_picture_name # Updates The Profile Picture Name
                                         logged_in_user.last_edit = timezone.now() # Updates The Last Edit Time
 
-                                    if delete_profile_picture:
+                                    if delete_profile_picture and logged_in_user.profile_picture_name:
                                         profile_picture_name = logged_in_user.profile_picture_name # Gets The Profile Picture Name
                                         profile_picture_path = os.path.join(settings.MEDIA_ROOT, f"images/{str(logged_in_user_id)}/{logged_in_user.profile_picture_name}") # Gets The Profile Picture Path
 
@@ -4942,7 +4958,7 @@ def profileView(request, username):
                                     return HttpResponseRedirect(reverse("homepage_url")) # Redirects To The Homepage
 
                                 else:
-                                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + timedelta(days = 30)).strftime('%d.%m. %Y')}) # Sets The Message
+                                    messages.add_message(request, messages.ERROR, _("Ďalšie úpravy budú možné %(next_edit_time)s") % {"next_edit_time": (logged_in_user.last_edit + edit_window).strftime('%d.%m. %Y')}) # Sets The Message
 
                             except Exception as error:
                                 messages.add_message(request, messages.ERROR, _("Pri vykonávaní zmien v účte došlo k chybe")) # Sets The Message
