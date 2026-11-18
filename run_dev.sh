@@ -32,3 +32,6 @@ gnome-terminal --title="SASS Watch" -- bash -c "npx sass --watch .:.; exec bash"
 # docker compose down web
 # docker compose up web
 # docker compose exec web python locale/tools/build_json.py   # Mobile App JSON Catalogs From The .po Files
+
+# Custom Commands:
+# docker compose exec web python manage.py clean_media

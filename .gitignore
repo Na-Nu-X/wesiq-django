@@ -31,3 +31,9 @@ posts/
 wesiq/media/images/
 temp/
 chat_attachments/
+
+# Database Backups
+wesiq/database/backup/*.dump
+wesiq/database/backup/*.sql
+wesiq/database/backup/*.sql.gz
+wesiq/database/backup/*.backup
