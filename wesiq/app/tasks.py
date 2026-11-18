@@ -27,12 +27,19 @@ def captureMessage(message):
         file.write(f"[{timezone.now().strftime("%d.%m. %Y %X %Z")}] - {message}\n")
 
 # Function For Send Mail
-def sendMail(user, subject, text_content, html_content, html_content_end, html_content_middle = ""):
+def sendMail(
+    user, 
+    subject, 
+    text_content, 
+    html_content, 
+    html_content_end, 
+    html_content_middle = ""
+):
     with translation.override(user.language):
         # Send Mail
         subject = f"Wesiq - {subject}"
         text_content = _("Ahoj %(username)s") % {"username": user.username} + f",\n{text_content}"
-        sender = settings.EMAIL_HOST_USER
+        sender = settings.DEFAULT_FROM_EMAIL # Sets The Sender (Wesiq <noreply@wesiq.com>)
         receiver = [user.email_address]
         html_content = f"""
             <h1>{_('Ahoj %(username)s') % {"username": user.username}},</h1>
@@ -42,9 +49,8 @@ def sendMail(user, subject, text_content, html_content, html_content_end, html_c
             {_('Tím')} Wesiq.</p>
         """
 
-        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver)
+        mail_message = EmailMultiAlternatives(subject, text_content, sender, receiver, reply_to=["support@wesiq.com"])
         mail_message.attach_alternative(html_content, "text/html")
-
         mail_message.send()
 
 # Function For Send Weekly Report Mail

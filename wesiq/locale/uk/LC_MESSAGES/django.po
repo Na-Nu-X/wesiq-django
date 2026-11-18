@@ -6222,3 +6222,51 @@ msgstr "Всі права захищені."
 
 #~ msgid "Zavolať..."
 #~ msgstr "Зателефонувати..."
+
+#: app/views.py:1638
+msgid "Predplatné z Google Play alebo App Store zrušíte v nastaveniach obchodu."
+msgstr "Передплату Google Play або App Store можна скасувати в налаштуваннях магазину."
+
+#: app/api/views.py:334
+msgid "Predplatné sa nepodarilo overiť. Skúste to znova neskôr."
+msgstr "Не вдалося перевірити передплату. Спробуйте пізніше."
+
+#: app/models.py:1491
+msgid "Store"
+msgstr "Магазин"
+
+#: app/models.py:1492
+msgid "Where the subscription was bought (Stripe on the website, Google Play or App Store in the app)."
+msgstr "Де було придбано передплату (Stripe на сайті, Google Play або App Store у застосунку)."
+
+#: app/models.py:1500
+msgid "Store Subscription ID"
+msgstr "ID передплати в магазині"
+
+#: app/models.py:1501
+msgid "Transaction ID of the Google Play / App Store subscription (from RevenueCat)."
+msgstr "ID транзакції передплати Google Play / App Store (з RevenueCat)."
+
+#: app/models.py:1508
+msgid "Store Product ID"
+msgstr "ID продукту в магазині"
+
+#: app/models.py:1509
+msgid "Google Play / App Store product of the subscription."
+msgstr "Продукт передплати в Google Play / App Store."
+
+#: app/models.py:1516
+msgid "RevenueCat App User ID"
+msgstr "ID користувача в RevenueCat"
+
+#: app/models.py:1517
+msgid "ID of the user in RevenueCat (the Wesiq user ID)."
+msgstr "ID користувача в RevenueCat (ID користувача Wesiq)."
+
+#: app/models.py:1524
+msgid "Expires At"
+msgstr "Закінчується"
+
+#: app/models.py:1525
+msgid "End of the paid period of a Google Play / App Store subscription."
+msgstr "Кінець оплаченого періоду передплати Google Play / App Store."
