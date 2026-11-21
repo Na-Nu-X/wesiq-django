@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
 from django.utils import translation
-from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, OfficialTrainingPlan, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, MutedUser, ChatSettings, ContactMessage
+from app.models import Users, FollowRelation, SpecialBadges, UserDailyOfficialTasks, UsersReport, Activity, Reviews, ReviewReport, Articles, ArticleRating, ArticleForum, ArticleForumReport, ArticleVisitor, OfficialTrainingPlan, TrainingPlan, Exercises, OfficialTasks, CustomTasks, Transactions, Subscription, Post, PostReport, PostMedia, SeenPost, VideoView, PostForum, PostForumReport, BioLinks, Chat, MessageReaction, ChatAttachment, VoiceMessage, MutedUser, ChatSettings, ContactMessage
 from ..tasks import compressImage, compressVideo, compressImageAttachment, compressVideoAttachment, compressChatBackgroundImage
 from django.conf import settings
 from django.utils import timezone
@@ -55,6 +55,11 @@ from app.security import (
     clean_post_comment, CommentValidationError
 )
 
+MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
+MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
+
+MIN_VIDEO_DURATION = 1 # 1 Second
+
 # Defines The Disallowed Mime Types
 DISALLOWED_MIME_TYPES = [
     "application/x-msdownload", # Executable (.exe) Files
@@ -90,6 +95,19 @@ ARCHIVE_MIME_TYPES = [
     "application/x-7z-compressed",
     "application/x-tar",
     "application/gzip",
+]
+
+MAX_VOICE_MESSAGE_SIZE = 5 * 1024 * 1024  # Defines The Maximum Size Of Voice Message (5 MB)
+
+# Defines The Audio Mime Types
+AUDIO_MIME_TYPES = [
+    "audio/mp4",
+    "audio/m4a",
+    "audio/x-m4a",
+    "audio/aac",
+    "audio/mpeg",
+    "audio/ogg",
+    "audio/webm",
 ]
 
 #############
@@ -2161,7 +2179,6 @@ def upload_post(request):
                     MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
                     MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
                     MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
-                    MIN_VIDEO_DURATION = 1 # 1 Second
                     
                     compress_tasks = [] # Stores All Compress Tasks
 
@@ -4706,7 +4723,8 @@ def get_chat(request, username):
                 "sender__subscription",
                 "post",
             ).prefetch_related(
-                "attachments"
+                "attachments",
+                "voice_message"
             ).annotate(
                 # Creates The Is Sender Column (True If The Logged In User Is The Sender)
                 is_sender = Case(
@@ -4821,7 +4839,14 @@ def get_chat(request, username):
 
                             None
                         )
-                    } if one_chat.post else None
+                    } if one_chat.post else None,
+                    
+                    "voice_message": {
+                        "id": voice_message.id,
+                        "file": voice_message.file.name if voice_message.file else None,
+                        "duration": voice_message.duration,
+                        "waveform": voice_message.waveform or []
+                    } if (voice_message := next(iter(one_chat.voice_message.all()), None)) and voice_message.file else None
                 }
 
                 for one_chat in page_chats
@@ -5009,9 +5034,6 @@ def change_chat_background_image(request):
                     image = Image.open(selected_chat_background_image) # Opens The Image
                     width, height = image.size
 
-                    MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
-                    MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
-
                     # Catches Too Large Image Size
                     if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
                         raise ValueError(_("Rozmery obrázka sú príliš veľké:\n%(file)s") % {"file": selected_chat_background_image.name})
@@ -5159,7 +5181,6 @@ def send_chat_attachment(request):
         MAX_IMAGE_SIZE = max_image_size # 2MB For No Subscribers, 10MB For Subscribers
         MAX_VIDEO_SIZE = max_video_size # 25MB For No Subscribers, 50MB For Subscribers With Basic Plan, 100MB For Subscribers With Premium Plan
         MAX_VIDEO_DURATION = max_video_duration # 1 Minute For No Subscribers, 2 Minutes For Subscribers With Basic Plan, 3 Minutes For Subscribers With Premium Plan
-        MIN_VIDEO_DURATION = 1 # 1 Second
         MAX_FILE_SIZE = max_file_size # 5MB For No Subscribers, 10MB For Subscribers
 
         selected_files = request.FILES.getlist("selected_files") # Gets The Selected Files
@@ -5224,9 +5245,6 @@ def send_chat_attachment(request):
                         # Image Scale Verification
                         image = Image.open(one_selected_file) # Opens The Image
                         width, height = image.size
-
-                        MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
-                        MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
 
                         # Catches Too Large Image Size
                         if width > MAX_IMAGE_WIDTH or height > MAX_IMAGE_HEIGHT:
@@ -5347,6 +5365,76 @@ def send_chat_attachment(request):
             "success": False, 
             "message": str(_("Pri odosielaní prílohy došlo k chybe."))
         }, status = 500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+@parser_classes([MultiPartParser, FormParser])
+def send_voice_message(request):
+    logged_in_user = request.user # Gets The Logged In User
+
+    if not logged_in_user or not logged_in_user.is_authenticated:
+        return Response({
+            "success": False,
+            "message": str(_("Pre odoslanie hlasovej správy sa musíte prihlásiť."))
+        }, status = 401)
+
+    voice_message_file = request.FILES.get("voice_message_file") # Gets The Voice Message File
+
+    if voice_message_file is None:
+        return Response({
+            "success": False,
+            "message": str(_("Nebola nahraná žiadna hlasová správa."))
+        }, status = 400)
+
+    # Catches An Unsupported File
+    if voice_message_file.content_type and voice_message_file.content_type not in AUDIO_MIME_TYPES:
+        return Response({
+            "success": False,
+            "message": str(_("Súbor nemá podporovaný formát:\n%(file)s") % {"file": voice_message_file.name})
+        }, status = 400)
+
+    # Catches Too Large File
+    if voice_message_file.size > MAX_VOICE_MESSAGE_SIZE:
+        return Response({
+            "success": False,
+            "message": str(_("Súbor je príliš veľký:\n%(file)s") % {"file": voice_message_file.name})
+        }, status = 400)
+
+    try:
+        voice_message_duration = int(request.data.get("voice_message_duration") or 0) # Gets The Voice Message Duration
+
+    except(TypeError, ValueError):
+        voice_message_duration = 0 # Sets The Voice Message Duration
+
+    try:
+        raw_voice_message_waveform = json.loads(request.data.get("voice_message_waveform", "[]")) # Gets The Raw Voice Message Waveform
+        voice_message_waveform = [round(float(x), 3) for x in raw_voice_message_waveform[:50]] if isinstance(raw_voice_message_waveform, list) else [] # Sets The Voice Message Waveform
+
+    except(json.JSONDecodeError, TypeError, ValueError):
+        voice_message_waveform = [] # Sets The Voice Message Waveform
+
+    # Creates The New Voice Message
+    new_voice_message = VoiceMessage.objects.create(
+        sent_by = logged_in_user,
+        file = voice_message_file,
+        duration = voice_message_duration,
+        waveform = voice_message_waveform
+    )
+
+    # Gets The Sent Voice Message Data
+    sent_voice_message = {
+        "voice_message_id": new_voice_message.id,
+        "voice_message_url": new_voice_message.file.url,
+        "duration": new_voice_message.duration,
+        "waveform": new_voice_message.waveform
+    }
+
+    return Response({
+        "success": True, 
+        "sent_voice_message": sent_voice_message, 
+        "message": str(_("Hlasová správa bola úspešne odoslaná."))
+    }, status = 201)
 
 #############
 # Blog Page #
