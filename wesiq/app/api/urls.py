@@ -79,6 +79,7 @@ urlpatterns = [
     path("change-chat-background-image/", views.change_chat_background_image, name = "change_chat_background_image_url"),
     path("delete-chat-background-image/", views.delete_chat_background_image, name = "delete_chat_background_image_url"),
     path("send-chat-attachment/", views.send_chat_attachment, name = "send_chat_attachment_url"),
+    path("send-voice-message/", views.send_voice_message, name = "send_voice_message_url"),
 
     path("get-articles/", views.get_articles, name = "get_articles_url"),
 

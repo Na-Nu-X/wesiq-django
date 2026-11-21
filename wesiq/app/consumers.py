@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Post, Chat, MessageReaction, ChatAttachment, MutedUser
+from .models import Users, Post, Chat, MessageReaction, ChatAttachment, VoiceMessage, MutedUser
 from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
@@ -367,6 +367,56 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        # Send Voice Message
+        elif action == "send_voice_message":
+            voice_message_id = json_data.get("voice_message_id") # Gets The Voice Message ID
+
+            if not voice_message_id:
+                return await self.send_error("invalid_attachments")
+
+            new_chat = await self.save_voice_message(voice_message_id)
+
+            if not new_chat:
+                return await self.send_error("not_allowed")
+
+            receiver_id = self.receiver.id # Gets The Receiver ID
+            receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
+
+            is_muted = await self.is_user_muted(user = self.receiver, muted_user = self.sender) # Gets The Information If The User Is Muted
+
+            if not is_muted:
+                # Sends Data To The Notification Channel
+                await self.channel_layer.group_send(
+                    receiver_group_name,
+                    
+                    {
+                        "action": "new_message_notification",
+                        "type": "new_message_notification", # Calls The Function "New Message Notification"
+                        "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                        "message": str(_("Nová hlasová správa")), # Stores The Message To The Event
+                        "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                        "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                        "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                    }
+                )
+
+            voice_message_data = await self.get_voice_message_data(new_chat) # Gets The Voice Message Data
+
+            await self.channel_layer.group_send(
+                self.room_group_name,
+                {
+                    "type": "new", # Calls The Function "New"
+                    "chat_id": new_chat.id, # Stores The Chat ID To The Event
+                    "message": "", # Stores The Message To The Event
+                    "attachments": [],
+                    "post": None, # No Shared Post (Plain Message)
+                    "voice_message": voice_message_data, # Stores The Attachments To The Event
+                    "formatted_time": new_chat.formatted_time, # Stores The Chat Formatted Time To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                }
+            )
+
     @database_sync_to_async
     def get_attachments_data(self, chat):
         return [
@@ -382,6 +432,20 @@ class ChatConsumer(AsyncWebsocketConsumer):
             for one_attachment in chat.attachments.all()
         ]
 
+    @database_sync_to_async
+    def get_voice_message_data(self, chat):
+        voice_message = chat.voice_message.first() # Gets The Voice Message
+
+        if not voice_message or not voice_message.file:
+            return None
+
+        return {
+            "id": voice_message.id,
+            "file": voice_message.file.name if voice_message.file else None,
+            "duration": voice_message.duration,
+            "waveform": voice_message.waveform or []
+        }
+
     # Function For Send Data Of The New Message To The Front-End
     async def new(self, event):
         await self.send(text_data = json.dumps({
@@ -390,6 +454,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "attachments": event["attachments"],
             "post": event["post"],
+            "voice_message": event["voice_message"],
             "formatted_time": event["formatted_time"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
@@ -647,6 +712,30 @@ class ChatConsumer(AsyncWebsocketConsumer):
         }
 
         return new_chat_with_shared_post_data # Returns The New Chat With Shared Post Data
+
+    # Function For Save The Voice Message
+    @database_sync_to_async
+    def save_voice_message(self, voice_message_id):
+        # Gets The Voice Message
+        voice_message = VoiceMessage.objects.filter(
+            id = voice_message_id,
+            sent_by = self.sender,
+            chat__isnull = True
+        ).first()
+
+        if not voice_message:
+            return None
+
+        # Saves The New Message
+        new_chat_voice_message = Chat.objects.create(
+            sender = self.sender,
+            receiver = self.receiver
+        )
+
+        voice_message.chat = new_chat_voice_message
+        voice_message.save(update_fields = ["chat"]) # Saves The Updated Voice Message
+            
+        return new_chat_voice_message # Returns The New Chat With Voice Message
 
     # Function For Get The Information If The User Is Muted
     @database_sync_to_async

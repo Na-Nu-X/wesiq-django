@@ -2497,6 +2497,70 @@ class ChatAttachment(models.Model):
     def __str__(self):
         return f"Chat attachment from {self.sent_by.first_name} {self.sent_by.last_name}"
 
+def getVoiceMessageUploadPath(instance, filename):
+    if not hasattr(instance, "_random_uuid"):
+        instance._random_uuid = secrets.token_hex(nbytes=10)
+
+    extension = os.path.splitext(filename)[1].lower() or ".m4a" # Gets The File Extension
+    new_filename = f"AUDIO-{instance._random_uuid}{extension}" # Creates The New Filename
+    return f"voice_messages/{instance.sent_by.id}/{new_filename}" # Returns The Full Path
+
+class VoiceMessage(models.Model):
+    chat = models.ForeignKey(
+        "Chat", 
+        verbose_name = _("Chat"),
+        help_text = _("The message to which the voice message belongs."), 
+        on_delete = models.CASCADE,
+        related_name = "voice_message",
+        null = True, 
+        blank = True
+    )
+
+    sent_by = models.ForeignKey(
+        Users, 
+        verbose_name = _("User"),
+        help_text = _("The user who sent the voice message."), 
+        on_delete = models.CASCADE, 
+        null = False
+    )
+
+    file = models.FileField(
+        upload_to = getVoiceMessageUploadPath,
+        verbose_name = _("Voice Message File"),
+        help_text = _("Path to the voice message file."), 
+        null=True, 
+        blank=True
+    )
+
+    duration = models.PositiveIntegerField(
+        verbose_name = _("Voice Message Duration"),
+        help_text = _("Voice message duration in MS."), 
+        null=True,
+        blank=True
+    )
+
+    waveform = models.JSONField(
+        verbose_name = _("Voice Message Waveform"),
+        help_text = _("Voice message waveform."), 
+        default=list, 
+        null=True,
+        blank=True
+    )
+
+    created_at = models.DateTimeField(
+        verbose_name = _("Created At"), 
+        help_text = _("Time of the voice message creation."), 
+        auto_now_add = True, 
+        null = False
+    )
+
+    class Meta:
+        verbose_name = "Voice Message"
+        verbose_name_plural = "Voice Messages"
+
+    def __str__(self):
+        return f"Voice message from {self.sent_by.first_name} {self.sent_by.last_name}"
+
 class MutedUser(models.Model):
     user = models.ForeignKey(
         Users, 
