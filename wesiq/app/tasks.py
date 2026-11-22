@@ -851,6 +851,11 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
         duration_result = subprocess.run(duration_cmd, stdout = subprocess.PIPE, stderr = subprocess.STDOUT)
         total_duration = float(duration_result.stdout.decode().strip())
 
+        # Checks If The Video Has An Audio Stream (Videos Without Audio Must Use The Muted Command, Otherwise The HLS Stream Map Fails)
+        audio_cmd = ["ffprobe", "-v", "error", "-select_streams", "a", "-show_entries", "stream=index", "-of", "csv=p=0", input_path]
+        audio_result = subprocess.run(audio_cmd, stdout = subprocess.PIPE, stderr = subprocess.DEVNULL)
+        has_audio = bool(audio_result.stdout.decode().strip())
+
         # Video Scrubber Preview Images Generation
 
         interval = 5  # Sets Video Scrubber Preview Interval For Every 5 Seconds
@@ -972,7 +977,7 @@ def compressVideo(self, logged_in_user_id, post_media_id, custom_thumbnail_path 
             variant_playlist_pattern
         ]
 
-        if media_object.is_muted:
+        if media_object.is_muted or not has_audio:
             # FFmpeg Compression And HLS Command For Video Without Audio
             command = [
                 "ffmpeg", "-y", "-i", input_path,

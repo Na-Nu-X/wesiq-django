@@ -3511,7 +3511,6 @@ def use_xp_boost(request):
 @permission_classes([IsAuthenticated])
 def new_activity(request):
     try:
-        logged_in_user = request.user # Gets The Logged In User
         logged_in_user_id = request.user.id # Gets The Logged In User ID
 
         new_activity_data = request.data.get("new_activity_data", None) # Gets The New Activity Data
@@ -3692,23 +3691,30 @@ def manage_training_plan(request):
 @permission_classes([AllowAny])
 def get_official_training_plans(request):
     try:
+        logged_in_user = request.user # Gets The Logged In User
+
+        subscription = getattr(logged_in_user, "subscription", None) if getattr(logged_in_user, "is_authenticated", False) else None # Gets The Subscription
+        has_active_subscription = bool(subscription and subscription.is_active) # Checks If The Logged In User Has An Active Subscription
+
         official_training_plans = OfficialTrainingPlan.objects.all() # Gets Official Training Plans
+        official_training_plans_data = [] # Stores The Official Training Plans Data
 
         # Creates Valid Format Of Official Training Plans For JSON Response
-        official_training_plans_data = [
-            {
+        for one_training_plan in official_training_plans:
+            can_access = (not one_training_plan.is_for_subscribers) or has_active_subscription # Gets The Information If The User Can Access The Data
+
+            official_training_plans_data.append({
                 "id": one_training_plan.id,
                 "training_plan_key": one_training_plan.training_plan_key,
                 "type": one_training_plan.type,
-                "exercise": one_training_plan.exercise,
-                "periods": one_training_plan.periods,
-                "unit": one_training_plan.unit,
-                "order": one_training_plan.order,
-                "is_warm_up": one_training_plan.is_warm_up
-            }
-
-            for one_training_plan in official_training_plans
-        ]
+                "exercise": one_training_plan.exercise if can_access else None,
+                "periods": one_training_plan.periods if can_access else None,
+                "unit": one_training_plan.unit if can_access else None,
+                "order": one_training_plan.order if can_access else None,
+                "is_warm_up": one_training_plan.is_warm_up if can_access else None,
+                "is_for_subscribers": one_training_plan.is_for_subscribers,
+                "is_locked": not can_access
+            })
 
         return Response({
             "success": True, 
@@ -4722,6 +4728,7 @@ def get_chat(request, username):
             ).select_related(
                 "sender__subscription",
                 "post",
+                "article"
             ).prefetch_related(
                 "attachments",
                 "voice_message"
@@ -4734,7 +4741,9 @@ def get_chat(request, username):
                 ),
 
                 post_comments_amount = Count("post__comments", filter = ~Q(post__comments__status = "hidden"), distinct = True),
-                post_likes_amount = Count("post__likes", distinct = True)
+                post_likes_amount = Count("post__likes", distinct = True),
+                
+                average_rating = Avg("article__articlerating__rating")
             ).prefetch_related(
                 "message_reactions__user"
             ).order_by(
@@ -4846,7 +4855,20 @@ def get_chat(request, username):
                         "file": voice_message.file.name if voice_message.file else None,
                         "duration": voice_message.duration,
                         "waveform": voice_message.waveform or []
-                    } if (voice_message := next(iter(one_chat.voice_message.all()), None)) and voice_message.file else None
+                    } if (voice_message := next(iter(one_chat.voice_message.all()), None)) and voice_message.file else None,
+                    
+                    "article": {
+                        "id": one_chat.article.id, 
+                        "title": one_chat.article.title, 
+                        "description": one_chat.article.description,
+                        "image_name": one_chat.article.image_name, 
+                        "html_filename": one_chat.article.html_filename,
+                        "link": one_chat.article.link,
+                        "categories": one_chat.article.categories,
+                        "visitors": one_chat.article.visitors,
+                        "creation_time": one_chat.article.creation_time,
+                        "average_rating": one_chat.average_rating
+                    } if one_chat.article else None
                 }
 
                 for one_chat in page_chats
@@ -5588,7 +5610,6 @@ def get_articles(request):
         articles_data = [
             {
                 "id": one_article.id, 
-                "title": one_article.title, 
                 "title": one_article.title, 
                 "description": one_article.description,
                 "image_name": one_article.image_name, 

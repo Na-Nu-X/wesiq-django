@@ -1254,6 +1254,13 @@ class OfficialTrainingPlan(models.Model):
         null = False
     )
 
+    is_for_subscribers = models.BooleanField(
+        verbose_name = _("Is For Subscribers"), 
+        help_text = _("Stores the information if the training plan is only for subscribers."), 
+        default = False, 
+        null = False
+    )
+
     class Meta:
         verbose_name = _("Oficiálny Tréningový plán")
         verbose_name_plural = _("Oficiálne Tréningové plány")
@@ -2249,6 +2256,15 @@ class Chat(models.Model):
         Post,
         verbose_name = _("Post"),
         help_text = _("The shared post."), 
+        on_delete = models.SET_NULL,
+        null = True,
+        blank = True
+    )
+
+    article = models.ForeignKey(
+        Articles,
+        verbose_name = _("Article"),
+        help_text = _("The shared article."), 
         on_delete = models.SET_NULL,
         null = True,
         blank = True

@@ -59,6 +59,11 @@ class Migration(migrations.Migration):
             name='userdailyofficialtasks',
             options={'verbose_name': "User's daily official task", 'verbose_name_plural': "Users' daily official tasks"},
         ),
+        migrations.AddField(
+            model_name='chat',
+            name='article',
+            field=models.ForeignKey(blank=True, help_text='The shared article.', null=True, on_delete=django.db.models.deletion.SET_NULL, to='app.articles', verbose_name='Article'),
+        ),
         migrations.AlterField(
             model_name='articlevisitor',
             name='article',

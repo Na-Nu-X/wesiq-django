@@ -21,7 +21,7 @@ docker compose logs -f web
 ```
 
 Front-end builds, from `wesiq/`:
-- `npm run watch` runs `tsc -w` for both TS projects (`app/static/app/ts/` and `static/ts/`). On Windows the README says to change the `|` in this script so that both compilers run.
+- `npm run watch` runs `tsc -w` for both TS projects (`app/static/app/ts/` and `static/ts/`). The two compilers are joined with `&` so that they run in parallel. On Windows `cmd`, `&` runs them one after another, so the second never starts; the README says to change it to `|` there.
 - `npx sass --watch .:.` compiles every `.scss` next to its source as `.css`. Compiled `.css` files are gitignored.
 - To type-check once: `npx tsc -p app/static/app/ts/tsconfig.json --noEmit` (and `-p static/ts/tsconfig.json`).
 

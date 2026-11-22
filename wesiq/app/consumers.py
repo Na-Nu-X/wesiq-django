@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
-from .models import Users, Post, Chat, MessageReaction, ChatAttachment, VoiceMessage, MutedUser
+from .models import Users, Post, Chat, MessageReaction, ChatAttachment, VoiceMessage, MutedUser, Articles
 from django.db import transaction
 from rest_framework_simplejwt.tokens import AccessToken
 from urllib.parse import parse_qs
@@ -11,6 +11,7 @@ from django.conf import settings
 from django.http.request import validate_host
 from urllib.parse import urlparse
 from .security import visible_posts_q
+from django.db.models import Avg
 
 MAX_MESSAGE_LENGTH = 250 # Mirrors Chat.content max_length
 MAX_EMOJI_LENGTH = 10 # Mirrors MessageReaction.emoji max_length
@@ -417,6 +418,51 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
 
+        # Share Article Action
+        elif action == "share_article":
+            article_id = str(json_data["article_id"]) # Gets The Article ID (Public ID)
+
+            new_chat = await self.share_article(article_id) # Shares The Article (Raises Article.DoesNotExist If The Sender Can't See It)
+
+            receiver_id = self.receiver.id # Gets The Receiver ID
+            receiver_group_name = f"user_{receiver_id}_notifications" # Gets The Receiver Group Name
+            
+            notification_message = str(_("Zdielaný článok: %(article_title)s") % {"article_title": new_chat["article"]["title"]})
+
+            is_muted = await self.is_user_muted(user = self.receiver, muted_user = self.sender) # Gets The Information If The User Is Muted
+
+            if not is_muted:
+                # Sends Data To The Notification Channel
+                await self.channel_layer.group_send(
+                    receiver_group_name,
+
+                    {
+                        "action": "new_message_notification",
+                        "type": "new_message_notification", # Calls The Function "New Message Notification"
+                        "chat_id": new_chat["id"], # Stores The Chat ID To The Event
+                        "message": notification_message, # Stores The Message To The Event
+                        "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                        "sender_username": self.sender.username, # Stores The Sender's Username To The Event
+                        "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                    }
+                )
+
+            # Sends Data Back To The Front-End
+            await self.channel_layer.group_send(
+                self.room_group_name,
+
+                {
+                    "type": "new", # Calls The Function "New"
+                    "chat_id": new_chat["id"], # Stores The Chat ID To The Event
+                    "message": None, # Stores The Message To The Event
+                    "attachments": [],
+                    "article": new_chat["article"], # Stores The Article To The Event
+                    "formatted_time": new_chat["formatted_time"], # Stores The Chat Formatted Time To The Event
+                    "sender_id": self.sender.id, # Stores The Sender's ID To The Event
+                    "sender_profile_picture_name": self.sender.profile_picture_name # Stores The Sender's Profile Picture Name To The Event
+                }
+            )
+
     @database_sync_to_async
     def get_attachments_data(self, chat):
         return [
@@ -452,9 +498,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
             "action": "new",
             "chat_id": event["chat_id"],
             "message": event["message"],
-            "attachments": event["attachments"],
-            "post": event["post"],
-            "voice_message": event["voice_message"],
+            "attachments": event.get("attachments", []),
+            "post": event.get("post", None),
+            "voice_message": event.get("voice_message", None),
+            "article": event.get("article", None),
             "formatted_time": event["formatted_time"],
             "sender_id": event["sender_id"],
             "sender_profile_picture_name": event["sender_profile_picture_name"]
@@ -736,6 +783,50 @@ class ChatConsumer(AsyncWebsocketConsumer):
         voice_message.save(update_fields = ["chat"]) # Saves The Updated Voice Message
             
         return new_chat_voice_message # Returns The New Chat With Voice Message
+
+    # Function For Save The New Message With The Shared Article
+    @database_sync_to_async
+    def share_article(self, article_id):
+        article = Articles.objects.get(id = article_id) # Gets The Article
+    
+        # Saves The New Message
+        new_chat = Chat.objects.create(
+            sender = self.sender,
+            receiver = self.receiver,
+            article = article
+        )
+
+        # Gets The New Chat With Shared Article
+        new_chat_with_shared_article = Chat.objects.filter(
+            id = new_chat.id
+        ).select_related(
+            "article"
+        ).annotate(
+            average_rating = Avg("article__articlerating__rating"),
+        ).first()
+        
+        shared_article = new_chat_with_shared_article.article
+
+        # Creates Valid Format Of New Chat With Shared Article For JSON Response
+        new_chat_with_shared_article_data = {
+            "id": new_chat_with_shared_article.id,
+            "formatted_time": new_chat_with_shared_article.formatted_time,
+            
+            "article": {
+                "id": shared_article.id, 
+                "title": shared_article.title, 
+                "description": shared_article.description,
+                "image_name": shared_article.image_name, 
+                "html_filename": shared_article.html_filename,
+                "link": shared_article.link,
+                "categories": shared_article.categories,
+                "visitors": shared_article.visitors,
+                "creation_time": shared_article.creation_time.isoformat() if shared_article.creation_time else None,
+                "average_rating": new_chat_with_shared_article.average_rating
+            }
+        }
+
+        return new_chat_with_shared_article_data # Returns The New Chat With Shared Article Data
 
     # Function For Get The Information If The User Is Muted
     @database_sync_to_async
