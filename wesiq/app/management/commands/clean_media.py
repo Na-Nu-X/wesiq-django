@@ -9,11 +9,9 @@
 import time
 from collections import defaultdict
 from pathlib import Path
-
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
-
-from app.models import ChatAttachment, ChatSettings, PostMedia, Users
+from app.models import ChatAttachment, ChatSettings, PostMedia, Users, VoiceMessage
 
 class Command(BaseCommand):
     help = "Deletes files in MEDIA_ROOT that no database row references (dry run unless --execute is passed)."
@@ -190,6 +188,9 @@ class Command(BaseCommand):
 
         for value in ChatSettings.objects.values_list("background_image", flat = True):
             keep("ChatSettings.background_image", value)
+
+        for value in VoiceMessage.objects.values_list("file", flat = True):
+            keep("VoiceMessage.file", value)
 
         return kept_files, kept_dirs, missing
 
