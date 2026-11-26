@@ -1516,6 +1516,14 @@ msgstr "&copy; Wesiq 2025 - 2026, 版权所有。"
 msgid "Wesiq by Patrik Behul"
 msgstr "Wesiq by Patrik Behul"
 
+#: app/templates/app/registration.html
+msgid "Potvrdzujem, že mám aspoň 13 rokov."
+msgstr "我确认我已年满 13 岁。"
+
+#: app/views.py
+msgid "Pre registráciu musíte potvrdiť, že máte aspoň 13 rokov."
+msgstr "注册前，您必须确认您已年满 13 岁。"
+
 #~ msgid "Zadajte 6-miestny overovací kód"
 #~ msgstr "请输入6位数的验证码"
 

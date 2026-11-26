@@ -287,3 +287,205 @@ class WebPublicIdTests(SecurityTestCase):
     def test_post_absolute_url_uses_public_id(self):
         post = Post.objects.create(user = make_user("urlauthor"))
         self.assertIn(post.public_id, post.get_absolute_url())
+
+class RegistrationAgeConfirmationTests(SecurityTestCase):
+    REGISTRATION = {
+        "username": "newbie",
+        "email_address": "newbie@example.com",
+        "phone_number": "",
+        "password": "New-Pass-1234!",
+        "password_check": "New-Pass-1234!",
+        "language": "en",
+    }
+
+    def test_api_registration_requires_age_confirmation(self):
+        # The privacy policy sets a minimum age of 13, so the app must send the confirmation
+        response = self.api.post("/native-api/register/", self.REGISTRATION, format = "json")
+
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(Users.objects.filter(username = "newbie").exists())
+
+    def test_api_registration_with_age_confirmation(self):
+        response = self.api.post("/native-api/register/", {**self.REGISTRATION, "age_confirmation": True}, format = "json")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Users.objects.filter(username = "newbie").exists())
+
+class AccountDeletionTests(SecurityTestCase):
+    def test_api_deletion_starts_the_30_day_period_now(self):
+        # cleanupSuspendedUsers counts 30 days from last_login, so an old login must not shorten the period
+        user = make_user("leaving", last_login = timezone.now() - timedelta(days = 29))
+        self.api.force_authenticate(user)
+
+        self.api.post("/native-api/edit-account/", {"delete_account": "true"})
+
+        user.refresh_from_db()
+        self.assertEqual(user.account_status, "suspended")
+        self.assertGreater(user.last_login, timezone.now() - timedelta(minutes = 1))
+
+class LogCleanupTests(TestCase):
+    def test_old_entries_and_their_detail_lines_are_removed(self):
+        import datetime, tempfile
+        from pathlib import Path
+        from app.tasks import pruneLogFile
+
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "login.log"
+            path.write_text(
+                "[01.01. 2020 10:00:00 UTC] - Old Login\n\t- IP Address: 1.2.3.4\n"
+                "[01.06. 2026 10:00:00 UTC] - New Login\n\t- IP Address: 5.6.7.8\n",
+                encoding = "utf-8",
+            )
+
+            removed = pruneLogFile(path, datetime.date(2025, 1, 1))
+
+            self.assertEqual(removed, 1)
+            self.assertEqual(path.read_text(encoding = "utf-8"), "[01.06. 2026 10:00:00 UTC] - New Login\n\t- IP Address: 5.6.7.8\n")
+
+class SocialLoginTests(SecurityTestCase):
+    GOOGLE_URL = "/native-api/auth/google/"
+    APPLE_URL = "/native-api/auth/apple/"
+
+    def google_login(self, **claims):
+        from unittest import mock
+
+        payload = {"sub": "google-sub-1", "email": "social@example.com", "email_verified": True, "given_name": "Social", "family_name": "User"}
+        payload.update(claims)
+
+        with mock.patch("app.api.views.google_id_token.verify_oauth2_token", return_value = payload) as verify:
+            response = self.api.post(self.GOOGLE_URL, {"id_token": "token"}, format = "json")
+
+        return response, verify
+
+    def apple_login(self, data = None, **claims):
+        # Signs A Real RS256 Token, So Audience, Issuer And Signature Checks Run For Real
+        import time, jwt
+        from unittest import mock
+        from cryptography.hazmat.primitives.asymmetric import rsa
+        from django.conf import settings
+
+        private_key = rsa.generate_private_key(public_exponent = 65537, key_size = 2048)
+        payload = {
+            "iss": "https://appleid.apple.com", "aud": settings.APPLE_BUNDLE_ID, "iat": int(time.time()), "exp": int(time.time()) + 600,
+            "sub": "apple-sub-1", "email": "abc@privaterelay.appleid.com", "email_verified": "true",
+        }
+        payload.update(claims)
+        token = jwt.encode(payload, private_key, algorithm = "RS256")
+
+        with mock.patch("app.api.views.APPLE_JWKS_CLIENT.get_signing_key_from_jwt", return_value = mock.Mock(key = private_key.public_key())):
+            return self.api.post(self.APPLE_URL, {"identity_token": token, **(data or {})}, format = "json")
+
+    def test_google_creates_user_and_stores_sub(self):
+        response, verify = self.google_login()
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.data["success"])
+        self.assertEqual(verify.call_args.kwargs["clock_skew_in_seconds"], 10)
+
+        user = Users.objects.get(google_id = "google-sub-1")
+        self.assertEqual(user.username, "social")
+        self.assertFalse(user.has_usable_password())
+
+    def test_google_finds_user_by_sub_after_email_change(self):
+        user = make_user("linked", google_id = "google-sub-1")
+
+        response, _ = self.google_login(email = "new-address@example.com")
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Users.objects.count(), 1)
+        self.assertEqual(Users.objects.get().id, user.id)
+
+    def test_google_links_existing_verified_account_by_email(self):
+        user = make_user("existing", email_address = "social@example.com")
+
+        self.google_login()
+
+        user.refresh_from_db()
+        self.assertEqual(user.google_id, "google-sub-1")
+        self.assertTrue(check_password(OLD_PASSWORD, user.password)) # A Verified Owner Keeps Their Password
+
+    def test_google_does_not_take_over_account_linked_to_other_google_account(self):
+        other = make_user("other", email_address = "social@example.com", google_id = "google-sub-OTHER")
+
+        self.google_login()
+
+        other.refresh_from_db()
+        self.assertEqual(other.google_id, "google-sub-OTHER")
+        self.assertEqual(Users.objects.filter(google_id = "google-sub-1").count(), 1)
+
+    def test_unverified_squatter_password_is_discarded(self):
+        # An Attacker Registers With The Victim's E-mail; The Victim Then Signs In With Google
+        squatter = make_user("squatter", email_address = "social@example.com", account_status = "unverified", verification_code = "123456")
+
+        self.google_login()
+
+        squatter.refresh_from_db()
+        self.assertEqual(squatter.account_status, "OK")
+        self.assertFalse(squatter.has_usable_password())
+        self.assertIsNone(squatter.verification_code)
+
+        response = self.api.post("/native-api/login/", {"identifier": "social@example.com", "password": OLD_PASSWORD}, format = "json")
+        self.assertFalse(response.data["success"])
+
+    def test_google_unverified_email_is_rejected(self):
+        response, _ = self.google_login(email_verified = False)
+
+        self.assertEqual(response.status_code, 401)
+        self.assertFalse(Users.objects.exists())
+
+    def test_long_names_are_truncated(self):
+        response, _ = self.google_login(email = "a.really.long.email.local.part.1990@example.com", given_name = "X" * 40, family_name = "Y" * 80)
+
+        self.assertEqual(response.status_code, 200)
+        user = Users.objects.get()
+        self.assertLessEqual(len(user.username), 20)
+        self.assertEqual(len(user.first_name), 20)
+        self.assertEqual(len(user.last_name), 50)
+
+    def test_long_username_collisions_stay_within_limit(self):
+        email = "averyveryverylongname@example.com"
+        for index in range(3):
+            response, _ = self.google_login(sub = f"sub-{index}", email = email)
+            self.assertEqual(response.status_code, 200)
+
+        usernames = list(Users.objects.values_list("username", flat = True))
+        self.assertEqual(len(set(usernames)), 3)
+        self.assertTrue(all(len(username) <= 20 for username in usernames))
+
+    def test_forbidden_username_is_not_generated(self):
+        from unittest import mock
+
+        with mock.patch("app.api.views.FORBIDDEN_USERNAMES", {"admin"}):
+            self.google_login(email = "admin@example.com")
+
+        self.assertNotEqual(Users.objects.get().username.lower(), "admin")
+
+    def test_stale_bearer_token_does_not_block_social_login(self):
+        self.api.credentials(HTTP_AUTHORIZATION = "Bearer expired.invalid.token")
+
+        response, _ = self.google_login()
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_apple_creates_user_with_name_from_request(self):
+        response = self.apple_login({"first_name": "Jane", "last_name": "Doe"})
+
+        self.assertEqual(response.status_code, 200)
+        user = Users.objects.get(apple_id = "apple-sub-1")
+        self.assertEqual((user.first_name, user.last_name), ("Jane", "Doe"))
+
+    def test_apple_accepts_boolean_email_verified(self):
+        response = self.apple_login(email_verified = True)
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_apple_unverified_email_is_rejected(self):
+        response = self.apple_login(email_verified = "false")
+
+        self.assertEqual(response.status_code, 401)
+        self.assertFalse(Users.objects.exists())
+
+    def test_apple_wrong_audience_is_rejected(self):
+        response = self.apple_login(aud = "com.someone.else")
+
+        self.assertEqual(response.status_code, 401)

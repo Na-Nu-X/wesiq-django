@@ -1,4 +1,5 @@
 from rest_framework.response import Response
+from app.templatetags.filters import article_image_version
 from django.db.models import F, Exists, OuterRef, Value, BooleanField, Prefetch
 from django.utils.translation import gettext as _
 from django.utils import translation
@@ -48,12 +49,10 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.password_validation import validate_password
 from app.forms import editAccountForm
 from app.revenuecat import RevenueCatError, syncUserSubscription
-from app.security import (
-    issue_password_reset_code, verify_password_reset_code, clear_password_reset_code, revoke_user_refresh_tokens,
-    visible_posts_q, EDITABLE_POST_SETTINGS, parse_bool, record_activity, ActivityValidationError,
-    is_xp_boost_available, validate_uploaded_image, clean_bio_link,
-    clean_post_comment, CommentValidationError
-)
+from app.security import (issue_password_reset_code, verify_password_reset_code, clear_password_reset_code, revoke_user_refresh_tokens, visible_posts_q, EDITABLE_POST_SETTINGS, parse_bool, record_activity, ActivityValidationError, is_xp_boost_available, validate_uploaded_image, clean_bio_link, clean_post_comment, CommentValidationError)
+import jwt
+from google.auth.transport import requests as google_requests
+from google.oauth2 import id_token as google_id_token
 
 MAX_IMAGE_WIDTH = 10000 # Defines The Maximum Image Width
 MAX_IMAGE_HEIGHT = 10000 # Defines The Maximum Image Height
@@ -223,12 +222,19 @@ def sendMail(
 # Function For Get The Android Asset Links
 def android_assetlinks(request):
     return JsonResponse([{
-        "relation": ["delegate_permission/common.handle_all_urls"],
-
+        "relation": [
+            "delegate_permission/common.handle_all_urls",
+            "delegate_permission/common.get_login_creds"
+        ],
+        
         "target": {
             "namespace": "android_app",
-            "package_name": "",
-            "sha256_cert_fingerprints": ["TEST"]
+            "package_name": "com.behul.wesiq",
+            "sha256_cert_fingerprints": [
+                "13:93:A2:2A:87:82:CE:CA:42:63:47:11:FF:96:A8:45:5F:5D:80:26:3F:EC:47:F3:91:D8:AD:E0:46:F3:75:BD",
+                "2E:B9:30:1A:13:B3:31:C7:CE:8A:25:E9:CC:7D:62:49:F8:FE:F3:90:CA:3A:84:8C:B9:A5:C5:7F:A0:D6:83:4E",
+                "E9:E8:B1:7D:34:FC:10:4B:DB:D9:7C:EC:85:2A:E6:3A:CC:6E:B8:88:5C:4C:92:3F:B6:B2:53:AD:B1:C4:BD:2E"
+            ]
         }
     }], safe = False)
 
@@ -453,6 +459,239 @@ def login(request):
             "message": str(_("Pri prihlasovaní došlo k chybe."))
         }, status = 500)
 
+APPLE_JWKS_CLIENT = jwt.PyJWKClient("https://appleid.apple.com/auth/keys")
+
+# Social Login Providers And The User Field That Stores Each Provider's Stable Account ID ("sub" Claim)
+SOCIAL_ID_FIELDS = {
+    "Google": "google_id",
+    "Apple": "apple_id",
+}
+
+USERNAME_MAX_LENGTH = Users._meta.get_field("username").max_length # 20
+FIRST_NAME_MAX_LENGTH = Users._meta.get_field("first_name").max_length # 20
+LAST_NAME_MAX_LENGTH = Users._meta.get_field("last_name").max_length # 50
+
+# Function For Generate A Free, Allowed Username From The E-mail Address (App Format, Without The Leading "@")
+def generate_social_username(email:str) -> str:
+    raw_base = email.split("@")[0]
+    base_username = re.sub(r"[^a-zA-Z0-9._]", "", raw_base)[:USERNAME_MAX_LENGTH - 5] # Leaves Room For A Numeric Suffix
+
+    # Same Rules As Registration (Forbidden Usernames And Profanities)
+    if not base_username or base_username.lower() in FORBIDDEN_USERNAMES or base_username.lower() in PROFANITIES:
+        base_username = "user"
+
+    username = base_username
+    counter = 1
+
+    # Checks Both App ("username") And Website ("@username") Formats To Prevent Collisions
+    while Users.objects.filter(Q(username__iexact = username) | Q(username__iexact = f"@{username}")).exists():
+        username = f"{base_username}{counter}"[:USERNAME_MAX_LENGTH]
+        counter += 1
+
+    return username
+
+def get_or_create_social_user(provider:str, subject:str, email:str, first_name:str = "", last_name:str = ""):
+    id_field = SOCIAL_ID_FIELDS[provider]
+
+    # 1. The Provider's Stable Account ID (Survives E-mail Changes And Apple's "Hide My Email" Relay Addresses)
+    user = Users.objects.filter(**{id_field: subject}).order_by("id").first()
+
+    # 2. A Verified E-mail Address (Ordered By ID To Match Standard Login Behavior), Skipping Accounts Already Linked To Another Provider Account
+    if not user:
+        user = (
+            Users.objects
+            .filter(email_address__iexact = email)
+            .filter(Q(**{f"{id_field}__isnull": True}) | Q(**{id_field: ""}))
+            .order_by("id")
+            .first()
+        )
+
+    if user:
+        update_fields = []
+
+        # Anyone Can Register An Unverified Account With Someone Else's E-mail Address. The Provider Just Proved The
+        # E-mail Belongs To This Person, So The Password (And Pending Verification) Set By Whoever Registered It Is Discarded
+        if user.account_status == "unverified":
+            user.set_unusable_password()
+            user.verification_code = None
+            update_fields += ["password", "verification_code"]
+
+        if not getattr(user, id_field):
+            setattr(user, id_field, subject)
+            update_fields.append(id_field)
+
+        if update_fields:
+            user.save(update_fields = update_fields)
+
+        return user
+
+    # Creates A New User Account If None Exists
+    user = Users(
+        username = generate_social_username(email),
+        email_address = email,
+        first_name = (first_name or "")[:FIRST_NAME_MAX_LENGTH],
+        last_name = (last_name or "")[:LAST_NAME_MAX_LENGTH],
+        account_status = "OK",
+        **{id_field: subject},
+    )
+    user.set_unusable_password()
+    user.save()
+
+    return user
+
+def build_social_login_response(request, user, provider:str):
+    user.last_login = timezone.now() # Sets The Last Login Time
+    user.account_status = "OK" # Sets The Account Status
+    user.save(update_fields = ["last_login", "account_status"]) # Saves The Updated User
+
+    refresh = RefreshToken.for_user(user) # Gets The Refresh Token
+
+    captureLogin(f"Successful {provider} Login to the Account\n\t- User ID: {user.id},\n\t- E-mail Address: {user.email_address},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Login
+
+    return Response({
+        "success": True,
+        "access": str(refresh.access_token),
+        "refresh": str(refresh),
+        "message": str(_("Úspešne prihlásený ako %(username)s") % {"username": user.username})
+    }, status = 200)
+
+@api_view(["POST"])
+@authentication_classes([]) # A Stale Bearer Token Sent By The App Must Not Block Logging In
+@permission_classes([AllowAny])
+@ratelimit(key = "ip", rate = "10/m", method = "POST", block = False)
+def google_login(request):
+    try:
+        token = request.data.get("id_token", None)
+
+        if not token:
+            return Response({
+                "success": False,
+                "message": str(_("Chýba overovací token Google."))
+            }, status = 400)
+
+        if getattr(request, "limited", False):
+            captureError(f"Too many Google login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+            return Response({
+                "success": False,
+                "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
+            }, status = 200)
+
+        try:
+            payload = google_id_token.verify_oauth2_token(
+                token,
+                google_requests.Request(),
+                settings.GOOGLE_WEB_CLIENT_ID,
+                clock_skew_in_seconds = 10, # Tolerates Phones Whose Clock Is Slightly Off
+            )
+        except ValueError as error:
+            captureError(f"Invalid Google token.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n")
+
+            return Response({
+                "success": False,
+                "message": str(_("Neplatný Google token."))
+            }, status = 401)
+
+        email = payload.get("email")
+        if not email or not payload.get("email_verified"):
+            return Response({
+                "success": False,
+                "message": str(_("E-mailová adresa v Google účte nie je overená."))
+            }, status = 401)
+
+        user = get_or_create_social_user(
+            provider = "Google",
+            subject = payload["sub"],
+            email = email,
+            first_name = payload.get("given_name", ""),
+            last_name = payload.get("family_name", ""),
+        )
+
+        return build_social_login_response(request, user, "Google")
+
+    except Exception as error:
+        captureError(f"An error occurred while logging in with Google.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n")
+
+        return Response({
+            "success": False,
+            "message": str(_("Pri prihlasovaní cez Google došlo k chybe."))
+        }, status = 500)
+
+@api_view(["POST"])
+@authentication_classes([]) # A Stale Bearer Token Sent By The App Must Not Block Logging In
+@permission_classes([AllowAny])
+@ratelimit(key = "ip", rate = "10/m", method = "POST", block = False)
+def apple_login(request):
+    try:
+        identity_token = request.data.get("identity_token", None)
+
+        if not identity_token:
+            return Response({
+                "success": False,
+                "message": str(_("Chýba overovací token Apple."))
+            }, status = 400)
+
+        if getattr(request, "limited", False):
+            captureError(f"Too many Apple login attempts.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n")
+
+            return Response({
+                "success": False,
+                "message": str(_("Príliš veľa pokusov!\nSkúste to opäť za minútu."))
+            }, status = 200)
+
+        try:
+            signing_key = APPLE_JWKS_CLIENT.get_signing_key_from_jwt(identity_token)
+            payload = jwt.decode(
+                identity_token,
+                signing_key.key,
+                algorithms = ["RS256"],
+                audience = settings.APPLE_BUNDLE_ID,
+                issuer = "https://appleid.apple.com",
+            )
+        except Exception as error:
+            captureError(f"Invalid Apple token.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n")
+
+            return Response({
+                "success": False,
+                "message": str(_("Neplatný Apple token."))
+            }, status = 401)
+
+        email = payload.get("email")
+        if not email:
+            return Response({
+                "success": False,
+                "message": str(_("V Apple tokene chýba e-mailová adresa."))
+            }, status = 400)
+
+        # Apple Sends "email_verified" Either As A Boolean Or As The String "true"
+        if str(payload.get("email_verified", "")).lower() != "true":
+            return Response({
+                "success": False,
+                "message": str(_("E-mailová adresa v Apple účte nie je overená."))
+            }, status = 401)
+
+        # The Name Isn't In The Token (Apple Only Gives It To The App On The First Sign-In), So It Comes From The Request
+        first_name = request.data.get("first_name", "")
+        last_name = request.data.get("last_name", "")
+
+        user = get_or_create_social_user(
+            provider = "Apple",
+            subject = payload["sub"],
+            email = email,
+            first_name = first_name if isinstance(first_name, str) else "",
+            last_name = last_name if isinstance(last_name, str) else "",
+        )
+
+        return build_social_login_response(request, user, "Apple")
+
+    except Exception as error:
+        captureError(f"An error occurred while logging in with Apple.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n")
+
+        return Response({
+            "success": False,
+            "message": str(_("Pri prihlasovaní cez Apple došlo k chybe."))
+        }, status = 500)
+
 @api_view(["POST"])
 @authentication_classes([JWTAuthentication])
 @permission_classes([AllowAny])
@@ -466,6 +705,7 @@ def register(request):
         password = request.data.get("password", None) # Gets The Password
         password_check = request.data.get("password_check", None) # Gets The Password Check
         language = request.data.get("language", "en") # Gets The Language
+        age_confirmation = request.data.get("age_confirmation") in (True, "true", "on", "1") # Gets The Confirmation That The User Is At Least 13 Years Old
 
         # If The Credentials Were Not Entered
         if not username or not email_address or not password or not password_check:
@@ -473,6 +713,13 @@ def register(request):
                 "success": False, 
                 "message": str(_("Pre registráciu vyplnte povinné údaje."))
             }, status = 500)
+
+        # The Privacy Policy Requires Users To Be At Least 13 Years Old
+        elif not age_confirmation:
+            return Response({
+                "success": False, 
+                "message": str(_("Pre registráciu musíte potvrdiť, že máte aspoň 13 rokov."))
+            }, status = 400)
 
         elif username.lower() in FORBIDDEN_USERNAMES or username.lower() in PROFANITIES:
             return Response({
@@ -1451,6 +1698,100 @@ def toggle_post_like(request):
         return Response({
             "success": False, 
             "message": str(_("Pri zmene označenia páči sa mi to došlo k chybe."))
+        }, status = 500)
+
+@api_view(["POST"])
+@authentication_classes([JWTAuthentication])
+@permission_classes([AllowAny])
+def get_users_who_liked_post(request):
+    try:
+        logged_in_user_id = request.user.id if request.user.is_authenticated else None # Gets The Logged In User ID If Is Available
+
+        post_id = request.data.get("post_id", None) # Gets The Post ID
+
+        # If The Information Are Missing
+        if not post_id:
+            return Response({
+                "success": False, 
+                "message": str(_("Príspevok sa nenašiel."))
+            }, status = 400)
+
+        try:
+            post = Post.objects.filter(visible_posts_q(logged_in_user_id)).distinct().get(public_id = post_id) # Gets The Post (Only If The Viewer Is Allowed To See It)
+
+        except Post.DoesNotExist:
+            return Response({
+                "success": False,
+                "message": str(_("Príspevok nebol nájdený."))
+            }, status = 404)
+
+        # Hidden Likes Are Visible Only To The Author
+        if post.hide_likes and post.user_id != logged_in_user_id:
+            return Response({
+                "success": False,
+                "message": str(_("Autor skryl označenia páči sa mi to."))
+            }, status = 403)
+
+        # Gets The Users Who Liked The Post With The Follow Flags Of The Logged In User
+        users = post.likes_from_users.filter(
+            account_status = "OK"
+        ).select_related(
+            "subscription"
+        ).annotate(
+            # Creates The Has Follow Column (True If The Logged In User Is Following The User)
+            has_follow = Exists(
+                FollowRelation.objects.filter(
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("pk"),
+                    status = "accepted"
+                )
+            ) if logged_in_user_id else Value(False, output_field = BooleanField()),
+
+            # Creates The Has Pending Follow Request Column (True If The Logged In User Has Pending Follow Request)
+            has_pending_follow_request = Exists(
+                FollowRelation.objects.filter(
+                    from_user = logged_in_user_id,
+                    to_user = OuterRef("pk"),
+                    status = "pending"
+                )
+            ) if logged_in_user_id else Value(False, output_field = BooleanField())
+        ).order_by(
+            "-has_follow",
+            "username"
+        )
+
+        # Creates Valid Format Of Users For JSON Response
+        users = [
+            {
+                "id": one_user.id, 
+                "first_name": one_user.first_name, 
+                "last_name": one_user.last_name, 
+                "username": one_user.username,
+                "profile_picture_name": one_user.profile_picture_name, 
+                "private_account": one_user.private_account,
+                "has_follow": one_user.has_follow,
+                "has_pending_follow_request": one_user.has_pending_follow_request,
+
+                "subscription": {
+                    "is_active": one_user.subscription.is_active
+                } if hasattr(one_user, "subscription") and one_user.subscription else None
+            }
+
+            for one_user in users
+        ]
+
+        return Response({
+            "success": True, 
+            "users": users, 
+            "message": str(_("Užívatelia boli úspešne načítaní."))
+        }, status = 200)
+
+    except Exception as error:
+        captureError(f"An error occurred while loading users who liked a post.\n\t- URL: {request.build_absolute_uri()}\n\t- IP Address: {getClientIp(request)}\n\t- Error: {error}\n") # Captures The Error
+
+        return Response({
+            "success": False, 
+            "message": str(_("Pri načítavaní užívateľov došlo k chybe."))
         }, status = 500)
 
 @api_view(["POST"])
@@ -3713,6 +4054,12 @@ def get_official_training_plans(request):
                 "order": one_training_plan.order if can_access else None,
                 "is_warm_up": one_training_plan.is_warm_up if can_access else None,
                 "is_for_subscribers": one_training_plan.is_for_subscribers,
+                "duration": one_training_plan.duration,
+                "difficulty": one_training_plan.difficulty,
+                "requirements": one_training_plan.requirements,
+                "description": one_training_plan.description,
+                "goal": one_training_plan.goal,
+                "target_muscles": one_training_plan.target_muscles,
                 "is_locked": not can_access
             })
 
@@ -3937,6 +4284,51 @@ def get_profile(request, username):
                     "created_at": one_following.created_at
                 })
 
+            mutual_followers_data = [] # Stores The Mutual Followers Data
+            mutual_followers_count = 0 # Stores The Mutual Followers Count
+
+            if logged_in_user and logged_in_user_id != user.id:
+                # Gets The Mutual Followers (Users Who Follow This Profile And Are Also Followed By The Logged In User)
+                mutual_followers = FollowRelation.objects.filter(
+                    to_user = user,
+                    status = "accepted"
+                ).filter(
+                    Exists(
+                        FollowRelation.objects.filter(
+                            from_user = logged_in_user_id,
+                            to_user = OuterRef("from_user_id"),
+                            status = "accepted"
+                        )
+                    )
+                ).select_related(
+                    "from_user"
+                ).order_by(
+                    "from_user_id",
+                    "-created_at"
+                ).distinct("from_user_id")
+
+                mutual_followers_count = mutual_followers.count() # Gets The Mutual Followers Count
+
+                # Takes First 3 Mutual Followers For The Small Avatar Stack
+                for one_mutual in mutual_followers[:3]:
+                    follower = one_mutual.from_user
+
+                    follower_data = {
+                        "id": follower.id,
+                        "first_name": follower.first_name,
+                        "last_name": follower.last_name,
+                        "username": follower.username,
+                        "profile_picture_name": follower.profile_picture_name
+                    }
+
+                    # If The User Has Subscription
+                    if hasattr(follower, "subscription") and follower.subscription:
+                        follower_data["subscription"] = {
+                            "is_active": follower.subscription.is_active
+                        }
+
+                    mutual_followers_data.append(follower_data) # Appends The Follower Data To The Mutual Followers Data
+
             today = timezone.now().date() # Gets The Today's Date
 
             # Creates The Has Already Increased Activity Streak Column (True If The User Already Has)
@@ -4030,6 +4422,8 @@ def get_profile(request, username):
                 "private_account": user.private_account,
                 "data_saving_mode": None,
                 "followers": followers_data,
+                "mutual_followers": mutual_followers_data,
+                "mutual_followers_count": mutual_followers_count,
                 "following": following_data,
                 "has_follow": user.has_follow,
                 "has_pending_follow_request": user.has_pending_follow_request,
@@ -4045,6 +4439,13 @@ def get_profile(request, username):
                 "post_comments": [],
                 "badges": badges_data
             }
+
+            # If The User Has Subscription (Public, Like In Posts And Comments, So Everyone Sees The Subscriber Frame And Badge)
+            if hasattr(user, "subscription") and user.subscription:
+                user_data["subscription"] = {
+                    "plan": user.subscription.plan,
+                    "is_active": user.subscription.is_active
+                }
 
             # If The User Is Logged In
             if logged_in_user_id:
@@ -4088,15 +4489,6 @@ def get_profile(request, username):
                     ]
 
                     user_data["saved_posts"] = saved_posts_data # Stores The Saved Posts
-
-                    # If The User Has Subscription
-                    if hasattr(user, "subscription") and user.subscription:
-                        subscription = {
-                            "plan": user.subscription.plan,
-                            "is_active": user.subscription.is_active
-                        }
-                        
-                        user_data["subscription"] = subscription # Stores The Subscription
 
                     return Response({
                         "success": True, 
@@ -4308,7 +4700,7 @@ def edit_account(request):
                 _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
             )
 
-            Users.objects.filter(id = logged_in_user.id).update(account_status = "suspended") # Updates The Account Status
+            Users.objects.filter(id = logged_in_user.id).update(account_status = "suspended", last_login = timezone.now()) # Updates The Account Status (The 30-Day Deletion Period Starts Now, "cleanupSuspendedUsers" Counts It From "last_login")
 
             captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n")
 
@@ -4741,7 +5133,6 @@ def get_chat(request, username):
                 ),
 
                 post_comments_amount = Count("post__comments", filter = ~Q(post__comments__status = "hidden"), distinct = True),
-                post_likes_amount = Count("post__likes", distinct = True),
                 
                 average_rating = Avg("article__articlerating__rating")
             ).prefetch_related(
@@ -4830,7 +5221,7 @@ def get_chat(request, username):
                         "public_visibility": one_chat.post.public_visibility,
                         "allow_comments": one_chat.post.allow_comments,
                         "hide_likes": one_chat.post.hide_likes,
-                        "likes": getattr(one_chat, "post_likes_amount", 0),
+                        "likes": one_chat.post.likes, # The Post Keeps Its Like Count In The "likes" Field
                         "comments": getattr(one_chat, "post_comments_amount", 0),
                         "created_at": one_chat.post.created_at.isoformat(),
 
@@ -4862,6 +5253,7 @@ def get_chat(request, username):
                         "title": one_chat.article.title, 
                         "description": one_chat.article.description,
                         "image_name": one_chat.article.image_name, 
+                        "image_version": article_image_version(one_chat.article.image_name),
                         "html_filename": one_chat.article.html_filename,
                         "link": one_chat.article.link,
                         "categories": one_chat.article.categories,
@@ -5613,6 +6005,7 @@ def get_articles(request):
                 "title": one_article.title, 
                 "description": one_article.description,
                 "image_name": one_article.image_name, 
+                "image_version": article_image_version(one_article.image_name),
                 "html_filename": one_article.html_filename,
                 "link": one_article.link,
                 "categories": one_article.categories,
@@ -5713,6 +6106,7 @@ def get_article(request, theme):
                 "title": article.title,
                 "description": article.description,
                 "image_name": article.image_name, 
+                "image_version": article_image_version(article.image_name),
                 "html_filename": article.html_filename,
                 "link": article.link,
                 "categories": article.categories,

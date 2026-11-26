@@ -13,7 +13,7 @@ def save_google_user(sender, request, sociallogin, **kwargs):
     if sociallogin.account.provider == "google":
         data = sociallogin.account.extra_data
         
-        google_id = data.get("id")
+        google_id = data.get("sub") or data.get("id") # Newer allauth Versions Store The OpenID "sub" Claim
         email = data.get("email")
         first_name = data.get("given_name")
         last_name = data.get("family_name")

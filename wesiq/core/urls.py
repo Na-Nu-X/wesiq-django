@@ -32,7 +32,7 @@ urlpatterns = [
     # API (Native App)
     path("native-api/", include("app.api.urls")),
     path(".well-known/assetlinks.json", native_views.android_assetlinks),
-    path(".well-known/apple-app-site-association", native_views.apple_app_site_association)
+    # path(".well-known/apple-app-site-association", native_views.apple_app_site_association)
 ]
 
 urlpatterns += i18n_patterns(

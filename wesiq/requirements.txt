@@ -59,3 +59,4 @@ djangorestframework-simplejwt==5.5.1
 django-hashid-field
 gunicorn
 uvicorn[standard]
+google-auth==2.63.1

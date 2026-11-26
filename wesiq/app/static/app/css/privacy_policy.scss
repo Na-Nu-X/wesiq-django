@@ -1,0 +1,151 @@
+@import "../../../../static/css/partials/variables";
+@import "../../../../static/css/partials/mixins";
+
+/*************
+ Page (Standalone Document Without "base.html", So There Is No Global Reset)
+*************/
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0px;
+    padding: $space-xxxl $screen-padding $space-huge;
+    font-family: $font-system;
+    color: $color-text-secondary;
+    background-color: $color-background;
+    -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+    color: $color-on-primary;
+    background-color: $color-primary-solid;
+}
+
+/************
+ Main Styles
+************/
+
+// Readable Document Card (Wider Than Content Columns For Long Legal Text)
+
+.privacy_policy_page {
+    @include card(default, $space-xxxl $space-xxl, $radius-xl);
+    max-width: 760px;
+    margin: 0px auto;
+    @include typography(body);
+    overflow-wrap: break-word;
+
+    @media (max-width: $sheet-breakpoint) {
+        padding: $space-xxl $space-lg;
+        border-radius: $radius-lg;
+    }
+
+    // Headings
+
+    h1 {
+        @include typography(display);
+        margin: 0px 0px $space-xs;
+        color: $color-text;
+
+        // "Last Updated" Line
+        + p {
+            @include typography(caption);
+            display: inline-block;
+            margin: 0px 0px $space-xxl;
+            padding: $space-xs $space-md;
+            color: $color-primary-text;
+            background-color: $color-primary-soft;
+            border-radius: $radius-pill;
+        }
+    }
+
+    h2 {
+        @include typography(title);
+        margin: $space-huge 0px $space-md;
+        padding-top: $space-xxl;
+        color: $color-text;
+        border-top: $hairline solid $color-divider;
+        scroll-margin-top: $space-lg;
+    }
+
+    h3 {
+        @include typography(heading);
+        margin: $space-xxl 0px $space-sm;
+        color: $color-text-accent;
+        scroll-margin-top: $space-lg;
+    }
+
+    h2 + h3 {
+        margin-top: $space-lg;
+    }
+
+    // Text
+
+    p {
+        margin: 0px 0px $space-md;
+    }
+
+    strong {
+        font-weight: 600;
+        color: $color-text;
+    }
+
+    a {
+        color: $color-primary-text;
+        text-decoration: underline;
+        text-decoration-color: $color-border-strong;
+        text-underline-offset: 3px;
+        transition: color $duration-fast ease, text-decoration-color $duration-fast ease;
+
+        &:hover {
+            color: $color-text-accent;
+            text-decoration-color: currentColor;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $color-primary;
+            outline-offset: 2px;
+            border-radius: $radius-xs;
+        }
+    }
+
+    // Lists
+
+    ul {
+        margin: 0px 0px $space-lg;
+        padding-left: $space-xxl;
+
+        ul {
+            margin: $space-sm 0px 0px;
+        }
+    }
+
+    li {
+        margin-bottom: $space-sm;
+        padding-left: $space-xs;
+
+        &::marker {
+            color: $color-primary;
+        }
+
+        // Pandoc-Style "<li><p>" Items Shouldn't Get Double Spacing
+        > p {
+            margin: 0px;
+        }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load filters %}
 {% load i18n %}
 
 {% block title %}{{ article.title|default:"Článok sa nenašiel" }}{% endblock title %}
@@ -18,7 +19,7 @@
 
         <div class="article_banner">
             <div class="banner_image">
-                <img src="{% static './images/articles' %}/{{ article.image_name }}" alt="">
+                <img src="{{ article.image_name|article_image_url }}" alt="">
             </div>
             
             <div class="banner_info">

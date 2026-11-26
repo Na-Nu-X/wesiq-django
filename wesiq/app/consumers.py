@@ -1,4 +1,5 @@
 import json
+from app.templatetags.filters import article_image_version
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from .models import Users, Post, Chat, MessageReaction, ChatAttachment, VoiceMessage, MutedUser, Articles
@@ -56,7 +57,6 @@ def clean_text(value):
     return value
 
 class ChatConsumer(AsyncWebsocketConsumer):
-
     # Function For Connect
     async def connect(self):
         self.receiver_username = self.scope["url_route"]["kwargs"]["username"] # Gets The Receiver's Username
@@ -716,8 +716,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         ).prefetch_related(
             "post__media"
         ).annotate(
-            post_comments_amount = Count("post__comments", filter=~Q(post__comments__status = "hidden"), distinct = True),
-            post_likes_amount = Count("post__likes", distinct = True)
+            post_comments_amount = Count("post__comments", filter=~Q(post__comments__status = "hidden"), distinct = True)
         ).get(id = new_chat.id)
 
         post_media_list = list(new_chat_with_shared_post.post.media.all()) if new_chat_with_shared_post.post else [] # Gets The Post Media List
@@ -745,7 +744,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "public_visibility": new_chat_with_shared_post.post.public_visibility,
                 "allow_comments": new_chat_with_shared_post.post.allow_comments,
                 "hide_likes": new_chat_with_shared_post.post.hide_likes,
-                "likes": getattr(new_chat_with_shared_post, "post_likes_amount", 0),
+                "likes": new_chat_with_shared_post.post.likes, # The Post Keeps Its Like Count In The "likes" Field
                 "comments": getattr(new_chat_with_shared_post, "post_comments_amount", 0),
                 "created_at": new_chat_with_shared_post.post.created_at.isoformat(),
 
@@ -817,6 +816,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "title": shared_article.title, 
                 "description": shared_article.description,
                 "image_name": shared_article.image_name, 
+                "image_version": article_image_version(shared_article.image_name),
                 "html_filename": shared_article.html_filename,
                 "link": shared_article.link,
                 "categories": shared_article.categories,

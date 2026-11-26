@@ -162,9 +162,17 @@ class Users(AbstractBaseUser, PermissionsMixin):
 
     google_id = models.CharField(
         verbose_name = _("Google ID"), 
-        help_text = _("ID of user registered with Google."), 
-        max_length = 255, 
-        null = True, 
+        help_text = _("ID of user registered with Google."),
+        max_length = 255,
+        null = True,
+        blank = True
+    )
+
+    apple_id = models.CharField(
+        verbose_name = _("Apple ID"),
+        help_text = _("ID of user registered with Apple."),
+        max_length = 255,
+        null = True,
         blank = True
     )
 
@@ -1259,6 +1267,55 @@ class OfficialTrainingPlan(models.Model):
         help_text = _("Stores the information if the training plan is only for subscribers."), 
         default = False, 
         null = False
+    )
+
+    duration = models.PositiveIntegerField(
+        verbose_name = _("Duration"), 
+        help_text = _("Estimated duration of the training plan in minutes."), 
+        default = 60, 
+        null = True,
+        blank = True
+    )
+
+    difficulty = models.IntegerField(
+        verbose_name = _("Difficulty Percentage"), 
+        help_text = _("Training plan difficulty in percent."), 
+        default = 0, 
+        null = True,
+        blank = True,
+        validators = [MinValueValidator(0), MaxValueValidator(100)]
+    )
+
+    requirements = models.CharField(
+        verbose_name = _("Requirements"), 
+        help_text = _("Additional requirements for the training plan."), 
+        max_length = 50, 
+        null = True,
+        blank = True
+    )
+
+    description = models.TextField(
+        verbose_name = _("Description"),
+        help_text = _("Short summary of what the training plan focuses on."),
+        max_length = 300,
+        null = True,
+        blank = True
+    )
+
+    goal = models.CharField(
+        verbose_name = _("Goal"),
+        help_text = _("Primary goal of the plan (e.g. hypertrophy, strength, fat_loss, endurance)."),
+        max_length = 30,
+        null = True,
+        blank = True
+    )
+
+    target_muscles = ArrayField(
+        models.CharField(max_length = 30),
+        verbose_name = _("Target Muscles"),
+        help_text = _("List of primary muscle groups trained in this plan."),
+        default = list,
+        blank = True
     )
 
     class Meta:

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load filters %}
 {% load i18n %}
 
 {% block title %}{% translate "Blog" %}{% endblock title %}
@@ -108,7 +109,7 @@
                 <div
                     class="article_image"
                     {% if one_article.image_name %}
-                        style="background-image: url('{% static './images/articles' %}/{{ one_article.image_name }}');"
+                        style="background-image: url('{{ one_article.image_name|article_image_url }}');"
                     {% endif %}
                 ></div>
 

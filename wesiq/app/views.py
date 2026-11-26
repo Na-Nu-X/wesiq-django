@@ -1291,8 +1291,12 @@ def homepageView(request):
         else:
             registration_form = registrationForm(request.POST) # Gets The Registration Form
 
+            # The Privacy Policy Requires Users To Be At Least 13 Years Old
+            if request.POST.get("age_confirmation") != "on":
+                messages.add_message(request, messages.ERROR, _("Pre registráciu musíte potvrdiť, že máte aspoň 13 rokov.")) # Sets The Message
+
             # Validates The Registration Form
-            if registration_form.is_valid():
+            elif registration_form.is_valid():
                 try:
                     # Forbidden Username
                     if registration_form.cleaned_data["username"].lower() in FORBIDDEN_USERNAMES or registration_form.cleaned_data["username"].lower() in PROFANITIES:
@@ -2039,8 +2043,12 @@ def registrationView(request):
         else:
             registration_form = registrationForm(request.POST) # Gets The Registration Form
 
+            # The Privacy Policy Requires Users To Be At Least 13 Years Old
+            if request.POST.get("age_confirmation") != "on":
+                messages.add_message(request, messages.ERROR, _("Pre registráciu musíte potvrdiť, že máte aspoň 13 rokov.")) # Sets The Message
+
             # Validates The Registration Form
-            if registration_form.is_valid():
+            elif registration_form.is_valid():
                 try:
                     # Forbidden Username
                     if registration_form.cleaned_data["username"].lower() in FORBIDDEN_USERNAMES or registration_form.cleaned_data["username"].lower() in PROFANITIES:
@@ -4816,7 +4824,7 @@ def profileView(request, username):
                                         _("Tento e-mail prosím ignorujte, slúži len pre Vaše informovanie."), # End Of HTML Content
                                     )
 
-                                    Users.objects.filter(id = logged_in_user.id).update(account_status = "suspended") # Updates The Account Status
+                                    Users.objects.filter(id = logged_in_user.id).update(account_status = "suspended", last_login = timezone.now()) # Updates The Account Status (The 30-Day Deletion Period Starts Now, "cleanupSuspendedUsers" Counts It From "last_login")
 
                                     messages.add_message(request, messages.ERROR, _("Účet %(first_name)s %(last_name)s bol odstránený") % {"first_name": logged_in_user.first_name, "last_name": logged_in_user.last_name}) # Sets The Message
                                     captureLogin(f"{logged_in_user.first_name} {logged_in_user.last_name}'s account status has been changed to suspended.\n\t- URL: {request.build_absolute_uri()}\n\t- User ID: {logged_in_user_id},\n\t- IP Address: {getClientIp(request)}\n") # Captures The Login

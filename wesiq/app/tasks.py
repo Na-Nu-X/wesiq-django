@@ -449,6 +449,75 @@ def cleanupUnverifiedUsers():
     captureMessage(message)
     return message
 
+LOG_RETENTION_DAYS = 730 # 24 Months, Matches The Retention Period Stated In The Privacy Policy
+LOG_ENTRY_DATE_PATTERN = re.compile(r"^\[(\d{2})\.(\d{2})\. (\d{4}) ") # Start Of Every Entry Written By "captureError", "captureLogin" And "captureMessage" (E.g. "[19.11. 2026 19:15:26 UTC] - ...")
+
+# Function For Remove The Entries Older Than The Cutoff From One Log File (Indented Lines Belong To The Entry Above Them)
+def pruneLogFile(path, cutoff_date):
+    with open(path, mode = "rb") as file:
+        content = file.read()
+
+    kept_lines = []
+    removed_entries = 0
+    is_keeping = True # Lines Before The First Dated Entry Are Kept
+
+    for line in content.decode("utf-8", errors = "replace").splitlines(keepends = True):
+        match = LOG_ENTRY_DATE_PATTERN.match(line)
+
+        if match:
+            day, month, year = (int(value) for value in match.groups())
+
+            try:
+                is_keeping = datetime.date(year, month, day) >= cutoff_date
+
+            except ValueError:
+                is_keeping = True # Keeps Entries With An Unexpected Date
+
+            if not is_keeping:
+                removed_entries += 1
+
+        if is_keeping:
+            kept_lines.append(line)
+
+    if removed_entries == 0:
+        return 0
+
+    temporary_path = f"{path}.tmp"
+
+    with open(temporary_path, mode = "w", encoding = "utf-8") as file:
+        file.write("".join(kept_lines))
+
+    # Copies Entries The Views Appended While The File Was Being Pruned (They Write Without Any Lock)
+    with open(path, mode = "rb") as file:
+        file.seek(len(content))
+        appended = file.read()
+
+    if appended:
+        with open(temporary_path, mode = "ab") as file:
+            file.write(appended)
+
+    shutil.copymode(path, temporary_path)
+    os.replace(temporary_path, path) # Swaps The Files Atomically
+
+    return removed_entries
+
+@shared_task(name = "app.tasks.cleanupOldLogs")
+def cleanupOldLogs():
+    cutoff_date = (timezone.now() - timedelta(days = LOG_RETENTION_DAYS)).date() # Gets The Oldest Date That Is Kept
+    removed_entries = 0
+
+    for path in Path(settings.LOGS_DIR).glob("*.log"):
+        try:
+            removed_entries += pruneLogFile(path, cutoff_date)
+
+        except OSError as error:
+            captureMessage(f"Log File {path.name} Couldn't Be Pruned: {error}")
+
+    # Sets Message
+    message = f"{removed_entries} Old Log Entries Have Been Deleted" if removed_entries != 1 else "1 Old Log Entry Has Been Deleted"
+    captureMessage(message)
+    return message
+
 @shared_task(name = "app.tasks.cleanupRejectedReviews")
 def cleanupRejectedReviews():
     one_week_ago = timezone.now() - timedelta(days = 7) # Gets The 1 Week Ago Time

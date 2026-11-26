@@ -276,6 +276,12 @@ CELERY_BEAT_SCHEDULE = {
         "task": "app.tasks.modelsWarmUp",
         "schedule": crontab(minute="*/10") # Every 10 Minutes
     },
+
+    # Kept In Code (Not Only In The Admin), Because The Privacy Policy Promises Logs Are Deleted After 24 Months
+    "cleanup_old_logs_every_day": {
+        "task": "app.tasks.cleanupOldLogs",
+        "schedule": crontab(hour=3, minute=30) # Every Day At 3:30
+    },
 }
 
 # Redis Caching
@@ -396,3 +402,6 @@ SIMPLE_JWT = {
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True
 }
+
+GOOGLE_WEB_CLIENT_ID = "540480595540-tntaf1q3pdefl5tjcsk445ircs19dtn6.apps.googleusercontent.com"
+APPLE_BUNDLE_ID = "com.behul.wesiq"

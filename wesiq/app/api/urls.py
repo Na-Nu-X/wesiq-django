@@ -11,6 +11,8 @@ urlpatterns = [
     # API (Native App)
 
     path("login/", views.login, name='login_url'),
+    path("auth/google/", views.google_login, name = "google_login"),
+    path("auth/apple/", views.apple_login, name = "apple_login"),
     path("register/", views.register, name = "register_url"),
     path("get-logged-in-user/", views.get_logged_in_user, name = "get_logged_in_user_url"),
 
@@ -26,6 +28,7 @@ urlpatterns = [
     path("update-video-watch-time/", views.update_video_watch_time, name = "native_update_video_watch_time_url"),
     path("stream-video/<int:user_id>/<int:media_id>/<path:filename>", views.stream_video, name = "native_stream_video_url"),
     path("toggle-post-like/", views.toggle_post_like, name = "toggle_post_like_url"),
+    path("get-users-who-liked-post/", views.get_users_who_liked_post, name = "get_users_who_liked_post_url"),
     path("toggle-post-save/", views.toggle_post_save, name = "toggle_post_save_url"),
     path("report-post/", views.report_post, name = "report_post_url"),
     path("edit-post-settings/", views.edit_post_settings, name = "edit_post_settings_url"),
